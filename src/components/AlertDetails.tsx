@@ -6,12 +6,12 @@ export function AlertDetails({ items, onInspectAlert }: { items: EvaluatedAlert[
     <div className="section-heading"><h2>Alerts considered together</h2><span className="count-badge">{items.length}</span></div>
     <p className="supporting-text">For your direction and the selected time.</p>
     {items.length === 0 && <p className="empty-message">No applicable alerts were found in the checked feeds.</p>}
-    {items.map(({ alert, timing, affectsSelectedStop, reason }) => {
+    {items.map(({ alert, timing, affectsSelectedStop, reason, stopScope }) => {
       const readable = presentAlertText(alert);
       const issues = [...new Set([...alert.timingIssues, ...alert.sourceIssues, ...alert.geometryIssues])];
       return <details className="alert-detail" key={alert.id}>
         <summary><span>{alert.title}</span><span className={`alert-tag ${timing === 'uncertain' ? 'tag-uncertain' : affectsSelectedStop ? 'tag-affected' : ''}`}>
-          {timing === 'uncertain' ? 'Needs review' : affectsSelectedStop ? 'Lists your stop' : 'Route alert'}
+          {timing === 'uncertain' ? stopScope === 'elsewhere' ? 'Elsewhere · timing unclear' : 'Needs review' : affectsSelectedStop ? 'Lists your stop' : stopScope === 'elsewhere' ? 'Elsewhere on route' : 'Stop impact unclear'}
         </span></summary>
         <div className="readable-alert">
           <h3>What the notice says</h3>

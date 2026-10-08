@@ -16,7 +16,7 @@ const sources: RawFeed = {
 };
 const feed = normalizeFeed(sources, snapshot.route);
 const northbound = snapshot.route.directions.find(direction => direction.id === '1')!;
-const evaluated = feed.alerts.map((alert): EvaluatedAlert => ({ alert, timing: 'active', affectsSelectedStop: false, reason: '' }));
+const evaluated = feed.alerts.map((alert): EvaluatedAlert => ({ alert, timing: 'active', affectsSelectedStop: false, stopScope: 'unknown', reason: '' }));
 
 function setup(): { direction: RouteDirection; alert: DetourAlert; stop: Stop; item: EvaluatedAlert } {
   const stop: Stop = { id: 'middle', name: 'Middle', lat: 40, lon: -74.995 };
@@ -27,7 +27,7 @@ function setup(): { direction: RouteDirection; alert: DetourAlert; stop: Stop; i
     timingIssues: [], geometryIssues: [], sourceIssues: [], skippedStopIds: [], stopCoverage: 'unknown',
     geometry: [[[40, -74.998], [40.002, -74.998], [40.002, -74.992], [40, -74.992]]], unservedGeometry: [],
   };
-  return { direction, alert, stop, item: { alert, timing: 'active', affectsSelectedStop: false, reason: '' } };
+  return { direction, alert, stop, item: { alert, timing: 'active', affectsSelectedStop: false, stopScope: 'unknown', reason: '' } };
 }
 
 describe('automatic map context', () => {

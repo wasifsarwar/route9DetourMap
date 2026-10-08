@@ -6,6 +6,7 @@ import type {
   EvaluatedAlert,
   StopAssessment,
 } from './types';
+import { getStopScope } from './stopScope';
 import { parseInstant, toWallTime, withinSchedule } from './time';
 
 export const DEFAULT_MAX_AGE_MS = 15 * 60 * 1000;
@@ -92,16 +93,18 @@ export function assessStop(input: AssessmentInput): StopAssessment {
     .map((alert): EvaluatedAlert => {
       const timing = evaluateAlertTiming(alert, now);
       const listed = alert.stopCoverage !== 'unknown' && alert.skippedStopIds.includes(stopId);
+      const stopScope = getStopScope(alert, stopId, direction.stops);
       let reason = timing.reason;
       if (timing.timing !== 'inactive') {
         if (alert.sourceIssues.length) reason += ` ${alert.sourceIssues.join(' ')}`;
         if (listed) reason += ' The agency lists your stop as skipped.';
         else if (alert.stopCoverage !== 'explicit-list' || alert.skippedStopIds.length === 0) reason += ' The agency has not supplied a complete list of affected stops.';
-        else reason += ' Your stop is not named in this alert’s published stop list.';
+        else reason += stopScope === 'elsewhere' ? ' The published affected-stop list names other stops, not yours.' : ' This alert’s stop coverage could not be verified.';
       }
-      return { alert, ...timing, affectsSelectedStop: listed && timing.timing !== 'inactive', reason };
+      return { alert, ...timing, stopScope, affectsSelectedStop: listed && timing.timing !== 'inactive', reason };
     })
-    .filter((evaluation) => evaluation.timing !== 'inactive');
+    .filter((evaluation) => evaluation.timing !== 'inactive')
+    .sort((a, b) => ({ selected: 0, unknown: 1, elsewhere: 2 })[a.stopScope] - ({ selected: 0, unknown: 1, elsewhere: 2 })[b.stopScope]);
 
   if (!validRoute) result.reasons.push('The scheduled route and stop data do not cover this date.');
   if (!fresh && !replay) {
@@ -131,10 +134,10 @@ export function assessStop(input: AssessmentInput): StopAssessment {
     result.reasons.push(...confirmed.map(({ alert }) => `${alert.title}: the agency explicitly lists this stop as skipped.`));
     if (unresolved.length) result.reasons.push('Other alerts still have unresolved details. They may add restrictions.');
   } else if (unresolved.length > 0) {
-    result.reasons.push(...unresolved.map(({ alert, reason }) => `${alert.title}: ${reason}`));
+    result.reasons.push(...unresolved.map(({ alert, reason, stopScope }) => `${alert.title}: ${stopScope === 'elsewhere' ? 'Other stops are listed, but unresolved timing still prevents confirming current service. ' : ''}${reason}`));
   } else if (feedComplete(feed)) {
     result.status = 'unaffected';
-    result.title = 'No reported impact at this stop';
+    result.title = result.relevantAlerts.length ? 'Detour elsewhere on this route' : 'No reported impact at this stop';
     result.summary = 'None of the current alerts checked lists an active impact at this stop. This is limited to the agency information checked; it does not confirm that a bus will stop here.';
     result.reasons.push(result.relevantAlerts.length
       ? 'Your stop is absent from the published stop lists for every applicable alert checked.'

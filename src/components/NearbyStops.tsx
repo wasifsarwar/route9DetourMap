@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AlertFeed, RouteData, RouteDirection } from '../domain/types';
+import { hasElsewhereDetour } from '../domain/stopScope';
 import { assessStop } from '../domain/impact';
 import { nearbyStops, distanceLabel, validFix, type LocationFix } from '../domain/nearbyStops';
 import { requestLocation } from '../hooks/location';
@@ -48,7 +49,7 @@ export function NearbyStops({ route, direction, feed, now, onSelect }: {
       const assessment = assessStop({ route, feed, directionId: direction.id, stopId: stop.id, now, boarding: [] });
       return <li key={stop.id}><button onClick={() => { onSelect(stop.id); clear(); }}>
         <span className="nearby-stops__name">{stop.name}<small>About {distanceLabel(meters)}</small></span>
-        <span className={`nearby-stops__status nearby-stops__status--${assessment.status}`}>{assessment.status === 'affected' ? 'Stop skipped' : assessment.status === 'unaffected' ? 'No impact reported' : 'Status unconfirmed'}</span>
+        <span className={`nearby-stops__status nearby-stops__status--${assessment.status}`}>{assessment.status === 'affected' ? 'Stop skipped' : assessment.status === 'unaffected' ? hasElsewhereDetour(assessment) ? 'Detour elsewhere' : 'No impact reported' : 'Status unconfirmed'}</span>
       </button></li>;
     })}</ul>}
     {!fix && !error && !loading && <p className="nearby-stops__privacy">Uses your location once. Not saved or shared by this app.</p>}

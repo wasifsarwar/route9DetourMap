@@ -90,6 +90,7 @@ export interface EvaluatedAlert {
   alert: DetourAlert;
   timing: AlertTiming;
   affectsSelectedStop: boolean;
+  stopScope: 'selected' | 'elsewhere' | 'unknown';
   reason: string;
 }
 

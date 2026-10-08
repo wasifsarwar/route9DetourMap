@@ -1,3 +1,4 @@
+import { stopStatusCopy } from './stopScope';
 import { describe, expect, it } from 'vitest';
 import { assessStop, evaluateAlertTiming, isFeedFresh } from './impact';
 import { parseInstant, parseWallTime, toWallTime, withinSchedule } from './time';
@@ -130,7 +131,7 @@ describe('joint stop assessment', () => {
   it('limits unaffected language to checked agency alerts and published lists', () => {
     const result = assessStop(input({ stopId: 'other' }));
     expect(result.status).toBe('unaffected');
-    expect(result.title).toBe('No reported impact at this stop');
+    expect(result.title).toBe('Detour elsewhere on this route');
     expect(result.summary).toMatch(/does not confirm/);
   });
   it('cannot clear a stop when any applicable alert has unknown stop coverage or inconsistent timing', () => {
@@ -206,4 +207,38 @@ describe('agency-verified replacement boarding', () => {
     expect(result.status).toBe('affected');
     expect(result.alternative).toBeNull();
   });
+});
+
+describe('stop-specific scope', () => {
+  it('separates an active detour elsewhere using complete agency stop lists', () => {
+    const result = assessStop(input({ stopId: 'other' }));
+    expect(result.status).toBe('unaffected');
+    expect(result.relevantAlerts[0].stopScope).toBe('elsewhere');
+  });
+  it('keeps timing conflicts elsewhere visible without clearing current service', () => {
+    const result = assessStop(input({ stopId: 'other', feed: feed([alert({ timingIssues: ['Conflicting schedule'] })]) }));
+    expect(result.status).toBe('unknown');
+    expect(result.relevantAlerts[0].stopScope).toBe('elsewhere');
+    expect(result.reasons.join(' ')).toContain('Other stops are listed');
+  });
+  it('never infers elsewhere from partial, missing, mismatched, or conflicted lists', () => {
+    for (const patch of [{ stopCoverage: 'partial-list' as const }, { skippedStopIds: [] }, { skippedStopIds: ['unmapped'] }, { sourceIssues: ['Conflict'] }]) {
+      const result = assessStop(input({ stopId: 'other', feed: feed([alert(patch)]) }));
+      expect(result.status).toBe('unknown');
+      expect(result.relevantAlerts[0].stopScope).toBe('unknown');
+    }
+  });
+  it('puts a selected-stop closure before uncertainty and elsewhere alerts', () => {
+    const result = assessStop(input({ feed: feed([alert({ id: 'elsewhere', skippedStopIds: ['other'] }), alert({ id: 'unknown', skippedStopIds: [] }), alert()]) }));
+    expect(result.relevantAlerts.map(item => item.stopScope)).toEqual(['selected', 'unknown', 'elsewhere']);
+    expect(result.status).toBe('affected');
+  });
+});
+
+it('reserves elsewhere wording for a resolved stop assessment', () => {
+  expect(stopStatusCopy(assessStop(input({ stopId: 'other' }))).heading).toBe('Detour elsewhere on this route');
+  for (const change of [{ now: new Date(now.getTime() + 16 * 60_000) }, { feed: feed([alert()], { complete: false }) }, { feed: feed([alert({ timingIssues: ['Conflicting hours'] })]) }]) {
+    expect(stopStatusCopy(assessStop(input({ stopId: 'other', ...change }))).heading).toBe('Stop status unconfirmed');
+  }
+  expect(stopStatusCopy(assessStop(input({ stopId: 'other', feed: feed([]) }))).heading).toBe('No detour reported here');
 });
