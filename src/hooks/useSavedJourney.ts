@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { DirectionId, RouteData } from '../domain/types';
-import { readJourneyPreference, resolveJourney, writeJourneyPreference, type JourneyPreference, type JourneySelection } from './journeyPreference';
+import { readJourneyPreference, resolveJourney, resolveMapStop, writeJourneyPreference, type JourneyPreference, type JourneySelection } from './journeyPreference';
 
 /** Remember the last route direction and stop, independently of replay or map inspection. */
 export function useSavedJourney(route: RouteData | undefined) {
@@ -29,5 +29,9 @@ export function useSavedJourney(route: RouteData | undefined) {
     commit({ direction, stop: nextStop });
   }, [direction, commit]);
 
-  return { direction, stop, selectDirection, selectStop };
+  const selectMapStop = useCallback((directionId: DirectionId, stopId: string) => {
+    const next = route ? resolveMapStop(route, directionId, stopId) : null;
+    if (next) commit(next);
+  }, [route, commit]);
+  return { direction, stop, selectDirection, selectStop, selectMapStop };
 }

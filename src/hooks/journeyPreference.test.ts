@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { RouteData } from '../domain/types';
-import { JOURNEY_STORAGE_KEY, readJourneyPreference, resolveJourney, writeJourneyPreference, type JourneyPreference, type JourneyStorage } from './journeyPreference';
+import { JOURNEY_STORAGE_KEY, readJourneyPreference, resolveJourney, resolveMapStop, writeJourneyPreference, type JourneyPreference, type JourneyStorage } from './journeyPreference';
 import { useSavedJourney } from './useSavedJourney';
 
 const route: RouteData = {
@@ -110,4 +110,12 @@ describe('unavailable storage and route loading', () => {
     expect(renderToStaticMarkup(createElement(Probe, { data: route }))).toBe('<span>0:south-second</span>');
     expect(save).not.toHaveBeenCalled();
   });
+});
+
+it('selects direction and stop atomically and rejects a stop from the other direction', () => {
+  expect(resolveMapStop(route, '0', 'south-second')).toEqual({direction:route.directions[0],stop:route.directions[0].stops[1]});
+  expect(resolveMapStop(route, '1', 'south-second')).toBeNull();
+  const shared = {...route,directions:route.directions.map(d=>({...d,stops:[{id:'shared',name:d.label,lat:40,lon:-75}]}))};
+  expect(resolveMapStop(shared,'1','shared')?.stop.name).toBe('Northbound');
+  expect(resolveMapStop(shared,'0','shared')?.stop.name).toBe('Southbound');
 });

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
+import type { Coordinate, DetourAlert, DirectionId, RouteDirection, Stop, StopAssessment } from '../domain/types';
 import { buildDetourTrace } from '../domain/mapGeometry';
 import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
 import type { useRealtime } from '../realtime/useRealtime';
@@ -13,13 +13,14 @@ import { BusReview } from './BusReview';
 import './RouteMap.css';
 
 interface RouteMapProps {
+  directions: RouteDirection[];
   realtime: ReturnType<typeof useRealtime>;
   mobile: boolean;
   result: ReactNode;
   direction: RouteDirection;
   stop: Stop;
   assessment: StopAssessment;
-  onSelectStop: (stopId: string) => void;
+  onSelectStop: (directionId: DirectionId, stopId: string) => void;
   reviewedAlerts: DetourAlert[];
   inspectedAlertId: string;
   inspectionRequest: number;
@@ -36,8 +37,8 @@ function textNode(text: string): HTMLSpanElement {
   return node;
 }
 
-/** Route dots show a path; stop markers always keep their evidenced physical locations. */
-export function RouteMap({ realtime, mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
+/** Stop markers in both directions keep their evidenced physical locations. */
+export function RouteMap({ directions, realtime, mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
   const reviewEnabled = new URLSearchParams(window.location.search).get('review') === '1' && realtime.enabled;
   const [reviewMap, setReviewMap] = useState<L.Map | null>(null);
   const section = useRef<HTMLElement>(null);
@@ -190,32 +191,50 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       }
     }
 
-    for (const routeStop of direction.stops) {
-      const listed = assessment.relevantAlerts.filter(({ alert, timing }) => timing !== 'inactive' && alert.skippedStopIds.includes(routeStop.id));
-      const isSelected = routeStop.id === stop.id;
+    const allStops = directions.flatMap(d => d.stops.map(s => ({ direction: d, stop: s })));
+    for (const { direction: stopDirection, stop: routeStop } of allStops) {
+      const inDirection = stopDirection.id === direction.id;
+      const listed = assessment.relevantAlerts.filter(({ alert, timing }) => inDirection && timing !== 'inactive' && alert.skippedStopIds.includes(routeStop.id));
+      const isSelected = inDirection && routeStop.id === stop.id;
       const confirmed = listed.some(({ timing, alert }) => timing === 'active' && !alert.sourceIssues.length && alert.stopCoverage !== 'unknown')
         && isSelected && assessment.fresh && assessment.status === 'affected';
-      const inferred = inferredStops.includes(routeStop.id);
+      const inferred = inDirection && inferredStops.includes(routeStop.id);
       const status = listed.length ? confirmed ? 'Agency lists this stop as skipped'
         : isSelected ? 'Listed as skipped; current impact is unconfirmed' : 'Agency lists this stop as skipped; select to check current impact'
         : inferred ? 'On the illustrated bypassed section; closure and replacement stop unconfirmed'
           : 'Scheduled stop; select to check reported impact';
       const marker = L.marker([routeStop.lat, routeStop.lon], {
-        icon: L.divIcon({ className: `route-stop ${isSelected ? 'route-stop--selected' : ''} ${listed.length ? 'route-stop--skipped' : inferred ? 'route-stop--inferred' : ''}`,
-          html: `<span aria-hidden="true">${listed.length ? '×' : inferred ? '?' : ''}</span>`, iconSize: [32, 32], iconAnchor: [16, 16] }),
+        icon: L.divIcon({ className: `route-stop route-stop--${stopDirection.id === '1' ? 'north' : 'south'} ${isSelected ? 'route-stop--selected' : ''} ${listed.length ? 'route-stop--skipped' : inferred ? 'route-stop--inferred' : ''}`,
+          html: `<span aria-hidden="true">${stopDirection.id === '1' ? 'N' : 'S'}</span>`, iconSize: [32, 32], iconAnchor: [16, 16] }),
         keyboard: true, riseOnHover: true, zIndexOffset: isSelected ? 1000 : 0,
-      }).bindTooltip(textNode(isSelected ? routeStop.name : `${routeStop.name} · ${status}`), {
+      }).bindTooltip(textNode(isSelected ? `${routeStop.name} · ${stopDirection.label}` : `${routeStop.name} · ${stopDirection.label} toward ${stopDirection.headsign} · ${status}`), {
         permanent: isSelected, direction: 'top', offset: [0, -15],
         className: isSelected ? 'selected-stop-label' : '',
       });
-      marker.on('click', () => selectStop.current(routeStop.id));
+      const chooseStop = () => {
+        const instance = map.current;
+        if (!instance) return;
+        const origin = instance.latLngToContainerPoint([routeStop.lat, routeStop.lon]);
+        const overlapping = allStops.filter(item => origin.distanceTo(instance.latLngToContainerPoint([item.stop.lat, item.stop.lon])) <= 20);
+        if (overlapping.length <= 1) { selectStop.current(stopDirection.id, routeStop.id); return; }
+        const content = document.createElement('div'); content.className = 'stop-direction-chooser';
+        const title = document.createElement('strong'); title.textContent = 'Choose your stop and direction'; content.append(title);
+        for (const item of overlapping) {
+          const button = document.createElement('button'); button.type = 'button';
+          button.textContent = `${item.direction.label} · ${item.direction.headsign} — ${item.stop.name}`;
+          button.addEventListener('click', () => { instance.closePopup(); selectStop.current(item.direction.id, item.stop.id); });
+          content.append(button);
+        }
+        L.popup({ maxWidth: 260, maxHeight: 190, autoPanPaddingTopLeft: L.point(16, 80) }).setLatLng([routeStop.lat, routeStop.lon]).setContent(content).openOn(instance);
+      };
+      marker.on('click', chooseStop);
       marker.on('add', () => {
         const element = marker.getElement();
         if (!element) return;
         element.setAttribute('role', 'button');
-        element.setAttribute('aria-label', `Check ${routeStop.name}. ${status}`);
+        element.setAttribute('aria-label', `Check ${stopDirection.label} stop ${routeStop.name}. ${status}`);
         element.addEventListener('keydown', (event) => {
-          if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); selectStop.current(routeStop.id); }
+          if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); chooseStop(); }
         });
       });
       marker.addTo(group);
@@ -226,7 +245,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
         icon: L.divIcon({ className: 'route-stop route-stop--replacement', html: '<span aria-hidden="true">✓</span>', iconSize: [24, 24], iconAnchor: [12, 12] }),
       }).bindTooltip(textNode(`Agency-confirmed replacement · ${alternative.name}`), { permanent: true, direction: 'top', offset: [0, -12] }).addTo(group);
     }
-  }, [direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops, showFocusedAgency]);
+  }, [directions, direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops, showFocusedAgency]);
 
   useEffect(() => {
     const instance = map.current;
@@ -381,8 +400,8 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       <details className="route-map__details">
         <summary>Map key & details</summary>
         <div className="route-map__details-content">
-          <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</span></div>
-          <p>Lines show routes. Small circles mark scheduled stops; dashed circles mean unconfirmed impact. Tap an orange dashed path to read its alert.</p>
+          <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">N</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">S</span>Reported skipped</span></div>
+          <p>Stops in both directions are shown: N toward Andorra, S toward 4th-Walnut. Tap a stop to select its direction. Dashed outlines mean unconfirmed impact. Tap an orange dashed path to read its alert.</p>
           {realtime.enabled && <p>{currentReport(realtime.feed?.vehiclesAt ?? null, realtime.now)
             ? 'Bus icons show recent SEPTA positions for this direction. Tap a bus for upcoming stop estimates. Missing icons do not mean no buses are running.'
             : 'Live bus positions are currently unavailable.'}</p>}
@@ -397,10 +416,10 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
           {focused && [...focused.alert.geometryIssues, ...focused.alert.sourceIssues].length > 0 && <ul className="route-map__issues">
             {[...focused.alert.geometryIssues, ...focused.alert.sourceIssues].map((issue, index) => <li key={`${index}-${issue}`}>{issue}</li>)}
           </ul>}
-          <p>Hollow blue circles are scheduled stops, not verified boarding locations; the dark outline marks your selection. A question mark means the illustrated path may bypass that stop, but its closure is unconfirmed. A cross means an agency notice lists it as skipped; select it to check current impact.</p>
+          <p>N/S markers use SEPTA’s published stop coordinates, not assumed sides of the street; the dark outline marks your selection. A dashed outline means the illustrated path may bypass that stop, but its closure is unconfirmed. An orange square means an agency notice lists it as skipped; select it to check current impact.</p>
           {bypassedStops.length > 0 && <div className="bypassed-stops"><strong>Possibly bypassed stops</strong>
             <p>The agency has not confirmed closures or replacement locations for this section.</p>
-            <ul>{bypassedStops.map((item) => <li key={item.id}><button onClick={() => onSelectStop(item.id)}>{item.name}</button></li>)}</ul>
+            <ul>{bypassedStops.map((item) => <li key={item.id}><button onClick={() => onSelectStop(direction.id, item.id)}>{item.name}</button></li>)}</ul>
           </div>}
           <p>Stop markers keep their real locations. {assessment.alternative ? 'The green marker identifies the agency-confirmed replacement.' : 'No exact replacement boarding point has been confirmed for this check.'}</p>
         </div>

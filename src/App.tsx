@@ -29,7 +29,7 @@ export default function App() {
   const mobile = useMobileLayout();
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
-  const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
+  const { direction, stop, selectDirection, selectStop, selectMapStop } = useSavedJourney(snapshot?.route);
   const [mode] = useState<'current' | 'replay'>(() => new URLSearchParams(window.location.search).get('demo') === '1' ? 'replay' : 'current');
   const realtime = useRealtime(mode === 'current');
   const [replayTime, setReplayTime] = useState('2026-10-07T21:54');
@@ -134,7 +134,7 @@ export default function App() {
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
         {mobile && time.error && <div className="mobile-replay-error">{evidence}</div>}
-        {!time.error && <RouteMap realtime={realtime} direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} mobile={mobile}
+        {!time.error && <RouteMap directions={route.directions} realtime={realtime} direction={direction} stop={stop} assessment={assessment} onSelectStop={selectMapStop} mobile={mobile}
           result={mobile ? <MobileStopSheet arrivals={arrivals} stop={stop} headsign={direction.headsign} assessment={assessment} replay={mode === 'replay'} expanded={sheetExpanded} onExpandedChange={setSheetExpanded}>{evidence}</MobileStopSheet> : null}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}

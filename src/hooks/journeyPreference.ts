@@ -71,3 +71,10 @@ export function resolveJourney(route: RouteData, preference: JourneyPreference |
     ?? direction.stops[0];
   return { direction, stop };
 }
+
+/** Resolve direction and stop together; stop IDs may occur in both directions. */
+export function resolveMapStop(route: RouteData, directionId: DirectionId, stopId: string): JourneySelection | null {
+  const direction = route.directions.find(item => item.id === directionId);
+  const stop = direction?.stops.find(item => item.id === stopId);
+  return direction && stop ? { direction, stop } : null;
+}

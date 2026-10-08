@@ -127,3 +127,9 @@
 .route-stop--selected > span { outline: 2px solid #182c4c; outline-offset: 3px; }
 .detour-popup p { margin: 7px 0; font-size: 12px; line-height: 1.45; }
 .route-map__line--reported { border-top-style: dashed; }
+
+.route-stop > span { width: 15px; height: 15px; font-size: 9px; font-weight: 800; }
+.route-stop--south > span { border-color: #147464; color: #147464; }
+.route-stop--skipped > span { width: 15px; height: 15px; border-color: #a13c18; color: #a13c18; }
+.route-stop--inferred > span { width: 15px; height: 15px; border-color: #9c854f; color: #695320; }
+.stop-direction-chooser button { display: block; width: 100%; text-align: left; min-height: 44px; margin-top: 7px; padding: 8px; font-size: 12px; }
