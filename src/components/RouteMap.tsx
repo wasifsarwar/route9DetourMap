@@ -41,6 +41,10 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
   const map = useRef<L.Map | null>(null);
   const layers = useRef<L.LayerGroup | null>(null);
   const busMarkers = useRef(new Map<string, L.Marker>());
+  const [followId, setFollowId] = useState<string | null>(null);
+  const [followNotice, setFollowNotice] = useState('');
+  const liveBuses = busesForDirection(realtime.feed, direction.id, realtime.now);
+  const followed = liveBuses.find(bus => bus.id === followId);
   const selectStop = useRef(onSelectStop);
   const [stopOffscreen, setStopOffscreen] = useState(false);
   const fullRouteButton = useRef<HTMLButtonElement>(null);
@@ -87,6 +91,11 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
     if (!container.current) return;
     const instance = L.map(container.current, { zoomControl: false, scrollWheelZoom: false, attributionControl: true }).setView([39.99, -75.19], 12);
     map.current = instance;
+    instance.on('dragstart', () => { setFollowId(null); setFollowNotice(''); });
+    const stopKeyboardFollow = (event: KeyboardEvent) => {
+      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) { setFollowId(null); setFollowNotice(''); }
+    };
+    container.current.addEventListener('keydown', stopKeyboardFollow);
     L.control.zoom({ position: 'bottomright' }).addTo(instance);
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -97,7 +106,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
     layers.current = L.layerGroup().addTo(instance);
     const resize = new ResizeObserver(() => instance.invalidateSize());
     resize.observe(container.current);
-    return () => { resize.disconnect(); busMarkers.current.clear(); instance.remove(); map.current = null; layers.current = null; };
+    return () => { container.current?.removeEventListener('keydown', stopKeyboardFollow); resize.disconnect(); busMarkers.current.clear(); instance.remove(); map.current = null; layers.current = null; };
   }, []);
 
   useEffect(() => {
@@ -217,7 +226,14 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       const popup = document.createElement('div'); popup.className = 'bus-popup';
       popup.style.maxHeight = `${Math.max(100, Math.min(250, instance.getSize().y - 130))}px`;
       const title = document.createElement('strong'); title.textContent = `Route 9 · Bus ${bus.id} · ${direction.label}`; popup.append(title);
-      const age = document.createElement('p'); age.textContent = `Position reported ${Math.max(0, Math.floor((realtime.now - bus.reportedAt) / 1000))} seconds ago`; popup.append(age);
+      const age = document.createElement('p'); age.textContent = `Position updated ${Math.max(0, Math.floor((realtime.now - bus.reportedAt) / 1000))} seconds ago`; popup.append(age);
+      const followButton = document.createElement('button');
+      followButton.type = 'button'; followButton.textContent = followId === bus.id ? 'Stop following' : 'Follow this bus';
+      followButton.addEventListener('click', () => {
+        setFollowNotice(''); setFollowId(followId === bus.id ? null : bus.id);
+        instance.closePopup();
+      });
+      popup.append(followButton);
       const prediction = arrivalsForStop(realtime.feed, direction.id, stop.id, realtime.now).find(p => p.tripId === bus.tripId);
       const selected = document.createElement('p'); selected.textContent = assessment.status === 'affected' ? 'Your selected stop is reported skipped.' : prediction ? `Your stop: ${arrivalMinutes(prediction.arrivalAt!, realtime.now)} min · SEPTA estimate` : 'No live estimate for your selected stop.'; popup.append(selected);
       const details = document.createElement('details'), summary = document.createElement('summary'); summary.textContent = 'Upcoming stop estimates'; details.open = wasExpanded; details.append(summary);
@@ -248,7 +264,17 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
         busMarkers.current.set(bus.id, marker);
       }
     }
-  }, [realtime.feed, realtime.now, realtime.enabled, direction, stop, assessment]);
+  }, [realtime.feed, realtime.now, realtime.enabled, direction, stop, assessment, followId]);
+
+  useEffect(() => {
+    if (followId && !followed) {
+      setFollowId(null);
+      setFollowNotice('Bus position unavailable. Following stopped.');
+    }
+  }, [followId, followed]);
+  useEffect(() => {
+    if (followed) map.current?.setView([followed.lat, followed.lon], Math.max(14, map.current.getZoom()), { animate: false });
+  }, [followed?.id, followed?.lat, followed?.lon]);
 
   const detourCoordinates = useTrace && trace ? trace.path : showFocusedAgency ? focused?.alert.geometry.flat() ?? [] : [];
   const namedStopCoordinates: Coordinate[] = direction.stops.filter(item => focused?.alert.skippedStopIds.includes(item.id))
@@ -262,6 +288,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
   // only when the selected stop, applicable alert, or explicit view changes.
   const cameraKey = `${selectionKey}:${focused?.alert.id ?? 'stop'}:${pathView}:${manualFocus ? `manual-${inspection.request}` : 'auto'}`;
   useEffect(() => {
+    setFollowId(null); setFollowNotice('');
     const { points, manual } = camera.current;
     if (!points.length) return;
     if (points.length === 1) map.current?.setView(points[0], 16, { animate: false });
@@ -269,13 +296,23 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
     if (manual) section.current?.scrollIntoView({ block: 'nearest' });
   }, [cameraKey]);
   function showNearStop() {
+    setFollowId(null); setFollowNotice('');
     setAgencyChoice(null);
     setStoredInspection({ selectionKey, request: inspectionRequest, alertId: null });
     map.current?.setView([stop.lat, stop.lon], 16, { animate: false });
   }
   function showFullRoute() {
+    setFollowId(null); setFollowNotice('');
     const coordinates = validCoordinates(direction.shape);
     if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { paddingTopLeft: mobile ? [24, 76] : [35, 100], paddingBottomRight: mobile ? [24, 42] : [35, 90], maxZoom: 15, animate: false });
+  }
+
+  function showLiveBuses() {
+    setFollowId(null); setFollowNotice('');
+    map.current?.closePopup();
+    if (liveBuses.length) map.current?.fitBounds(L.latLngBounds(liveBuses.map(bus => [bus.lat, bus.lon] as Coordinate)), {
+      paddingTopLeft: [24, 90], paddingBottomRight: [24, 48], maxZoom: 15, animate: false,
+    });
   }
 
   return <section ref={section} className="route-map" aria-label="Route map and reported detours">
@@ -304,7 +341,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       </button><p id="agency-map-explanation">SEPTA’s map and directions disagree. The actual route is uncertain.</p></div>}
     </div>}
 
-    {stopOffscreen && <button className="route-map__return" onClick={() => {
+    {!realtime.enabled && stopOffscreen && <button className="route-map__return" onClick={() => {
       showNearStop();
       fullRouteButton.current?.focus({ preventScroll: true });
     }}><Icon name="pin" />Back to my stop</button>}
@@ -313,6 +350,12 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
       {tilesUnavailable && <p className="route-map__tile-error" role="status">Street tiles could not load. Route lines and stop details remain available.</p>}
     </div>
+    {realtime.enabled && <div className="bus-tracking-controls" aria-label="Live bus tracking">
+      {followed ? <div className="bus-tracking-controls__status"><strong>Following bus {followed.id}</strong><span>Position updated {Math.max(0, Math.floor((realtime.now - followed.reportedAt) / 1000))} seconds ago</span></div>
+        : <div><button disabled={!liveBuses.length} onClick={showLiveBuses}>{liveBuses.length ? `Show live buses · ${liveBuses.length}` : realtime.feed && currentReport(realtime.feed.vehiclesAt, realtime.now) ? 'No buses reporting' : 'Bus positions unavailable'}</button>{followNotice && <span role="status">{followNotice}</span>}</div>}
+      {(stopOffscreen || followed) && <button onClick={showNearStop}>Your stop</button>}
+      {followed && <button onClick={() => setFollowId(null)}>Stop following</button>}
+    </div>}
     {result}
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">

@@ -64,10 +64,10 @@ export default function App() {
   const fresh = mode === 'current' && assessment?.fresh && !historicalFallback;
   const freshnessText = mode === 'replay' ? 'Recorded example · not current service'
     : waitingForCurrent ? 'Checking service updates…'
-      : historicalFallback ? 'Current updates unavailable'
+      : historicalFallback ? 'Current service alerts unavailable'
         : !feed ? 'Loading route…'
-          : !fresh ? 'Updates are out of date'
-            : !feed.complete ? 'Some updates unavailable' : ageText(feed.fetchedAt, clock);
+          : !fresh ? 'Service alerts out of date'
+            : !feed.complete ? 'Some service alerts unavailable' : ageText(feed.fetchedAt, clock);
 
   const arrivals = realtime.enabled && direction && stop && assessment ? <LiveArrivals feed={realtime.feed} now={realtime.now} error={realtime.error} directionId={direction.id} stopId={stop.id} assessment={assessment} /> : null;
   const evidence = route && direction && stop && feed && assessment ? (

@@ -13,7 +13,7 @@
 .route-map .leaflet-tile-pane { filter: grayscale(.65) saturate(.7); opacity: .8; }
 .route-map__notice { position: absolute; z-index: 400; bottom: 24px; left: 18px; max-width: calc(100% - 84px); padding: 8px 11px; border-left: 3px solid #a57527; border-radius: 0 6px 6px 0; background: #fffaf0f5; color: #6b4c20; font-size: 12px; line-height: 1.45; box-shadow: 0 1px 7px #182c4c0c; pointer-events: none; }
 .route-map__tile-error { position: absolute; bottom: 80px; left: 18px; right: 60px; z-index: 450; padding: 10px 12px; background: #fff8e9; border: 1px solid #e8caa1; border-radius: 8px; color: #715128; font-size: 12px; line-height: 1.5; }
-.route-map__footer { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 18px; min-height: 48px; border-top: 1px solid var(--border); background: white; z-index: 500; }
+.route-map__footer { order: 1; position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 18px; min-height: 48px; border-top: 1px solid var(--border); background: white; z-index: 500; }
 .route-map__legend { display: flex; align-items: center; gap: 14px; list-style: none; padding: 0; margin: 0; font-size: 11px; font-weight: 600; }
 .route-map__legend li { display: flex; align-items: center; gap: 6px; }
 .route-map__line { display: inline-block; width: 20px; border-top: 3px solid; }
@@ -110,3 +110,10 @@
 .detour-inspector__agency-note { margin-top: 6px; background: white; border: 1px solid #d4dde7; border-radius: 8px; }
 .detour-inspector__agency-note .detour-inspector__agency { margin: 0; width: 100%; border: 0; }
 .detour-inspector__agency-note p { margin: 0; padding: 0 10px 10px; font-size: 12px; line-height: 1.45; color: #6b4c20; }
+
+.bus-tracking-controls { order: 1; display: flex; align-items: center; gap: 8px; padding: 7px 14px; background: #fff; border-top: 1px solid #d4dde7; flex: 0 0 auto; }
+.bus-tracking-controls > div { flex: 1; min-width: 0; }
+.bus-tracking-controls button, .bus-popup button { min-height: 40px; padding: 7px 10px; font-size: 12px; }
+.bus-tracking-controls span { display: block; font-size: 11px; color: #586c7e; line-height: 1.4; }
+.bus-tracking-controls strong { display: block; font-size: 12px; }
+@media (max-width: 700px) { .bus-tracking-controls { flex-wrap: wrap; padding: 5px 12px; gap: 5px; } .bus-tracking-controls button { font-size: 11px; padding: 6px 8px; } }
