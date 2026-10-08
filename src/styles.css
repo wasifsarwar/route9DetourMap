@@ -128,3 +128,15 @@ select, input { width: 100%; min-width: 0; min-height: 46px; border: 1px solid #
   .impact-card { padding: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.readable-alert { margin-top: 16px; }
+.readable-alert h3 { font-size: 14px; }
+.readable-alert p { margin-top: 8px; }
+.readable-alert .readable-timing { color: #344c69; font-weight: 600; }
+.readable-alert ol { padding-left: 23px; line-height: 1.6; color: #344c69; }
+.readable-alert li + li { margin-top: 6px; }
+.alert-detail .alert-conflict { padding: 10px; background: #fff3d7; color: #75551c; border-radius: 6px; }
+.inspect-detour { padding: 10px 12px; margin: 12px 0; width: 100%; }
+.original-alert { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+.original-alert summary { font-weight: 500; font-size: 13px; }
+.map-area { overflow-y: auto; }
+.map-area .route-map { flex-shrink: 0; }

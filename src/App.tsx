@@ -26,6 +26,13 @@ export default function App() {
   const [mode, setMode] = useState<'current' | 'replay'>('current');
   const [replayTime, setReplayTime] = useState('2026-10-07T21:54');
   const [clock, setClock] = useState(() => new Date());
+  const [inspectedAlertId, setInspectedAlertId] = useState('');
+  const [inspectionRequest, setInspectionRequest] = useState(0);
+
+  function inspectAlert(id: string) {
+    setInspectedAlertId(id);
+    setInspectionRequest((request) => request + 1);
+  }
 
   useEffect(() => {
     const timer = window.setInterval(() => setClock(new Date()), 30_000);
@@ -88,7 +95,7 @@ export default function App() {
         </>}
         </div>
         <div className="journey-evidence">
-        {!time.error && <AlertDetails items={assessment.relevantAlerts} />}
+        {!time.error && <AlertDetails items={assessment.relevantAlerts} onInspectAlert={inspectAlert} />}
         <details className="sources-panel"><summary>Data freshness & sources</summary>
           <p>Agency data was retrieved {easternTime.format(new Date(feed.fetchedAt))}. The app checks for a newly published feed every minute.</p>
           <p>Collection is scheduled every five minutes, but updates can be delayed. After 15 minutes, current stop impact is shown as unable to confirm.</p>
@@ -103,7 +110,9 @@ export default function App() {
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
         <div className="map-heading"><div><p className="eyebrow">{direction.label.toUpperCase()} · ROUTE 9</p><h2>{stop.name}</h2></div><span className={`map-status status-${assessment.status}`}>{time.error ? 'Invalid replay time' : assessment.status === 'affected' ? 'Stop affected' : assessment.status === 'unaffected' ? 'No reported impact' : 'Unconfirmed'}</span></div>
-        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={setStopId} />}
+        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={setStopId}
+          reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
+          inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>
     </main>}
   </>;

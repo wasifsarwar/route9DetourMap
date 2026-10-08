@@ -55,6 +55,10 @@ The baseline represents two full-length Route 9 GTFS patterns, valid September 2
 
 An explicit skipped-stop entry can establish that a stop is affected. A partial list cannot establish that unlisted stops are served. Missing stop lists, conflicting schedules, incomplete feeds, and stale data cannot produce an all-clear result. Unverified paths remain marked, and separate overlapping paths are not merged into a supposedly verified route.
 
+Alert cards expand direction and turn shorthand into ordered instructions while keeping the unchanged source wording in a separate disclosure. The sinkhole notice shown in Transit and SEPTA's original raw message have the same direction, date, and turns; SEPTA's legacy feed already includes expanded Left/Right wording. Text formatting never resolves conflicting dates or changes stop status.
+
+Use **Detour to inspect → View detour** to compare the path with the normal route. Circular dots follow the displayed path; square stop markers represent physical boarding locations. The reviewed sinkhole illustration follows 4th → Spruce → 9th → Walnut and replaces the bypassed normal segment visually. It is reused only when the current notice matches the reviewed text and direction. **Agency geometry** remains available for comparison with the published loop. Geometric bypass detection marks Walnut/5th, Walnut/7th and Walnut/8th as possibly skipped, without changing their closure assessment or inventing relocated stops. Current feeds contain no exact temporary-stop coordinates; intersection coordinates identify turns, not boarding points.
+
 The current legacy notice explicitly closes northbound Schuylkill Av & JFK Blvd (stop 30576). It describes replacement boarding only as an area on Schuylkill between Walnut and Chestnut. The UI quotes that instruction with its source; it does not invent a replacement stop ID, map pin, or walking route. An exact alternative requires separate agency evidence and must pass every applicable alert check.
 
 Recorded-example mode uses the October 7, 2026 snapshot and a Philadelphia-time replay control. It is clearly historical and never supplies live alternative-boarding guidance. Candidate paths in that snapshot are interpretations, not field observations.
@@ -69,6 +73,7 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 4. Switch to the recorded example and change the Philadelphia time; the historical label must remain visible.
 5. Inspect the map, select a stop, and try Full route / Near stop. Check phone-width layout.
 6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
+7. Inspect Sink Hole, choose View detour, and compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
 
 The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
 

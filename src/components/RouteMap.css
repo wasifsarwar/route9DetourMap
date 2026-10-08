@@ -47,3 +47,27 @@
   .route-map__canvas-wrap { min-height: 380px; }
   .route-map__footer { padding: 14px; }
 }
+.detour-inspector { padding: 0 20px 16px; }
+.detour-inspector label { display: block; font-size: 12px; margin-bottom: 6px; }
+.detour-inspector__select { display: flex; gap: 8px; }
+.detour-inspector__select select { flex: 1; font-size: 14px; min-height: 40px; }
+.detour-inspector__select button { padding: 8px 12px; font-size: 13px; flex-shrink: 0; }
+.path-view { display: flex; gap: 6px; margin-top: 10px; }
+.path-view button { padding: 8px 12px; font-size: 12px; }
+.path-view button[aria-pressed='true'] { background: #fff0df; border-color: #d89563; }
+.path-explanation { margin-top: 9px; color: #586c85; font-size: 12px; line-height: 1.5; }
+.route-stop { display: grid; place-items: center; background: #fff; color: #3769c5; border: 2px solid #3769c5; border-radius: 5px; font-size: 17px; font-weight: 800; line-height: 1; box-shadow: 0 1px 3px #182c4c30; }
+.route-stop--skipped { color: #a13c18; border-color: #a13c18; background: #ffe9dd; }
+.route-stop--inferred { color: #6b572e; border-color: #9c854f; background: #fff5d9; border-style: dashed; font-size: 13px; }
+.route-stop--selected { outline: 3px solid #182c4c; outline-offset: 3px; z-index: 1000; }
+.route-stop--replacement { color: white; background: #147464; border-color: white; }
+.route-stop:focus-visible { outline: 3px solid #182c4c; outline-offset: 3px; }
+.legend-path-dot { width: 8px; height: 8px; border: 2px solid #dd661c; border-radius: 50%; }
+.legend-stop { display: inline-grid; place-items: center; width: 17px; height: 17px; color: #3769c5; border: 2px solid; border-radius: 3px; font-size: 14px; }
+.legend-stop--skipped { color: #a13c18; background: #ffe9dd; }
+.legend-stop--inferred { color: #6b572e; border-style: dashed; background: #fff5d9; }
+.bypassed-stops { margin-top: 17px; padding-top: 15px; border-top: 1px solid #dce3ee; font-size: 13px; }
+.bypassed-stops p { margin-top: 6px; }
+.bypassed-stops ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 10px 0 0; }
+.bypassed-stops button { padding: 7px 9px; font-size: 12px; text-align: left; }
+@media (max-width: 600px) { .detour-inspector { padding: 0 14px 14px; } .path-view button { flex: 1; } }
