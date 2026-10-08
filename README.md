@@ -2,6 +2,16 @@
 
 A small browser prototype answering the first technical question: can a rider understand a detour better when the route, direction, date window, and source uncertainty appear together?
 
+## Public site and deployment
+
+[Open the Route 9 pilot](https://wasifsarwar.github.io/route9DetourMap/)
+
+GitHub Actions runs the syntax checks and replay tests on pull requests and pushes to `main`. A successful push to `main` publishes only `dist/` to GitHub Pages. You can also run **Test and deploy GitHub Pages** manually from the repository's Actions tab. No API keys, package installation, or build step are needed.
+
+The repository's **Settings → Pages → Source** must be **GitHub Actions**. The workflow uses the `github-pages` environment and grants deployment permissions only to the publishing job. Local assets and data use relative URLs, so the app works under `/route9DetourMap/`.
+
+This public deployment serves the recorded snapshot described below. Deploying it does not make the transit data live. `.openai/hosting.json` records the original private Sites preview; GitHub Pages is now the requested deployment target, and that file is outside the published `dist/` directory.
+
 ## Run locally
 
 Requires Python 3 and Node.js (no package installation).
