@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nearbyStops, validFix, distanceLabel } from './nearbyStops';
+import { nearbyStops, validFix, distanceLabel, walkingTimeLabel } from './nearbyStops';
 const now = 1000000;
 const fix = { lat: 40, lon: -75, accuracy: 20, timestamp: now };
 const stop = (id: string, offset: number) => ({ id, name: id, lat: 40 + offset, lon: -75 });
@@ -30,4 +30,12 @@ it('treats a Washington location as outside coverage, not a location failure', (
   const washington = { lat: 47.4, lon: -122.2, accuracy: 50, timestamp: now };
   expect(validFix(washington, now)).toBe(true);
   expect(nearbyStops([stop('Philadelphia stop', 0)], washington, now)).toEqual([]);
+});
+
+ it('estimates walking minutes from unrounded distance without claiming routed travel', () => {
+  expect(walkingTimeLabel(0)).toBe('~1 min walk');
+  expect(walkingTimeLabel(0.3 * 1609.344)).toBe('~7 min walk');
+  expect(walkingTimeLabel(1609.344)).toBe('~23 min walk');
+  expect(walkingTimeLabel(NaN)).toBe('Walk time unavailable');
+  expect(walkingTimeLabel(-10)).toBe('Walk time unavailable');
 });

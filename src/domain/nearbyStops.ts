@@ -19,3 +19,9 @@ export function nearbyStops(stops: Stop[], fix: LocationFix, now: number) {
 export function distanceLabel(meters: number): string {
   return meters < 160 ? `${Math.max(50, Math.round(meters * 3.28084 / 50) * 50)} ft` : `${(meters / 1609.344).toFixed(1)} mi`;
 }
+
+/** Rough estimate at an assumed 1.2 m/s; distance is not a pedestrian route. */
+export function walkingTimeLabel(meters: number): string {
+  if (!Number.isFinite(meters) || meters < 0) return 'Walk time unavailable';
+  return `~${Math.max(1, Math.ceil(meters / 72))} min walk`;
+}
