@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useId, useRef, useState, type ReactNode } from 'react';
 import type { Stop, StopAssessment } from '../domain/types';
 import { stopStatusCopy } from '../domain/stopScope';
 import { ImpactCard } from './ImpactCard';
@@ -11,8 +11,22 @@ export function MobileStopSheet({ stop, headsign, assessment, replay, expanded, 
   const id = useId();
   const toggle = useRef<HTMLButtonElement>(null);
   const body = useRef<HTMLDivElement>(null);
+  const readingPosition = useRef(0);
+  const [hasViewedDetails, setHasViewedDetails] = useState(false);
   const copy = stopStatusCopy(assessment);
-  useEffect(() => { if (body.current) body.current.scrollTop = 0; }, [stop.id, headsign]);
+  useLayoutEffect(() => {
+    readingPosition.current = 0;
+    setHasViewedDetails(false);
+    if (body.current) body.current.scrollTop = 0;
+  }, [stop.id, headsign, replay]);
+  useLayoutEffect(() => {
+    if (expanded) {
+      setHasViewedDetails(true);
+      if (body.current) body.current.scrollTop = readingPosition.current;
+    } else if (body.current?.contains(document.activeElement)) {
+      toggle.current?.focus({ preventScroll: true });
+    }
+  }, [expanded, stop.id, headsign, replay]);
   function collapse() { onExpandedChange(false); toggle.current?.focus(); }
   return <section className={`mobile-stop-sheet mobile-stop-sheet--${assessment.status} ${expanded ? 'is-expanded' : ''}`}
     aria-label="Selected stop" onKeyDown={event => { if (event.key === 'Escape' && expanded) { event.preventDefault(); collapse(); } }}>
@@ -24,9 +38,10 @@ export function MobileStopSheet({ stop, headsign, assessment, replay, expanded, 
           : assessment.status === 'unknown' ? 'Check SEPTA before you travel.' : 'This does not confirm an arrival.'}</p>
       </div>
       <button className="mobile-stop-sheet__toggle" ref={toggle} aria-expanded={expanded} aria-controls={id}
-        onClick={() => onExpandedChange(!expanded)}><span>{expanded ? 'Show more map' : assessment.status === 'affected' ? 'View boarding guidance' : 'View service details'}</span><span aria-hidden="true">{expanded ? '⌄' : '⌃'}</span></button>
+        onClick={() => onExpandedChange(!expanded)}><span>{expanded ? 'Show more map' : hasViewedDetails ? 'Return to service details' : assessment.status === 'affected' ? 'View boarding guidance' : 'View service details'}</span><span aria-hidden="true">{expanded ? '⌄' : '⌃'}</span></button>
     </div>
-    <div id={id} ref={body} className="mobile-stop-sheet__body" hidden={!expanded}>
+    <div id={id} ref={body} className="mobile-stop-sheet__body" hidden={!expanded}
+      onScroll={event => { if (expanded) readingPosition.current = event.currentTarget.scrollTop; }}>
       <ImpactCard assessment={assessment} stop={stop} replay={replay} showHeading={false} />
       {children}
     </div>
