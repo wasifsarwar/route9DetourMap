@@ -5,3 +5,9 @@ node_modules/
 dist/
 public/data/current-alerts.json
 coverage/
+
+# Machine-specific AI tooling and generated memory.
+.codex/
+.serena/cache/
+.serena/memories/
+.serena/project.local.yml
