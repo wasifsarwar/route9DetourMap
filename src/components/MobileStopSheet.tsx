@@ -5,8 +5,8 @@ import { areaBoardingNotes } from '../domain/boardingSummary';
 import { ImpactCard } from './ImpactCard';
 import './MobileStopSheet.css';
 
-export function MobileStopSheet({ stop, headsign, assessment, replay, expanded, onExpandedChange, children }: {
-  stop: Stop; headsign: string; assessment: StopAssessment; replay: boolean;
+export function MobileStopSheet({ arrivals, stop, headsign, assessment, replay, expanded, onExpandedChange, children }: {
+  arrivals?: ReactNode; stop: Stop; headsign: string; assessment: StopAssessment; replay: boolean;
   expanded: boolean; onExpandedChange: (expanded: boolean) => void; children: ReactNode;
 }) {
   const id = useId();
@@ -40,6 +40,7 @@ export function MobileStopSheet({ stop, headsign, assessment, replay, expanded, 
         <p>{assessment.status === 'affected'  ? assessment.alternative ? `Board at ${assessment.alternative.stop.name}.` : 'Exact boarding point unconfirmed.'
           : assessment.status === 'unknown' ? 'Check SEPTA before you travel.' : 'This does not confirm an arrival.'}</p>
       </div>
+      {arrivals}
       <button className="mobile-stop-sheet__toggle" ref={toggle} aria-expanded={expanded} aria-controls={id}
         onClick={() => onExpandedChange(!expanded)}><span>{expanded ? 'Show more map' : hasViewedDetails ? 'Return to service details' : assessment.status === 'affected' ? 'View boarding guidance' : 'View service details'}</span><span aria-hidden="true">{expanded ? '⌄' : '⌃'}</span></button>
     </div>

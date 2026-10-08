@@ -9,6 +9,8 @@ import { MobileStopSheet } from './components/MobileStopSheet';
 import { Icon } from './components/Icon';
 import { RouteMap } from './components/RouteMap';
 import { ImpactCard } from './components/ImpactCard';
+import { useRealtime } from './realtime/useRealtime';
+import { LiveArrivals } from './components/LiveArrivals';
 import { AlertDetails } from './components/AlertDetails';
 
 const MAX_AGE_MS = 15 * 60_000;
@@ -29,6 +31,7 @@ export default function App() {
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
   const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
   const [mode] = useState<'current' | 'replay'>(() => new URLSearchParams(window.location.search).get('demo') === '1' ? 'replay' : 'current');
+  const realtime = useRealtime(mode === 'current');
   const [replayTime, setReplayTime] = useState('2026-10-07T21:54');
   const [clock, setClock] = useState(() => new Date());
   const [inspectedAlertId, setInspectedAlertId] = useState('');
@@ -66,6 +69,7 @@ export default function App() {
           : !fresh ? 'Updates are out of date'
             : !feed.complete ? 'Some updates unavailable' : ageText(feed.fetchedAt, clock);
 
+  const arrivals = realtime.enabled && direction && stop && assessment ? <LiveArrivals feed={realtime.feed} now={realtime.now} error={realtime.error} directionId={direction.id} stopId={stop.id} assessment={assessment} /> : null;
   const evidence = route && direction && stop && feed && assessment ? (
         <div className="journey-evidence">
           <details className="more-details" open={mobile || mode === 'replay'}>
@@ -115,13 +119,14 @@ export default function App() {
             <StopPicker route={route} direction={direction} stop={stop} feed={feed} now={clock} onSelect={selectStop} replay={mode === 'replay'} />
           </div>
           {time.error ? <p className="inline-error" role="alert">{time.error}</p> : !mobile && <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
+          {!mobile && arrivals}
         </div>
         {!mobile && evidence}
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
         {mobile && time.error && <div className="mobile-replay-error">{evidence}</div>}
-        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} mobile={mobile}
-          result={mobile ? <MobileStopSheet stop={stop} headsign={direction.headsign} assessment={assessment} replay={mode === 'replay'} expanded={sheetExpanded} onExpandedChange={setSheetExpanded}>{evidence}</MobileStopSheet> : null}
+        {!time.error && <RouteMap realtime={realtime} direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} mobile={mobile}
+          result={mobile ? <MobileStopSheet arrivals={arrivals} stop={stop} headsign={direction.headsign} assessment={assessment} replay={mode === 'replay'} expanded={sheetExpanded} onExpandedChange={setSheetExpanded}>{evidence}</MobileStopSheet> : null}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>

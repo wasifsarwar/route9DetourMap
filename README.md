@@ -8,7 +8,7 @@ The default screen shows destination buttons, a combined stop-search/location ba
 
 ## Stack
 
-React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions. GitHub Pages serves the app; a separate `live-data` branch publishes current JSON without rebuilding the website. There is no API key or application server. Dependencies are pinned by `package-lock.json`.
+React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions. GitHub Pages serves the app; a separate `live-data` branch publishes current alerts without rebuilding the website. Live bus tracking uses a separate backend relay when configured. No SEPTA API key is needed. Dependencies are pinned by `package-lock.json`.
 
 ## Local development
 
@@ -49,6 +49,7 @@ GitHub scheduled runs can be delayed or dropped; this is **not a guaranteed five
 - `src/hooks/`: independent route loading, resilient polling, and browser-local journey preferences.
 - `src/domain/`: pure stop-impact and Philadelphia time rules, with consequential edge-case tests.
 - `src/data/`: upstream collection, normalization, runtime validation, recorded snapshot adapter, and fixture tests.
+- `src/realtime/`: live vehicle/trip feed normalization, freshness, polling, and stop predictions.
 - `public/data/route9-snapshot.json`: recorded baseline and alerts, with original provenance and source warnings.
 
 Keep policy decisions in the domain layer, source-specific interpretation in the data layer, and display logic in components. Add a regression test for changes that could incorrectly declare a stop usable or recommend boarding.
@@ -91,7 +92,15 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 
 The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
 
-No arrivals, bus tracking, accounts, payments, automatic GTFS refresh, or field verification are implemented. Public feed access does not establish commercial reuse rights. Maps include OpenStreetMap attribution; review data and tile-service terms before scaling or monetization. Leaflet's license is included in its npm package.
+No accounts, payments, automatic GTFS refresh, or field verification are implemented. Public feed access does not establish commercial reuse rights. Maps include OpenStreetMap attribution; review data and tile-service terms before scaling or monetization. Leaflet's license is included in its npm package.
+
+## Live buses and arrival estimates
+
+Local `npm run dev` serves `/api/route9-live`, decoding SEPTA's public GTFS-Realtime VehiclePosition and TripUpdate protobuf feeds on the server. The browser polls every 20 seconds while visible and online. Vehicles and predictions expire after two minutes using their original source timestamps. Only explicit Route 9 trip directions are shown for the selected direction; unknown direction, canceled trips, placeholder vehicles, and stale positions are omitted. Selecting a bus opens its upcoming stop estimates without moving the map. Selecting a stop shows up to three arrivals.
+
+Countdowns use SEPTA's absolute predicted arrival times, never an assumed bus speed or static timetable. Missing predictions mean unavailable estimates, not no service. Reported skipped stops do not receive boarding countdowns; uncertain stops retain their warning alongside any estimate. Bus locations do not establish where boarding is allowed. Tracking is disabled in recorded demos.
+
+Production requires a relay because SEPTA's protobuf endpoints do not allow browser cross-origin access. The Netlify relay is `netlify/functions/route9-live.mts`; `netlify.toml` publishes only `relay-public/`, leaving the rider app on GitHub Pages. The deployed endpoint is `https://route9-live-relay.netlify.app/.netlify/functions/route9-live`; GitHub repository Actions variable `VITE_REALTIME_URL` supplies it to the Pages build. Without that variable, production omits tracking. The relay permits browser access from `https://wasifsarwar.github.io`, fetches only the two fixed public SEPTA endpoints, and shares a 20-second CDN cache. It receives no rider coordinates. The relay uses the existing Netlify Free team. Monitor hosting usage before wider release. Relay deployments are currently manual: `npx netlify-cli deploy --site 1172f914-c5fa-473c-9420-94fdd1baca5e --prod --no-build --dir relay-public --functions netlify/functions`. GitHub pushes deploy the frontend only; deploy the relay separately when its code changes.
 
 Stop search accepts partial street names, intersections in either order (for example, `7 Walnut`), and expanded street types. Use arrow keys and Enter to choose, or Escape to cancel. Choosing on a phone dismisses the search keyboard. Nearby results open over the map; Cancel/Clear/Escape return focus to the location button. Escape also collapses the expanded result sheet. Results are limited to the selected direction. Selecting a stop updates one result: in the sidebar on desktop, or in the persistent two-position sheet on phones. The phone sheet keeps the stop name, direction, service assessment, and boarding uncertainty together, and updates immediately when selecting a stop. Resizing moves the result between layouts without duplicating it.
 

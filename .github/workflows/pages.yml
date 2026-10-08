@@ -43,6 +43,7 @@ jobs:
         run: npm run build
         env:
           VITE_LIVE_FEED_URL: https://raw.githubusercontent.com/${{ github.repository }}/live-data/current-alerts.json
+          VITE_REALTIME_URL: ${{ vars.VITE_REALTIME_URL }}
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5

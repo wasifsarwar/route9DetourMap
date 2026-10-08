@@ -1,0 +1,6 @@
+# Backend relay only. The rider application stays on GitHub Pages.
+[build]
+  publish = "relay-public"
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

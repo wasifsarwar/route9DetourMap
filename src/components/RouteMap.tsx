@@ -4,10 +4,14 @@ import 'leaflet/dist/leaflet.css';
 import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
 import { buildDetourTrace, samplePathPoints } from '../domain/mapGeometry';
 import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
+import type { useRealtime } from '../realtime/useRealtime';
+import { busesForDirection, arrivalsForStop, arrivalMinutes } from '../realtime/select';
+import { currentReport } from '../realtime/types';
 import { Icon } from './Icon';
 import './RouteMap.css';
 
 interface RouteMapProps {
+  realtime: ReturnType<typeof useRealtime>;
   mobile: boolean;
   result: ReactNode;
   direction: RouteDirection;
@@ -31,11 +35,12 @@ function textNode(text: string): HTMLSpanElement {
 }
 
 /** Route dots show a path; stop markers always keep their evidenced physical locations. */
-export function RouteMap({ mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
+export function RouteMap({ realtime, mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
   const section = useRef<HTMLElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const layers = useRef<L.LayerGroup | null>(null);
+  const busMarkers = useRef(new Map<string, L.Marker>());
   const selectStop = useRef(onSelectStop);
   const [stopOffscreen, setStopOffscreen] = useState(false);
   const fullRouteButton = useRef<HTMLButtonElement>(null);
@@ -92,7 +97,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     layers.current = L.layerGroup().addTo(instance);
     const resize = new ResizeObserver(() => instance.invalidateSize());
     resize.observe(container.current);
-    return () => { resize.disconnect(); instance.remove(); map.current = null; layers.current = null; };
+    return () => { resize.disconnect(); busMarkers.current.clear(); instance.remove(); map.current = null; layers.current = null; };
   }, []);
 
   useEffect(() => {
@@ -199,6 +204,52 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     }
   }, [direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops, showFocusedAgency]);
 
+  useEffect(() => {
+    const instance = map.current;
+    if (!instance || !realtime.enabled) return;
+    const buses = busesForDirection(realtime.feed, direction.id, realtime.now);
+    for (const [id, marker] of busMarkers.current) if (!buses.some(bus => bus.id === id)) { marker.remove(); busMarkers.current.delete(id); }
+    for (const bus of buses) {
+      const existing = busMarkers.current.get(bus.id);
+      const oldContent = existing?.getPopup()?.getContent();
+      const wasExpanded = oldContent instanceof HTMLElement && !!oldContent.querySelector('details')?.open;
+      const scrollTop = oldContent instanceof HTMLElement ? oldContent.scrollTop : 0;
+      const popup = document.createElement('div'); popup.className = 'bus-popup';
+      popup.style.maxHeight = `${Math.max(100, Math.min(250, instance.getSize().y - 130))}px`;
+      const title = document.createElement('strong'); title.textContent = `Route 9 · Bus ${bus.id} · ${direction.label}`; popup.append(title);
+      const age = document.createElement('p'); age.textContent = `Position reported ${Math.max(0, Math.floor((realtime.now - bus.reportedAt) / 1000))} seconds ago`; popup.append(age);
+      const prediction = arrivalsForStop(realtime.feed, direction.id, stop.id, realtime.now).find(p => p.tripId === bus.tripId);
+      const selected = document.createElement('p'); selected.textContent = assessment.status === 'affected' ? 'Your selected stop is reported skipped.' : prediction ? `Your stop: ${arrivalMinutes(prediction.arrivalAt!, realtime.now)} min · SEPTA estimate` : 'No live estimate for your selected stop.'; popup.append(selected);
+      const details = document.createElement('details'), summary = document.createElement('summary'); summary.textContent = 'Upcoming stop estimates'; details.open = wasExpanded; details.append(summary);
+      const list = document.createElement('ul');
+      const upcoming = realtime.feed && currentReport(realtime.feed.predictionsAt, realtime.now) ? realtime.feed.predictions.filter(p => p.tripId === bus.tripId && p.directionId === direction.id && currentReport(p.reportedAt, realtime.now) && (p.skipped || p.arrivalAt !== null && p.arrivalAt >= realtime.now)) : [];
+      for (const p of upcoming) {
+        const row = document.createElement('li');
+        const closed = p.skipped || assessment.relevantAlerts.some(e => e.timing === 'active' && !e.alert.sourceIssues.length && e.alert.skippedStopIds.includes(p.stopId));
+        row.textContent = `${direction.stops.find(s => s.id === p.stopId)?.name ?? `Stop ${p.stopId}`}: ${closed ? 'reported skipped' : `${arrivalMinutes(p.arrivalAt!, realtime.now)} min`}`;
+        list.append(row);
+      }
+      if (!upcoming.length) { const row = document.createElement('li'); row.textContent = 'Predictions unavailable.'; list.append(row); }
+      details.append(list); popup.append(details);
+      details.addEventListener('toggle', () => {
+        const activePopup = busMarkers.current.get(bus.id)?.getPopup();
+        if (details.open === wasExpanded || activePopup?.getContent() !== popup || !activePopup.isOpen()) return;
+        activePopup.options.autoPan = true;
+        activePopup.update();
+        activePopup.options.autoPan = false;
+      });
+      const note = document.createElement('p'); note.textContent = assessment.status === 'unknown' ? 'SEPTA estimates. Stopping at your selected stop is unconfirmed.' : 'SEPTA estimates. Detours may change boarding locations.'; popup.append(note);
+      if (existing) { existing.setLatLng([bus.lat, bus.lon]); existing.setPopupContent(popup); popup.scrollTop = scrollTop; }
+      else {
+        const marker = L.marker([bus.lat, bus.lon], { icon: L.divIcon({ className: 'live-bus', html: '<span aria-hidden="true">🚌</span>', iconSize: [30,30], iconAnchor: [15,15] }), title: `Route 9 bus ${bus.id} · ${direction.label}`, zIndexOffset: 1500 }).bindPopup(popup, { maxWidth: 260, autoPan: true, autoPanPaddingTopLeft: L.point(16, 76), autoPanPaddingBottomRight: L.point(16, 20) }).addTo(instance);
+        // Bring a newly opened popup into view once; polling must not move the map.
+        marker.on('popupopen', () => { marker.getPopup()!.options.autoPan = false; });
+        marker.on('popupclose', () => { marker.getPopup()!.options.autoPan = true; });
+        busMarkers.current.set(bus.id, marker);
+      }
+    }
+  }, [realtime.feed, realtime.now, realtime.enabled, direction, stop, assessment]);
+
   const detourCoordinates = useTrace && trace ? trace.path : showFocusedAgency ? focused?.alert.geometry.flat() ?? [] : [];
   const namedStopCoordinates: Coordinate[] = direction.stops.filter(item => focused?.alert.skippedStopIds.includes(item.id))
     .map(item => [item.lat, item.lon]);
@@ -273,6 +324,9 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         <div className="route-map__details-content">
           <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</span></div>
           <p>Dots trace the route. Squares are stops.</p>
+          {realtime.enabled && <p>{currentReport(realtime.feed?.vehiclesAt ?? null, realtime.now)
+            ? 'Bus icons show recent SEPTA positions for this direction. Tap a bus for upcoming stop estimates. Missing icons do not mean no buses are running.'
+            : 'Live bus positions are currently unavailable.'}</p>}
           {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
             <button aria-pressed={pathView === 'directions'} onClick={() => setAgencyChoice(null)}>Written directions</button>
             <button aria-pressed={pathView === 'agency'} onClick={() => setAgencyChoice(agencyViewKey)}>{disputedAgencyPath ? 'Show SEPTA’s reported detour' : 'Agency geometry'}</button>
