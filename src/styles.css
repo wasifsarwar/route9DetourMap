@@ -202,3 +202,19 @@ select, input { width: 100%; min-width: 0; min-height: 48px; border: 1px solid #
   .app-shell--mobile .stop-search > label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
   .mobile-replay-error { height: 100%; overflow-y: auto; padding: 12px; }
 }
+
+/* Mobile map height is independent of the expanded service details. */
+@media (max-width: 700px) {
+  .app-shell--mobile { height: auto; min-height: 100svh; overflow: visible; }
+  .app-shell--mobile .app-workspace, .app-shell--mobile .map-area { flex: 0 0 auto; }
+  .app-shell--mobile .map-area .route-map { height: auto; overflow: visible; }
+  .app-shell--mobile .route-map__canvas-wrap { flex: 0 0 clamp(280px, 42svh, 380px); height: clamp(280px, 42svh, 380px); min-height: 280px; }
+  .app-shell--mobile .journey-main { padding: 6px 10px; }
+  .app-shell--mobile .direction-picker { margin-bottom: 5px; }
+  .app-shell--mobile .direction-picker button { font-size: 12px; min-height: 40px; padding: 4px; }
+  .app-shell--mobile .direction-picker button small { font-size: 10px; }
+  .app-shell--mobile .app-header { height: 38px; flex-basis: 38px; }
+  .app-shell--mobile .freshness-bar { min-height: 30px; font-size: 10px; }
+  .app-shell--mobile .freshness-bar button { min-height: 30px; }
+  .app-shell--mobile .route-map__return { display: flex; }
+}

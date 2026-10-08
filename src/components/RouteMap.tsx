@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
-import { buildDetourTrace, samplePathPoints } from '../domain/mapGeometry';
+import { buildDetourTrace } from '../domain/mapGeometry';
 import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
 import type { useRealtime } from '../realtime/useRealtime';
 import { busesForDirection, arrivalsForStop, arrivalMinutes } from '../realtime/select';
 import { currentReport } from '../realtime/types';
 import { Icon } from './Icon';
+import { presentAlertText } from '../domain/alertText';
 import { BusReview } from './BusReview';
 import './RouteMap.css';
 
@@ -129,6 +130,12 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
   useEffect(() => {
     const group = layers.current;
     if (!group) return;
+    let opened: { id: string; position: L.LatLng | undefined; scroll: number } | null = null;
+    for (const layer of group.getLayers()) {
+      if (!(layer instanceof L.Polyline) || !layer.isPopupOpen()) continue;
+      const popup = layer.getPopup(), content = popup?.getContent();
+      if (content instanceof HTMLElement && content.dataset.alertId) opened = { id: content.dataset.alertId, position: popup?.getLatLng(), scroll: content.parentElement?.scrollTop ?? 0 };
+    }
     group.clearLayers();
     const draw = (coordinates: Coordinate[], color: string, label: string, options: L.PolylineOptions = {}) => {
       const path = validCoordinates(coordinates);
@@ -139,22 +146,14 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
         L.polyline(path, { color, weight: 5, opacity: .8, ...options }).bindTooltip(textNode(label)).addTo(group);
       }
     };
-    const dots = (path: Coordinate[], color: string, spacing: number) => {
-      for (const point of samplePathPoints(path, spacing)) L.circleMarker(point, {
-        radius: 3, color, weight: 1, fillColor: '#fff', fillOpacity: 1, interactive: false,
-        className: 'route-path-dot',
-      }).addTo(group);
-    };
     const replaced = useTrace && !!trace?.bypassedPath.length;
     if (replaced && trace) {
       draw(trace.bypassedPath, '#8994a3', 'Normal route section bypassed by this illustrated detour; stop closures unconfirmed', { weight: 4, opacity: .65, dashArray: '5 7' });
       for (const path of [trace.beforePath, trace.afterPath]) {
         draw(path, colors.normal, `Normal scheduled route · ${direction.headsign}`);
-        dots(path, colors.normal, 180);
       }
     } else {
       draw(direction.shape, colors.normal, `Normal scheduled route · ${direction.headsign}`);
-      dots(direction.shape, colors.normal, 180);
     }
 
     for (const { alert, timing } of assessment.relevantAlerts) {
@@ -162,21 +161,31 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       // Unclear schedules are inspectable evidence, never automatic detour paths.
       if (timing === 'uncertain' && manualFocus?.alert.id !== alert.id) continue;
       const isFocused = alert.id === focused?.alert.id;
-      if (isFocused && useTrace && trace) {
-        draw(trace.path, colors.detour, interpreted ? `${alert.title} · Illustration of written directions, not a verified bus trace` : `${alert.title} · Agency-reported path`, {
-          weight: 6, opacity: .95, dashArray: timing === 'uncertain' || !assessment.fresh ? '10 8' : undefined,
-          className: 'focused-detour-path',
-        });
-        dots(trace.path, colors.detour, 80);
-      } else {
-        if ((alert.geometryIssues.length || alert.sourceIssues.length) && !(isFocused && showFocusedAgency)) continue;
-        for (const path of alert.geometry) {
-          draw(path, colors.detour,
-          `${alert.title} · Agency geometry${alert.geometryIssues.length ? ' · path needs review' : ''}${timing === 'uncertain' ? ' · timing uncertain' : ''}`, {
-            weight: isFocused ? 5 : 3, opacity: isFocused ? .8 : .35,
-            dashArray: alert.geometryIssues.length ? '3 7' : timing === 'uncertain' || !assessment.fresh ? '10 8' : undefined,
-          });
-          if (isFocused) dots(path, colors.detour, 80);
+      const candidate = buildDetourTrace(direction, alert, reviewedAlerts.find(reference => reference.id === alert.id));
+      const paths = isFocused && pathView === 'agency' && showFocusedAgency ? alert.geometry
+        : candidate.path.length ? [candidate.path]
+        : !alert.geometryIssues.length && !alert.sourceIssues.length ? alert.geometry : [];
+      for (const coordinates of paths) {
+        const path = validCoordinates(coordinates);
+        if (path.length < 2) continue;
+        const content = document.createElement('div'); content.className = 'detour-popup'; content.dataset.alertId = alert.id;
+        const heading = document.createElement('strong'); heading.textContent = alert.title; content.append(heading);
+        const readable = presentAlertText(alert);
+        const lines = [timing === 'uncertain' ? 'Timing unconfirmed.' : '', ...readable.timing, readable.intro, ...readable.steps, ...readable.paragraphs,
+          'Reported detour; path and boarding locations may be unconfirmed.'].filter(Boolean);
+        for (const line of lines) { const p = document.createElement('p'); p.textContent = line; content.append(p); }
+        const options = { color: isFocused ? '#bc5724' : '#d18a58', weight: isFocused ? 4 : 3, opacity: .75, dashArray: '7 8', className: 'detour-path' };
+        L.polyline(path, options).addTo(group);
+        // A wider transparent line makes narrow dashed paths usable on touch screens.
+        const hit = L.polyline(path, { color: '#d18a58', weight: 18, opacity: 0, className: 'detour-hit-target' })
+          .bindTooltip(textNode(`${alert.title} · Tap for alert`))
+          .bindPopup(content, { maxWidth: 250, maxHeight: 190, autoPan: opened?.id !== alert.id, autoPanPaddingTopLeft: L.point(16, 80), autoPanPaddingBottomRight: L.point(16, 20) }).addTo(group);
+        if (opened?.id === alert.id) { hit.openPopup(opened.position); if (content.parentElement) content.parentElement.scrollTop = opened.scroll; }
+        hit.on('popupclose', () => { hit.getPopup()!.options.autoPan = true; });
+        {
+          const element = hit.getElement();
+          element?.setAttribute('tabindex', '0'); element?.setAttribute('role', 'button'); element?.setAttribute('aria-label', `Read detour alert: ${alert.title}`);
+          element?.addEventListener('keydown', event => { if ((event as KeyboardEvent).key === 'Enter' || (event as KeyboardEvent).key === ' ') { event.preventDefault(); hit.openPopup(); } });
         }
       }
     }
@@ -193,7 +202,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
           : 'Scheduled stop; select to check reported impact';
       const marker = L.marker([routeStop.lat, routeStop.lon], {
         icon: L.divIcon({ className: `route-stop ${isSelected ? 'route-stop--selected' : ''} ${listed.length ? 'route-stop--skipped' : inferred ? 'route-stop--inferred' : ''}`,
-          html: `<span aria-hidden="true">${listed.length ? '×' : inferred ? '?' : '▪'}</span>`, iconSize: [20, 20], iconAnchor: [10, 10] }),
+          html: `<span aria-hidden="true">${listed.length ? '×' : inferred ? '?' : ''}</span>`, iconSize: [32, 32], iconAnchor: [16, 16] }),
         keyboard: true, riseOnHover: true, zIndexOffset: isSelected ? 1000 : 0,
       }).bindTooltip(textNode(isSelected ? routeStop.name : `${routeStop.name} · ${status}`), {
         permanent: isSelected, direction: 'top', offset: [0, -15],
@@ -373,7 +382,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
         <summary>Map key & details</summary>
         <div className="route-map__details-content">
           <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</span></div>
-          <p>Dots trace the route. Squares are stops.</p>
+          <p>Lines show routes. Small circles mark scheduled stops; dashed circles mean unconfirmed impact. Tap an orange dashed path to read its alert.</p>
           {realtime.enabled && <p>{currentReport(realtime.feed?.vehiclesAt ?? null, realtime.now)
             ? 'Bus icons show recent SEPTA positions for this direction. Tap a bus for upcoming stop estimates. Missing icons do not mean no buses are running.'
             : 'Live bus positions are currently unavailable.'}</p>}
@@ -388,7 +397,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
           {focused && [...focused.alert.geometryIssues, ...focused.alert.sourceIssues].length > 0 && <ul className="route-map__issues">
             {[...focused.alert.geometryIssues, ...focused.alert.sourceIssues].map((issue, index) => <li key={`${index}-${issue}`}>{issue}</li>)}
           </ul>}
-          <p>Blue squares are scheduled stops; the dark outline marks your selection. A question mark means the illustrated path may bypass that stop, but its closure is unconfirmed. A cross means an agency notice lists it as skipped; select it to check current impact.</p>
+          <p>Hollow blue circles are scheduled stops, not verified boarding locations; the dark outline marks your selection. A question mark means the illustrated path may bypass that stop, but its closure is unconfirmed. A cross means an agency notice lists it as skipped; select it to check current impact.</p>
           {bypassedStops.length > 0 && <div className="bypassed-stops"><strong>Possibly bypassed stops</strong>
             <p>The agency has not confirmed closures or replacement locations for this section.</p>
             <ul>{bypassedStops.map((item) => <li key={item.id}><button onClick={() => onSelectStop(item.id)}>{item.name}</button></li>)}</ul>

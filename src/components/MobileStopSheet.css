@@ -1,10 +1,10 @@
 .mobile-stop-sheet { order: 2; flex: 0 0 auto; min-height: 0; display: flex; flex-direction: column; background: white; border-top: 1px solid #bccbda; border-radius: 16px 16px 0 0; z-index: 510; padding-bottom: env(safe-area-inset-bottom); }
-.mobile-stop-sheet.is-expanded { flex-basis: 65%; max-height: 65%; }
-.mobile-stop-sheet__summary { flex-shrink: 0; padding: 12px 16px 0; }
-.mobile-stop-sheet__stop h2 { margin: 0; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
+.mobile-stop-sheet.is-expanded { flex: 0 0 auto; max-height: none; }
+.mobile-stop-sheet__summary { flex-shrink: 0; padding: 8px 12px 0; }
+.mobile-stop-sheet__stop h2 { margin: 0; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
 .mobile-stop-sheet__stop > p { font-size: 11px; color: #586c7e; margin: 2px 0 8px; }
 .mobile-stop-sheet__status { padding-left: 10px; border-left: 3px solid #9c854f; }
-.mobile-stop-sheet__status strong { display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 1.35; }
+.mobile-stop-sheet__status strong { display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 1.35; }
 .mobile-stop-sheet__status strong > span { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: #f7f0d5; color: #695320; flex-shrink: 0; font-size: 12px; }
 .mobile-stop-sheet__status p { margin: 4px 0 0; font-size: 12px; line-height: 1.4; color: #586c7e; }
 .mobile-stop-sheet--affected .mobile-stop-sheet__status { border-color: #bc5724; }
@@ -19,17 +19,8 @@
 .mobile-stop-sheet__body .impact-summary { margin-top: 0; }
 .mobile-stop-sheet__body .journey-evidence { padding: 0; }
 .mobile-stop-sheet__body .more-details > summary { min-height: 44px; }
-@media (max-height: 650px) {
-  .mobile-stop-sheet__summary { padding-top: 8px; }
-  .mobile-stop-sheet__stop > p { margin-bottom: 5px; }
-  .mobile-stop-sheet.is-expanded { flex-basis: 76%; max-height: 76%; }
-}
-/* On short screens, expanded guidance gets the workspace; one tap restores the map. */
-@media (max-width: 700px) and (max-height: 650px) {
-  .route-map:has(.mobile-stop-sheet.is-expanded) .route-map__canvas-wrap,
-  .route-map:has(.mobile-stop-sheet.is-expanded) .route-map__toolbar,
-  .route-map:has(.mobile-stop-sheet.is-expanded) .detour-inspector { display: none; }
-  .mobile-stop-sheet.is-expanded { flex: 1 1 0; max-height: none; }
-}
-
 .mobile-stop-sheet__status .mobile-stop-sheet__boarding { font-size: 13px; color: var(--navy); line-height: 1.45; margin-top: 7px; }
+
+.mobile-stop-sheet__body { max-height: 45svh; }
+.mobile-stop-sheet__toggle { background: #f0f4f9; padding: 7px 10px; margin-top: 7px; border-radius: 6px; }
+.mobile-stop-sheet__toggle { position: sticky; top: 0; z-index: 2; width: calc(100% - 24px); margin: 7px 12px 0; }

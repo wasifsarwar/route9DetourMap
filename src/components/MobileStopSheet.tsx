@@ -41,9 +41,9 @@ export function MobileStopSheet({ arrivals, stop, headsign, assessment, replay, 
           : assessment.status === 'unknown' ? 'Check SEPTA before you travel.' : 'This does not confirm an arrival.'}</p>
       </div>
       {arrivals}
-      <button className="mobile-stop-sheet__toggle" ref={toggle} aria-expanded={expanded} aria-controls={id}
-        onClick={() => onExpandedChange(!expanded)}><span>{expanded ? 'Show more map' : hasViewedDetails ? 'Return to service details' : assessment.status === 'affected' ? 'View boarding guidance' : 'View service details'}</span><span aria-hidden="true">{expanded ? '⌄' : '⌃'}</span></button>
     </div>
+      <button className="mobile-stop-sheet__toggle" ref={toggle} aria-expanded={expanded} aria-controls={id}
+        onClick={() => onExpandedChange(!expanded)}><span>{expanded ? 'Hide details' : hasViewedDetails ? 'Return to service details' : assessment.status === 'affected' ? 'View boarding guidance' : 'View service details'}</span><span aria-hidden="true">{expanded ? '⌄' : '⌃'}</span></button>
     <div id={id} ref={body} className="mobile-stop-sheet__body" hidden={!expanded}
       onScroll={event => { if (expanded) readingPosition.current = event.currentTarget.scrollTop; }}>
       <ImpactCard assessment={assessment} stop={stop} replay={replay} showHeading={false} />
