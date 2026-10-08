@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useMobileLayout } from './hooks/useMobileLayout';
 import { useTransitData } from './hooks/useTransitData';
 import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
@@ -23,6 +24,7 @@ function ageText(fetchedAt: string, now: Date) {
 }
 
 export default function App() {
+  const mobile = useMobileLayout();
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
   const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
   const [mode, setMode] = useState<'current' | 'replay'>('current');
@@ -83,7 +85,7 @@ export default function App() {
             {mode === 'current' && <NearbyStops route={route} direction={direction} feed={feed} now={clock} onSelect={selectStop} />}
             <StopSearch key={direction.id} stops={direction.stops} stop={stop} onSelect={selectStop} />
           </div>
-          {time.error ? <p className="inline-error" role="alert">{time.error}</p> : <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
+          {time.error ? <p className="inline-error" role="alert">{time.error}</p> : !mobile && <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
         </div>
         <div className="journey-evidence">
           <details className="more-details">
@@ -113,7 +115,8 @@ export default function App() {
         </div>
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
-        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} replay={mode === 'replay'}
+        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} mobile={mobile}
+          result={mobile ? <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} /> : null}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>

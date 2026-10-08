@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
 import { buildDetourTrace, samplePathPoints } from '../domain/mapGeometry';
 import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
-import { ImpactCard } from './ImpactCard';
 import { Icon } from './Icon';
 import './RouteMap.css';
 
 interface RouteMapProps {
-  replay: boolean;
+  mobile: boolean;
+  result: ReactNode;
   direction: RouteDirection;
   stop: Stop;
   assessment: StopAssessment;
@@ -31,7 +31,7 @@ function textNode(text: string): HTMLSpanElement {
 }
 
 /** Route dots show a path; stop markers always keep their evidenced physical locations. */
-export function RouteMap({ replay, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
+export function RouteMap({ mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
   const section = useRef<HTMLElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
@@ -48,14 +48,18 @@ export function RouteMap({ replay, direction, stop, assessment, onSelectStop, re
     if (inspection !== storedInspection) setStoredInspection(inspection);
   }, [inspection, storedInspection]);
   useEffect(() => { setPathView('directions'); }, [selectionKey]);
-  const [cardSelection, setCardSelection] = useState<string | null>(null);
-  const cardOpen = cardSelection === selectionKey;
-  const stopCard = useRef<HTMLDivElement>(null);
+  const stopSheet = useRef<HTMLDivElement>(null);
+  const [selectionRequest, setSelectionRequest] = useState(0);
+  const handledRequest = useRef(0);
+  const previousSelection = useRef(selectionKey);
   useEffect(() => {
-    if (cardSelection && cardSelection !== selectionKey) setCardSelection(null);
-    if (cardOpen && window.matchMedia('(max-width: 700px)').matches) stopCard.current?.scrollIntoView({ block: 'nearest' });
-  }, [cardOpen, cardSelection, selectionKey]);
-  selectStop.current = id => { setCardSelection(`${direction.id}:${id}`); onSelectStop(id); };
+    const changed = selectionKey !== previousSelection.current;
+    previousSelection.current = selectionKey;
+    if (!changed && selectionRequest === handledRequest.current) return;
+    handledRequest.current = selectionRequest;
+    if (mobile) stopSheet.current?.scrollIntoView({ block: 'nearest' });
+  }, [selectionRequest, selectionKey, mobile]);
+  selectStop.current = id => { onSelectStop(id); setSelectionRequest(request => request + 1); };
   const availableAlerts = assessment.relevantAlerts.filter(({ alert, timing }) => timing !== 'inactive' && alert.directionIds.includes(direction.id));
   const automaticFocus = useMemo(() => getAutomaticMapFocus(direction, stop, assessment.relevantAlerts, reviewedAlerts),
     [direction, stop, assessment.relevantAlerts, reviewedAlerts]);
@@ -231,9 +235,9 @@ export function RouteMap({ replay, direction, stop, assessment, onSelectStop, re
       {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
       {tilesUnavailable && <p className="route-map__tile-error" role="status">Street tiles could not load. Route lines and stop details remain available.</p>}
     </div>
-    {cardOpen && <div ref={stopCard} className="map-stop-card" role="region" aria-label="Selected map stop" onKeyDown={event => { if (event.key === 'Escape') setCardSelection(null); }}>
-      <div className="map-stop-card__heading"><h2>{stop.name}</h2><button aria-label="Close stop card" onClick={() => setCardSelection(null)}>×</button></div>
-      <ImpactCard assessment={assessment} stop={stop} replay={replay} />
+    {result && <div ref={stopSheet} className="stop-sheet" role="region" aria-label="Selected stop">
+      <div className="stop-sheet__heading"><h2>{stop.name}</h2><span>Toward {direction.headsign}</span></div>
+      {result}
     </div>}
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">
