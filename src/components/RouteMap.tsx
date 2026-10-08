@@ -41,7 +41,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
   const fullRouteButton = useRef<HTMLButtonElement>(null);
   const detourPicker = useRef<HTMLSelectElement>(null);
   const [tilesUnavailable, setTilesUnavailable] = useState(false);
-  const [pathView, setPathView] = useState<'directions' | 'agency'>('directions');
+  const [agencyChoice, setAgencyChoice] = useState<string | null>(null);
   const selectionKey = `${direction.id}:${stop.id}`;
   const [storedInspection, setStoredInspection] = useState<MapInspection>(() => ({
     selectionKey, request: inspectionRequest, alertId: inspectionRequest ? inspectedAlertId || null : null,
@@ -50,13 +50,17 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
   useEffect(() => {
     if (inspection !== storedInspection) setStoredInspection(inspection);
   }, [inspection, storedInspection]);
-  useEffect(() => { setPathView('directions'); }, [selectionKey]);
+
   selectStop.current = onSelectStop;
   const availableAlerts = assessment.relevantAlerts.filter(({ alert, timing }) => timing !== 'inactive' && alert.directionIds.includes(direction.id));
   const automaticFocus = useMemo(() => getAutomaticMapFocus(direction, stop, assessment.relevantAlerts, reviewedAlerts),
     [direction, stop, assessment.relevantAlerts, reviewedAlerts]);
   const manualFocus = availableAlerts.find(({ alert }) => alert.id === inspection.alertId);
   const focused = manualFocus ?? availableAlerts.find(({ alert }) => alert.id === automaticFocus.alertId);
+  const agencyViewKey = `${selectionKey}:${focused?.alert.id}:${inspection.request}:${JSON.stringify([focused?.alert.geometry, focused?.alert.geometryIssues, focused?.alert.sourceIssues])}`;
+  const pathView = agencyChoice === agencyViewKey ? 'agency' : 'directions';
+  const disputedAgencyPath = !!focused?.alert.geometry.length && !!(focused.alert.geometryIssues.length || focused.alert.sourceIssues.length);
+  const showFocusedAgency = !disputedAgencyPath || pathView === 'agency';
   const trace = useMemo(() => focused ? buildDetourTrace(direction, focused.alert,
     reviewedAlerts.find((alert) => alert.id === focused.alert.id)) : null, [direction, focused, reviewedAlerts]);
   const interpreted = trace?.kind === 'interpreted' && pathView === 'directions';
@@ -67,10 +71,10 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
   const nearby = !manualFocus && (automaticFocus.reason === 'illustrated-bypass' || automaticFocus.reason === 'nearby-path');
   const pathUnconfirmed = hasPublishedPath && (interpreted || !!focused?.alert.geometryIssues.length || !!focused?.alert.sourceIssues.length);
   const mapNotice = focused ? [
-    manualFocus && manualFocus.alert.id !== automaticFocus.alertId ? 'Viewing another route change' : '',
+    manualFocus ? 'Exploring a route alert · not a stop-impact confirmation' : '',
     nearby ? pathUnconfirmed ? 'Nearby detour · path and stops unconfirmed' : 'Nearby detour · stop impact unconfirmed' : '',
     !hasPublishedPath ? 'No detour path published' : '',
-    pathUnconfirmed && !nearby ? 'Detour path unconfirmed' : '',
+    disputedAgencyPath && !showFocusedAgency && !useTrace ? 'Disputed agency map hidden' : pathUnconfirmed && !nearby ? 'Detour path unconfirmed' : '',
     focused.timing === 'uncertain' ? 'Timing unconfirmed' : '',
   ].filter(Boolean).join(' · ') : '';
 
@@ -145,6 +149,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         });
         dots(trace.path, colors.detour, 80);
       } else {
+        if ((alert.geometryIssues.length || alert.sourceIssues.length) && !(isFocused && showFocusedAgency)) continue;
         for (const path of alert.geometry) {
           draw(path, colors.detour,
           `${alert.title} · Agency geometry${alert.geometryIssues.length ? ' · path needs review' : ''}${timing === 'uncertain' ? ' · timing uncertain' : ''}`, {
@@ -192,14 +197,14 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         icon: L.divIcon({ className: 'route-stop route-stop--replacement', html: '<span aria-hidden="true">✓</span>', iconSize: [24, 24], iconAnchor: [12, 12] }),
       }).bindTooltip(textNode(`Agency-confirmed replacement · ${alternative.name}`), { permanent: true, direction: 'top', offset: [0, -12] }).addTo(group);
     }
-  }, [direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops]);
+  }, [direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops, showFocusedAgency]);
 
-  const detourCoordinates = useTrace && trace ? trace.path : focused?.alert.geometry.flat() ?? [];
+  const detourCoordinates = useTrace && trace ? trace.path : showFocusedAgency ? focused?.alert.geometry.flat() ?? [] : [];
   const namedStopCoordinates: Coordinate[] = direction.stops.filter(item => focused?.alert.skippedStopIds.includes(item.id))
     .map(item => [item.lat, item.lon]);
   const cameraPoints = manualFocus
     ? detourCoordinates.length ? detourCoordinates : namedStopCoordinates.length ? namedStopCoordinates : [[stop.lat, stop.lon] as Coordinate]
-    : getStopFocusPoints(stop, useTrace && trace ? [trace.path, trace.bypassedPath] : focused?.alert.geometry ?? []);
+    : getStopFocusPoints(stop, useTrace && trace ? [trace.path, trace.bypassedPath] : showFocusedAgency ? focused?.alert.geometry ?? [] : []);
   const camera = useRef({ points: cameraPoints, manual: !!manualFocus });
   camera.current = { points: cameraPoints, manual: !!manualFocus };
   // A polling refresh should not undo a rider's pan or Full route view. Refocus
@@ -213,6 +218,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     if (manual) section.current?.scrollIntoView({ block: 'nearest' });
   }, [cameraKey]);
   function showNearStop() {
+    setAgencyChoice(null);
     setStoredInspection({ selectionKey, request: inspectionRequest, alertId: null });
     map.current?.setView([stop.lat, stop.lon], 16, { animate: false });
   }
@@ -228,23 +234,29 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         <button ref={fullRouteButton} onClick={showFullRoute}><Icon name="frame" />Full route</button>
       </div>
     </div>
-    {stopOffscreen && <button className="route-map__return" onClick={() => {
-      showNearStop();
-      fullRouteButton.current?.focus({ preventScroll: true });
-    }}><Icon name="pin" />Back to my stop</button>}
     {availableAlerts.length > 0 && <div className="detour-inspector">
       {manualFocus ? <div className="detour-inspector__viewing">
-        <span>Viewing: <strong>{manualFocus.alert.title}</strong></span>
+        <span>Exploring: <strong>{manualFocus.alert.title}</strong></span>
         <button aria-label="Close detour view" onClick={() => {
           showNearStop();
           requestAnimationFrame(() => detourPicker.current?.focus({ preventScroll: true }));
         }}><span aria-hidden="true">×</span></button>
-      </div> : <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Detour to explore</label><select ref={detourPicker} id="map-detour" value="" onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
-        <option value="">Near my stop</option>
+      </div> : <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Explore route alerts</label><select ref={detourPicker} id="map-detour" value="" onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
+        <option value="">Explore route alerts</option>
         {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
       </select></div>}
+      {manualFocus && <p className="detour-inspector__context">Selected stop: {stop.name}</p>}
+      {disputedAgencyPath && <button className="detour-inspector__agency" aria-pressed={pathView === 'agency'}
+        onClick={() => setAgencyChoice(pathView === 'agency' ? null : agencyViewKey)}>
+        {pathView === 'agency' ? 'Hide unverified agency map' : 'Show agency map—unverified'}
+      </button>}
     </div>}
     <div className="route-map__canvas-wrap">
+    {stopOffscreen && <button className="route-map__return" onClick={() => {
+      showNearStop();
+      fullRouteButton.current?.focus({ preventScroll: true });
+    }}><Icon name="pin" />Back to my stop</button>}
+
       <div ref={container} className="route-map__canvas" aria-label={`Map of ${direction.headsign}; selected stop ${stop.name}`} />
       {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
       {tilesUnavailable && <p className="route-map__tile-error" role="status">Street tiles could not load. Route lines and stop details remain available.</p>}
@@ -261,8 +273,8 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
           <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</span></div>
           <p>Dots trace the route. Squares are stops.</p>
           {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
-            <button aria-pressed={pathView === 'directions'} onClick={() => setPathView('directions')}>Written directions</button>
-            <button aria-pressed={pathView === 'agency'} onClick={() => setPathView('agency')}>Agency geometry</button>
+            <button aria-pressed={pathView === 'directions'} onClick={() => setAgencyChoice(null)}>Written directions</button>
+            <button aria-pressed={pathView === 'agency'} onClick={() => setAgencyChoice(agencyViewKey)}>{disputedAgencyPath ? 'Show agency map—unverified' : 'Agency geometry'}</button>
           </div>}
           {focused && <p className="path-explanation">{!hasPublishedPath ? 'This notice has no published detour path. The map shows its listed stop when available; nearby route lines do not establish an alternative boarding point.'
             : interpreted ? 'The illustrated path follows the written turns. The agency map disagrees, so this is not a verified bus trace.'
