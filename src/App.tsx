@@ -3,6 +3,7 @@ import { useTransitData } from './hooks/useTransitData';
 import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
 import { parseWallTime } from './domain/time';
+import { NearbyStops } from './components/NearbyStops';
 import { StopSearch } from './components/StopSearch';
 import { Icon } from './components/Icon';
 import { RouteMap } from './components/RouteMap';
@@ -79,6 +80,7 @@ export default function App() {
           <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
           <div className="journey-fields">
             <fieldset className="direction-picker"><legend>Going toward</legend><div>{route.directions.map((item) => <button type="button" aria-pressed={direction.id === item.id} key={item.id} onClick={() => selectDirection(item.id)}><span>{item.headsign}</span><small>{item.label}</small></button>)}</div></fieldset>
+            {mode === 'current' && <NearbyStops route={route} direction={direction} feed={feed} now={clock} onSelect={selectStop} />}
             <StopSearch key={direction.id} stops={direction.stops} stop={stop} onSelect={selectStop} />
           </div>
           {time.error ? <p className="inline-error" role="alert">{time.error}</p> : <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
