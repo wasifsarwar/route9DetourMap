@@ -4,7 +4,7 @@
 
 Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
-The default screen shows destination buttons, a combined stop-search/location bar, a short stop-status result, and a full-bleed map. Desktop keeps the controls and result in the sidebar. Phones use a viewport-sized workspace with a two-position result sheet: stop, direction, status, uncertainty, and an expand action stay visible without page scrolling. Expanding reveals boarding guidance and scrollable service details; on short screens it uses the map space, and “Show more map” restores it. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+The default screen shows destination buttons, a combined stop-search/location bar, a short stop-status result, and a full-bleed map. Desktop keeps the controls and result in the sidebar. Phones use a viewport-sized workspace with a two-position result sheet: stop, direction, status, uncertainty, and an expand action stay visible without page scrolling. Expanding reveals boarding guidance and scrollable service details; on short screens it uses the map space, and “Show more map” restores it. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, and source timestamps. Recorded-example controls are available only through the dedicated demo URL. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
 
 ## Stack
 
@@ -21,7 +21,7 @@ npm run dev
 # http://127.0.0.1:5173/
 ```
 
-The refresh command needs network access. Without a generated current feed, the app clearly reports that current data is unavailable and still offers the recorded example.
+The refresh command needs network access. Without a generated current feed, the app clearly reports that current data is unavailable and never switches riders into the recorded demo.
 
 ```sh
 npm run check
@@ -72,7 +72,7 @@ Circular dots follow the displayed path; square stop markers represent physical 
 
 The current legacy notice explicitly closes northbound Schuylkill Av & JFK Blvd (stop 30576). It describes replacement boarding only as an area on Schuylkill between Walnut and Chestnut. The collapsed phone sheet now shows that area instruction immediately alongside “Exact boarding point unconfirmed,” using the same eligibility checks as the desktop card. Current boarding summaries require fresh data, an affected stop, active matching instructions without source conflicts, and current rather than replay mode. The UI quotes that instruction with its source; it does not invent a replacement stop ID, map pin, or walking route. An exact alternative requires separate agency evidence and must pass every applicable alert check.
 
-Recorded-example mode uses the October 7, 2026 snapshot and a Philadelphia-time replay control. It is clearly historical and never supplies live alternative-boarding guidance. Candidate paths in that snapshot are interpretations, not field observations.
+The dedicated [demo link](https://wasifsarwar.github.io/route9DetourMap/?demo=1) opens recorded-example mode; the normal URL always opens current conditions and has no replay controls. Back to current removes the demo URL parameter. Demo mode is not saved in browser preferences. Recorded-example mode uses the October 7, 2026 snapshot and a Philadelphia-time replay control. It is clearly historical and never supplies live alternative-boarding guidance. Candidate paths in that snapshot are interpretations, not field observations.
 
 ## Validation
 
@@ -81,11 +81,11 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 1. Refresh agency data and choose northbound Schuylkill Av & JFK Blvd. While the explicit closure remains current, expect affected plus area-only agency instructions.
 2. Choose a different stop or direction. Missing stop coverage must remain unconfirmed.
 3. Open the relevant alerts and original sources; all applicable alerts should be available together.
-4. Open **Service details → Try a recorded example**, switch modes, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
+4. Open `?demo=1`, then **Service details → Recorded demo controls**, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
 5. Inspect the map, select a stop, and try Full route / Your stop. Check phone-width layout.
 6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
 7. Choose **Show → Sink Hole → View**, and open **Map key & details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
-8. Change the direction and stop, then reload. The journey should be restored; recorded-example mode and manual detour inspection should not persist.
+8. Change the direction and stop, then reload. The journey should be restored; manual detour inspection should not persist. Only the dedicated `?demo=1` URL should open recorded-example mode, including after reload; the regular URL must always open current conditions.
 9. Select Schuylkill/JFK, then Walnut/7th. The map should first stay with the reported stop closure and then show the nearby sinkhole path. Inspect a different detour manually, then select another stop to return to automatic focus.
 10. Return to the app after it was hidden or offline. Check that it resumes fetching without overlapping requests and never substitutes browser retrieval time for source age.
 

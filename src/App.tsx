@@ -28,7 +28,7 @@ export default function App() {
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
   const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
-  const [mode, setMode] = useState<'current' | 'replay'>('current');
+  const [mode] = useState<'current' | 'replay'>(() => new URLSearchParams(window.location.search).get('demo') === '1' ? 'replay' : 'current');
   const [replayTime, setReplayTime] = useState('2026-10-07T21:54');
   const [clock, setClock] = useState(() => new Date());
   const [inspectedAlertId, setInspectedAlertId] = useState('');
@@ -68,7 +68,7 @@ export default function App() {
 
   const evidence = route && direction && stop && feed && assessment ? (
         <div className="journey-evidence">
-          <details className="more-details" open={mobile}>
+          <details className="more-details" open={mobile || mode === 'replay'}>
             <summary>Service details<span>{assessment.relevantAlerts.length} {assessment.relevantAlerts.length === 1 ? 'alert' : 'alerts'}</span></summary>
             {!time.error && <>
               <div className="assessment-details"><h2>Why this result</h2><p>{assessment.summary}</p>
@@ -86,10 +86,9 @@ export default function App() {
               <p>Scheduled route pattern: {route.feedVersion}. Valid through {route.validThrough}. <a href={route.sourceUrl} target="_blank" rel="noreferrer">Route source</a>.</p>
               <p>Overlapping paths are displayed separately. Their combination is not a verified driving route. Bus arrivals and field-verified boarding points are outside this pilot.</p>
             </details>
-            <details className="replay-panel"><summary>Try a recorded example</summary>
-              <div className="mode-switch" role="group" aria-label="Data mode"><button aria-pressed={mode === 'current'} onClick={() => setMode('current')}>Current conditions</button><button aria-pressed={mode === 'replay'} onClick={() => setMode('replay')}>Recorded example</button></div>
-              {mode === 'replay' && <div className="replay-controls"><label htmlFor="replay-time">Replay time · Philadelphia</label><input id="replay-time" type="datetime-local" value={replayTime} onChange={(event) => setReplayTime(event.target.value)} /><p>Uses the October 7 snapshot. Not current travel information.</p></div>}
-            </details>
+            {mode === 'replay' && <details className="replay-panel" open><summary>Recorded demo controls</summary>
+              <div className="replay-controls"><label htmlFor="replay-time">Replay time · Philadelphia</label><input id="replay-time" type="datetime-local" value={replayTime} onChange={(event) => setReplayTime(event.target.value)} /><p>Uses the October 7 snapshot to test alert timing. This does not retrieve what happened at the selected time. Not current travel information.</p></div>
+            </details>}
           </details>
           <footer className="journey-footer">Independent Route 9 pilot</footer>
         </div>
@@ -100,7 +99,7 @@ export default function App() {
     <div className={`freshness-bar ${mode === 'replay' ? 'replay' : fresh ? 'fresh' : 'stale'}`} aria-live="polite">
       <span className="freshness-label"><span className="freshness-dot" aria-hidden="true" />{freshnessText}</span>
       {mode === 'current' ? <button onClick={() => { void refresh(); }} disabled={loading}><Icon name="refresh" />{loading ? 'Checking…' : 'Refresh'}</button>
-        : <button onClick={() => setMode('current')}>Back to current</button>}
+        : <button onClick={() => window.location.assign(import.meta.env.BASE_URL)}>Back to current</button>}
     </div>
 
     {!route || !direction || !stop || !feed || !assessment ? <main className="loading-surface" aria-live="polite">
