@@ -1,13 +1,12 @@
 import type { Stop, StopAssessment } from '../domain/types';
 
+import { areaBoardingNotes } from '../domain/boardingSummary';
 import { stopStatusCopy } from '../domain/stopScope';
 
 export function ImpactCard({ assessment, stop, replay, showHeading = true }: { assessment: StopAssessment; stop: Stop; replay: boolean; showHeading?: boolean }) {
   const copy = stopStatusCopy(assessment);
-  const boardingNotes = assessment.relevantAlerts.filter(({ alert, timing, affectsSelectedStop }) =>
-    timing === 'active' && affectsSelectedStop && alert.sourceIssues.length === 0 && alert.boardingNote,
-  );
-  const hasArea = assessment.status === 'affected' && boardingNotes.length > 0;
+  const boardingNotes = areaBoardingNotes(assessment, replay);
+  const hasArea = boardingNotes.length > 0;
 
   return <section className={`impact-card impact-${assessment.status}`} aria-label={`Status for ${stop.name}`} aria-live="polite" aria-atomic="true">
     {showHeading && <div className="impact-heading">
@@ -18,8 +17,8 @@ export function ImpactCard({ assessment, stop, replay, showHeading = true }: { a
       <p className="impact-summary">Use <strong>{assessment.alternative.stop.name}</strong>.</p>
       <a className="agency-link" href={assessment.alternative.sourceUrl} target="_blank" rel="noreferrer">SEPTA boarding instructions</a>
     </> : hasArea ? <>
-      {boardingNotes.map(({ alert }) => <p className="impact-summary" key={alert.id}>
-        {alert.boardingNote?.text.replace(' The notice does not identify an exact stop or boarding point.', '')}
+      {boardingNotes.map(note => <p className="impact-summary" key={note.id}>
+        {note.text}
       </p>)}
       <p className="impact-note">Exact boarding point unconfirmed.</p>
       <a className="agency-link" href="https://www.septa.org/alerts" target="_blank" rel="noreferrer">Check SEPTA alerts</a>

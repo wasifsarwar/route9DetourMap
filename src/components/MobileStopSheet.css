@@ -31,3 +31,5 @@
   .route-map:has(.mobile-stop-sheet.is-expanded) .detour-inspector { display: none; }
   .mobile-stop-sheet.is-expanded { flex: 1 1 0; max-height: none; }
 }
+
+.mobile-stop-sheet__status .mobile-stop-sheet__boarding { font-size: 13px; color: var(--navy); line-height: 1.45; margin-top: 7px; }
