@@ -80,3 +80,18 @@
   .route-map__details-content { max-height: min(260px, 40dvh); }
   .route-map .leaflet-control-zoom a { width: 32px; height: 32px; line-height: 32px; }
 }
+
+/* Detour exploration replaces the picker; recovery appears only off-screen. */
+.detour-inspector { width: min(360px, calc(100% - 142px)); }
+.detour-inspector__viewing { display: flex; align-items: center; background: white; border: 1px solid #d4dde7; border-radius: 8px; box-shadow: 0 2px 12px #182c4c12; min-height: 48px; }
+.detour-inspector__viewing > span { flex: 1; min-width: 0; padding: 8px 12px; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.detour-inspector__viewing button { flex: 0 0 44px; min-height: 44px; padding: 0; border: 0; background: transparent; font-size: 24px; }
+.route-map__return { position: absolute; top: 78px; right: 18px; z-index: 450; display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 12px; background: white; border-color: #d4dde7; box-shadow: 0 2px 12px #182c4c12; font-size: 12px; }
+.route-map__return .ui-icon { width: 16px; height: 16px; }
+@media (max-width: 1000px) {
+  .detour-inspector { top: 12px; width: calc(100% - 124px); max-width: 360px; }
+  .route-map__return { top: 100px; right: 12px; }
+}
+@media (max-width: 700px) and (max-height: 650px) {
+  .route-map:has(.mobile-stop-sheet.is-expanded) .route-map__return { display: none; }
+}

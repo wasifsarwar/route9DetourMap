@@ -37,6 +37,9 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
   const map = useRef<L.Map | null>(null);
   const layers = useRef<L.LayerGroup | null>(null);
   const selectStop = useRef(onSelectStop);
+  const [stopOffscreen, setStopOffscreen] = useState(false);
+  const fullRouteButton = useRef<HTMLButtonElement>(null);
+  const detourPicker = useRef<HTMLSelectElement>(null);
   const [tilesUnavailable, setTilesUnavailable] = useState(false);
   const [pathView, setPathView] = useState<'directions' | 'agency'>('directions');
   const selectionKey = `${direction.id}:${stop.id}`;
@@ -87,6 +90,19 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     resize.observe(container.current);
     return () => { resize.disconnect(); instance.remove(); map.current = null; layers.current = null; };
   }, []);
+
+  useEffect(() => {
+    const instance = map.current;
+    if (!instance) return;
+    const update = () => {
+      const size = instance.getSize();
+      if (!size.x || !size.y) return;
+      setStopOffscreen(!instance.getBounds().contains([stop.lat, stop.lon]));
+    };
+    instance.on('moveend resize', update);
+    update();
+    return () => { instance.off('moveend resize', update); };
+  }, [stop.lat, stop.lon]);
 
   useEffect(() => {
     const group = layers.current;
@@ -209,15 +225,24 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     <div className="route-map__toolbar">
       <h2 className="sr-only">Route map</h2>
       <div className="route-map__controls">
-        <button onClick={showNearStop}><Icon name="pin" />Your stop</button>
-        <button onClick={showFullRoute}><Icon name="frame" />Full route</button>
+        <button ref={fullRouteButton} onClick={showFullRoute}><Icon name="frame" />Full route</button>
       </div>
     </div>
+    {stopOffscreen && <button className="route-map__return" onClick={() => {
+      showNearStop();
+      fullRouteButton.current?.focus({ preventScroll: true });
+    }}><Icon name="pin" />Back to my stop</button>}
     {availableAlerts.length > 0 && <div className="detour-inspector">
-      <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Detour to explore</label><select id="map-detour" value={focused?.alert.id ?? ''} onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
+      {manualFocus ? <div className="detour-inspector__viewing">
+        <span>Viewing: <strong>{manualFocus.alert.title}</strong></span>
+        <button aria-label="Close detour view" onClick={() => {
+          showNearStop();
+          requestAnimationFrame(() => detourPicker.current?.focus({ preventScroll: true }));
+        }}><span aria-hidden="true">×</span></button>
+      </div> : <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Detour to explore</label><select ref={detourPicker} id="map-detour" value="" onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
         <option value="">Near my stop</option>
         {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
-      </select></div>
+      </select></div>}
     </div>}
     <div className="route-map__canvas-wrap">
       <div ref={container} className="route-map__canvas" aria-label={`Map of ${direction.headsign}; selected stop ${stop.name}`} />
