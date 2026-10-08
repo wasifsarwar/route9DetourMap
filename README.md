@@ -1,125 +1,51 @@
-# Reroute — Route 9 stop-impact pilot
+# Reroute
 
-[Open the app](https://wasifsarwar.github.io/route9DetourMap/)
+**Know where to catch your bus when the route changes.**
 
-Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
+Reroute helps Philadelphia riders understand SEPTA detours without decoding service notices or guessing from an unchanged route map. We’re starting with **Route 9**, with one goal: make it easy to answer **“Is my stop affected, and what should I do next?”**
 
-The default screen shows destination buttons, a combined stop-search/location bar, a short stop-status result, and a full-bleed map. Desktop keeps the controls and result in the sidebar. Phones use a stable-height map (280–380 px depending on viewport) with compact controls and a collapsible result below. The page scrolls when needed. Expanding reveals boarding guidance and independently scrollable service details without shrinking or hiding the map; a sticky “Hide details” control collapses them. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, and source timestamps. Recorded-example controls are available only through the dedicated demo URL. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+[Try Reroute](https://wasifsarwar.github.io/route9DetourMap/)
 
-## Stack
+## What you can do today
 
-React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions. GitHub Pages serves the app; a separate `live-data` branch publishes current alerts without rebuilding the website. Live bus tracking uses a separate backend relay when configured. No SEPTA API key is needed. Dependencies are pinned by `package-lock.json`.
+- **Find your stop.** Search by street or intersection, use your location, or tap a northbound or southbound stop directly on the map.
+- **Understand the disruption.** See reported stop impacts, readable alerts, and detour paths that follow SEPTA’s applicable dates and service hours.
+- **See buses approaching.** Track recent bus positions for your direction, follow a bus, and view SEPTA arrival estimates when available.
+- **Find the next useful action.** Get agency boarding instructions when supported, with the original notice available for context.
 
-## Local development
+The mobile layout keeps the map usable while service details expand below it. Nearby stops include approximate walking times; these are estimates from straight-line distance, not walking directions.
 
-Use Node.js 24 LTS (minimum 22.12) and npm.
+## Accuracy comes first
+
+Reroute is an independent pilot, not an official SEPTA app. It currently covers two full-length Route 9 patterns, not every trip variant.
+
+Missing, stale, or conflicting data stays **unconfirmed**. A detour line or a bus passing a location does not prove you can board there. Stop markers use SEPTA’s published coordinates, and uncertain replacement boarding points are never invented. Live positions and arrival estimates depend on available SEPTA reports.
+
+## What we’re working toward
+
+1. More precise matching between detours and individual stops.
+2. One complete, verified detour with dependable boarding guidance.
+3. Testing with Route 9 riders to see whether they can find their stop, understand its status, and decide what to do faster than with the original notice.
+
+We’ll expand coverage after proving accuracy and usefulness on Route 9. AI interpretation is only worth adding if it solves a recurring problem and improves accuracy against reviewed examples.
+
+## Run locally
+
+Use Node.js 24 LTS and npm.
 
 ```sh
 npm ci
 npm run refresh:data
 npm run dev
-# http://127.0.0.1:5173/
 ```
 
-The refresh command needs network access. Without a generated current feed, the app clearly reports that current data is unavailable and never switches riders into the recorded demo.
+Open http://127.0.0.1:5173/. Refreshing data requires network access.
 
 ```sh
-npm run check
 npm test
 npm run build
-npm run preview
-# http://127.0.0.1:4173/
 ```
 
-## Deployment and freshness
+Built with React, TypeScript, Vite, and Leaflet. GitHub Pages hosts the app; a Netlify relay supplies live bus data. GitHub Actions refreshes service alerts.
 
-`.github/workflows/pages.yml` installs dependencies, checks types, runs tests, retrieves a fallback feed, builds the app, and publishes `dist/` to GitHub Pages. Pushes to `main` and manual runs trigger deployment. Pull requests run checks and build without publishing or retrieving external data. Pages must use **GitHub Actions** as its source.
-
-`.github/workflows/refresh-data.yml` independently collects, validates, and publishes alerts to `live-data/current-alerts.json`. It runs on collector changes, manual dispatch, and every five minutes starting at minute 2. It has its own concurrency group and never waits for a Pages deployment. A source failure is published as incomplete before the workflow reports failure, so failures are visible both to riders and in Actions. The branch is dedicated to generated public data; no application code or credentials are published there.
-
-The deployed build sets `VITE_LIVE_FEED_URL` to the public raw GitHub URL. The browser checks it once per minute while visible and online, and immediately when the tab becomes visible or connectivity returns. Requests are single-flight and timeout-bound. If the primary endpoint fails or is stale, the app also checks the dated Pages copy and uses the newest valid publication available, including the one it already holds. A new incomplete publication supersedes an older successful one; missing sources are never silently hidden by an older fallback. The optional `collectedAt` field orders publications, while freshness still uses the original upstream retrieval timestamps. A minute-bucket query parameter avoids reusing an older raw-GitHub CDN object between polling intervals. Local development uses the same-origin feed unless `VITE_LIVE_FEED_URL` is set.
-
-GitHub scheduled runs can be delayed or dropped; this is **not a guaranteed five-minute data service**. Source data older than 15 minutes cannot confirm current stop impact, even if it was just downloaded. Check the **Refresh SEPTA data** workflow and manually dispatch it if needed. These changes remove deployment delays and improve recovery; a service with a freshness SLA would still need a monitored collector outside GitHub's best-effort scheduler.
-
-`public/data/current-alerts.json` and `dist/` are generated and ignored by Git. Relative asset URLs support the `/route9DetourMap/` Pages path. `.openai/hosting.json` is historical metadata for the original preview and is not used in deployment.
-
-## Project structure
-
-- `src/App.tsx`, `src/components/`, `src/styles.css`: journey selection, status, source details, and map UI.
-- `src/hooks/`: independent route loading, resilient polling, and browser-local journey preferences.
-- `src/domain/`: pure stop-impact and Philadelphia time rules, with consequential edge-case tests.
-- `src/data/`: upstream collection, normalization, runtime validation, recorded snapshot adapter, and fixture tests.
-- `src/realtime/`: live vehicle/trip feed normalization, freshness, polling, and stop predictions.
-- `public/data/route9-snapshot.json`: recorded baseline and alerts, with original provenance and source warnings.
-
-Keep policy decisions in the domain layer, source-specific interpretation in the data layer, and display logic in components. Add a regression test for changes that could incorrectly declare a stop usable or recommend boarding.
-
-## Data and interpretation
-
-The collector combines SEPTA's [detour feed](https://www3.septa.org/api/v2/detours/?route=9), [legacy service notices](https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9), and directional KML. Legacy notices are collected in Actions because that endpoint does not permit browser cross-origin access. Matching records with materially conflicting text or schedules remain unresolved. The published feed is validated before rendering.
-
-The baseline represents two full-length Route 9 GTFS patterns, valid September 27, 2026 through February 20, 2027. Short trips and other variants are not represented. Replace the baseline with a reviewed GTFS snapshot when service changes; after its validity window the app cannot confirm stop status.
-
-An explicit skipped-stop entry can establish that a stop is affected. A partial list cannot establish that unlisted stops are served. Missing stop lists, conflicting schedules, incomplete feeds, and stale data cannot produce an all-clear result. Unverified paths remain marked, and separate overlapping paths are not merged into a supposedly verified route.
-
-Alert cards expand direction and turn shorthand into ordered instructions while keeping the unchanged source wording in a separate disclosure. The sinkhole notice shown in Transit and SEPTA's original raw message have the same direction, date, and turns; SEPTA's legacy feed already includes expanded Left/Right wording. Text formatting never resolves conflicting dates or changes stop status.
-
-The map automatically chooses a relevant alert for the selected stop. A named stop closure takes priority even when no detour geometry is available. Otherwise a nearby, connected illustration may provide visual context; this does not establish that the stop is closed. The automatic viewport stays near the stop. Use the detour selector to inspect another detour, or **Your stop** to return. Changing stops or direction clears manual inspection.
-
-“Explore route alerts” opens a route-wide notice without changing the selected stop or its assessment. Disputed agency geometry is hidden, including background paths, until “Show SEPTA’s reported detour” is selected for that alert. Opt-in resets when the selection, inspection request, or agency geometry/conflict evidence changes, and when the exploration is closed. Reviewed written-direction illustrations remain explicitly unconfirmed. On short phones the pinned sheet identifies the selected stop; redundant map context is reduced to keep controls usable.
-
-
-Circular dots follow the displayed path; square stop markers represent physical boarding locations. The reviewed sinkhole illustration follows 4th → Spruce → 9th → Walnut and replaces the bypassed normal segment visually. It is reused only when the current notice matches the reviewed text and direction. **Agency geometry** remains available for comparison with the published loop. Geometric bypass detection marks Walnut/5th, Walnut/7th and Walnut/8th as possibly skipped, without changing their closure assessment or inventing relocated stops. Current feeds contain no exact temporary-stop coordinates; intersection coordinates identify turns, not boarding points.
-
-The current legacy notice explicitly closes northbound Schuylkill Av & JFK Blvd (stop 30576). It describes replacement boarding only as an area on Schuylkill between Walnut and Chestnut. The collapsed phone sheet now shows that area instruction immediately alongside “Exact boarding point unconfirmed,” using the same eligibility checks as the desktop card. Current boarding summaries require fresh data, an affected stop, active matching instructions without source conflicts, and current rather than replay mode. The UI quotes that instruction with its source; it does not invent a replacement stop ID, map pin, or walking route. An exact alternative requires separate agency evidence and must pass every applicable alert check.
-
-The dedicated [demo link](https://wasifsarwar.github.io/route9DetourMap/?demo=1) opens recorded-example mode; the normal URL always opens current conditions and has no replay controls. Back to current removes the demo URL parameter. Demo mode is not saved in browser preferences. Recorded-example mode uses the October 7, 2026 snapshot and a Philadelphia-time replay control. It is clearly historical and never supplies live alternative-boarding guidance. Candidate paths in that snapshot are interpretations, not field observations.
-
-## Validation
-
-Automated tests cover alert overlap, partial stop lists, stale/incomplete data, source contradictions, malformed feeds, direction, DST and overnight windows, and restrictions on alternative boarding. For a browser smoke test:
-
-1. Refresh agency data and choose northbound Schuylkill Av & JFK Blvd. While the explicit closure remains current, expect affected plus area-only agency instructions.
-2. Choose a different stop or direction. Missing stop coverage must remain unconfirmed.
-3. Open the relevant alerts and original sources; all applicable alerts should be available together.
-4. Open `?demo=1`, then **Service details → Recorded demo controls**, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
-5. Inspect the map, select a stop, and try Full route / Your stop. Check phone-width layout.
-6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
-7. Choose **Show → Sink Hole → View**, and open **Map key & details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
-8. Change the direction and stop, then reload. The journey should be restored; manual detour inspection should not persist. Only the dedicated `?demo=1` URL should open recorded-example mode, including after reload; the regular URL must always open current conditions.
-9. Select Schuylkill/JFK, then Walnut/7th. The map should first stay with the reported stop closure and then show the nearby sinkhole path. Inspect a different detour manually, then select another stop to return to automatic focus.
-10. Return to the app after it was hidden or offline. Check that it resumes fetching without overlapping requests and never substitutes browser retrieval time for source age.
-
-The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
-
-No accounts, payments, automatic GTFS refresh, or field verification are implemented. Public feed access does not establish commercial reuse rights. Maps include OpenStreetMap attribution; review data and tile-service terms before scaling or monetization. Leaflet's license is included in its npm package.
-
-## Live buses and arrival estimates
-
-Local `npm run dev` serves `/api/route9-live`, decoding SEPTA's public GTFS-Realtime VehiclePosition and TripUpdate protobuf feeds on the server. The browser polls every 20 seconds while visible and online. Vehicles and predictions expire after two minutes using their original source timestamps. Only explicit Route 9 trip directions are shown for the selected direction; unknown direction, canceled trips, placeholder vehicles, and stale positions are omitted. Show live buses fits the current direction’s fresh positions into view. Selecting a bus opens its upcoming stop estimates. Follow this bus keeps the map centered as reported coordinates change; dragging or keyboard panning, changing the stop/direction or detour view, Full route, and Your stop cancel following. A stale or missing bus ends following with an explicit message. Position age remains visible while following, separately from service-alert freshness. Selecting a stop shows up to three arrivals.
-
-Countdowns use SEPTA's absolute predicted arrival times, never an assumed bus speed or static timetable. Missing predictions mean unavailable estimates, not no service. Reported skipped stops do not receive boarding countdowns; uncertain stops retain their warning alongside any estimate. Bus locations do not establish where boarding is allowed. Tracking is disabled in recorded demos.
-
-Production requires a relay because SEPTA's protobuf endpoints do not allow browser cross-origin access. The Netlify relay is `netlify/functions/route9-live.mts`; `netlify.toml` publishes only `relay-public/`, leaving the rider app on GitHub Pages. The deployed endpoint is `https://route9-live-relay.netlify.app/.netlify/functions/route9-live`; GitHub repository Actions variable `VITE_REALTIME_URL` supplies it to the Pages build. Without that variable, production omits tracking. The relay permits browser access from `https://wasifsarwar.github.io`, fetches only the two fixed public SEPTA endpoints, and shares a 20-second CDN cache. It receives no rider coordinates. The relay uses the existing Netlify Free team. Monitor hosting usage before wider release. Relay deployments are currently manual: `npx netlify-cli deploy --site 1172f914-c5fa-473c-9420-94fdd1baca5e --prod --no-build --dir relay-public --functions netlify/functions`. GitHub pushes deploy the frontend only; deploy the relay separately when its code changes.
-
-Stop search accepts partial street names, intersections in either order (for example, `7 Walnut`), and expanded street types. Use arrow keys and Enter to choose, or Escape to cancel. Choosing on a phone dismisses the search keyboard. Nearby results open over the map; Cancel/Clear/Escape return focus to the location button. Escape also collapses the expanded result sheet. Results are limited to the selected direction. Selecting a stop updates one result: in the sidebar on desktop, or in the persistent two-position sheet on phones. The phone sheet keeps the stop name, direction, service assessment, and boarding uncertainty together, and updates immediately when selecting a stop. Resizing moves the result between layouts without duplicating it.
-
-**Near me** requests a browser location only when tapped (standard accuracy first, then one precise retry if needed), then lists up to three stops within one mile for the selected direction. Nearby results show estimated walking minutes alongside distance, using unrounded straight-line distance and an assumed walking pace of 1.2 m/s (~0.3 miles becomes ~7 minutes). These are not routed walking times: crossings, barriers, accessibility, and individual pace are not modeled. Actual walks may take longer. Minute estimates are withheld for location accuracy worse than 100 m; approximate distance remains visible. Each result uses the same live stop-impact assessment as the main card. The app does not persist or transmit coordinates, and does not track movement. Clear/cancel ignores pending callbacks and prevents retries; results expire after five minutes. Imprecise fixes (over 1 km), permission denial, unavailable location, and timeouts retain the search fallback. Location is unavailable in recorded-example mode. Requires HTTPS and browser location permission; actual accuracy depends on the device ([browser geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition)).
-
-Stop scope is classified separately from alert timing: a reliable nonempty complete agency stop list can identify an alert as elsewhere on the route; partial lists, unmapped stop IDs, and source conflicts cannot. Selected-stop notices appear first, followed by unknown scope and elsewhere notices. “Detour elsewhere on this route” is shown only when the overall assessment is resolved with no reported impact at the selected stop. Timing conflicts elsewhere remain visible and still prevent confirming current service. Stale/incomplete feeds and map geometry never establish an all-clear.
-
-## Bus path review (test URL only)
-
-Open `?review=1` (for example, https://wasifsarwar.github.io/route9DetourMap/?review=1) and expand **Test tool · Bus path review**. This is a discoverability flag, not authentication. The normal URL and recorded demo do not show or record review observations.
-
-1. Start recording before a bus reaches a detour; keep the tab visible. Both directions are captured, with separate bus/trip/direction identities and original GPS timestamps. Duplicate timestamps are ignored.
-2. Select the direction and observed trip. Purple dots preserve reported coordinates, including positions off the normal route. Fit observations to see the sample, and use Explore route alerts to compare with the displayed candidate. Distances refer only to the latest observed point and are not match scores or verification.
-3. Export JSON before reloading. It contains the selected trip's observations plus the normal and candidate geometry at export time. Review complete traversals and source gaps before drawing conclusions; no path segments are fabricated between observations, and bus passage never confirms boarding.
-
-Recording is opt-in, session-memory only, capped at one hour/5,000 reports across all buses. It pauses automatically when fresh positions stop arriving (including background tabs); Pause stops collection, Clear also removes observations. No background collector or server storage is added. To observe a whole detour, leave this test page visible through a traversal. No automatic detour-verification badge is exposed to riders.
-
-Detour display follows agency date bounds and recurring service windows in **America/New_York**, not the rider's device timezone. Starts are inclusive; ends are exclusive. Weekday 07:00–16:00 detours are hidden before 07:00, at/after 16:00, on weekends, and outside the published date range. Overnight windows use the day the window starts. Checks align to 30-second clock boundaries and rerun when the page becomes visible. Expired/inactive paths disappear even if previously inspected. Conflicting schedules remain unconfirmed: their paths never draw automatically, but are explicitly inspectable through a “timing unconfirmed” picker entry. Their stop-impact uncertainty is retained; hiding a path does not establish normal boarding.
-
-Map route lines have no decorative dots. Stop symbols are smaller but retain 32 px hit areas: N/S circles are scheduled stops, dashed circles indicate inferred uncertainty, orange squares mark agency-listed skipped stops, and green checks identify evidenced alternatives. Scheduled stops are not labeled verified boarding. All eligible active detour paths for the selected direction render together as pale orange dashes, preferring reviewed/interpreted traces over disputed agency geometry. Tapping or keyboard-activating a dashed path opens its readable alert; popup reading position survives polling. Existing time-window and disputed-geometry restrictions still apply.
-
-Both northbound and southbound stops remain visible on the map. N (blue) is northbound toward Andorra; S (teal) is southbound toward 4th-Walnut. Tapping selects the stop and direction together and updates arrivals/alerts. Overlapping markers offer a direction-and-stop chooser rather than moving agency coordinates to an invented curb location. Stop-impact styling for the other direction is assessed after selection; its neutral marker is not an all-clear. Live buses, detours, and nearby search continue to follow the selected direction.
+For testing: [recorded demo](https://wasifsarwar.github.io/route9DetourMap/?demo=1) · [bus-path review tool](https://wasifsarwar.github.io/route9DetourMap/?review=1). Historical examples and observed bus paths do not establish current boarding guidance.
