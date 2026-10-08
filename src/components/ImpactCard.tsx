@@ -2,7 +2,7 @@ import type { Stop, StopAssessment } from '../domain/types';
 
 import { stopStatusCopy } from '../domain/stopScope';
 
-export function ImpactCard({ assessment, stop, replay }: { assessment: StopAssessment; stop: Stop; replay: boolean }) {
+export function ImpactCard({ assessment, stop, replay, showHeading = true }: { assessment: StopAssessment; stop: Stop; replay: boolean; showHeading?: boolean }) {
   const copy = stopStatusCopy(assessment);
   const boardingNotes = assessment.relevantAlerts.filter(({ alert, timing, affectsSelectedStop }) =>
     timing === 'active' && affectsSelectedStop && alert.sourceIssues.length === 0 && alert.boardingNote,
@@ -10,10 +10,10 @@ export function ImpactCard({ assessment, stop, replay }: { assessment: StopAsses
   const hasArea = assessment.status === 'affected' && boardingNotes.length > 0;
 
   return <section className={`impact-card impact-${assessment.status}`} aria-label={`Status for ${stop.name}`} aria-live="polite" aria-atomic="true">
-    <div className="impact-heading">
+    {showHeading && <div className="impact-heading">
       <span className="impact-icon" aria-hidden="true">{assessment.status === 'affected' ? '!' : assessment.status === 'unaffected' ? '✓' : '?'}</span>
       <div>{replay && <p className="eyebrow">Recorded example</p>}<h2>{copy.heading}</h2></div>
-    </div>
+    </div>}
     {assessment.alternative ? <>
       <p className="impact-summary">Use <strong>{assessment.alternative.stop.name}</strong>.</p>
       <a className="agency-link" href={assessment.alternative.sourceUrl} target="_blank" rel="noreferrer">SEPTA boarding instructions</a>

@@ -4,8 +4,8 @@ import { useTransitData } from './hooks/useTransitData';
 import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
 import { parseWallTime } from './domain/time';
-import { NearbyStops } from './components/NearbyStops';
-import { StopSearch } from './components/StopSearch';
+import { StopPicker } from './components/StopPicker';
+import { MobileStopSheet } from './components/MobileStopSheet';
 import { Icon } from './components/Icon';
 import { RouteMap } from './components/RouteMap';
 import { ImpactCard } from './components/ImpactCard';
@@ -25,6 +25,7 @@ function ageText(fetchedAt: string, now: Date) {
 
 export default function App() {
   const mobile = useMobileLayout();
+  const [sheetExpanded, setSheetExpanded] = useState(false);
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
   const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
   const [mode, setMode] = useState<'current' | 'replay'>('current');
@@ -34,6 +35,7 @@ export default function App() {
   const [inspectionRequest, setInspectionRequest] = useState(0);
 
   function inspectAlert(id: string) {
+    if (mobile) setSheetExpanded(false);
     setInspectedAlertId(id);
     setInspectionRequest((request) => request + 1);
   }
@@ -64,31 +66,9 @@ export default function App() {
           : !fresh ? 'Updates are out of date'
             : !feed.complete ? 'Some updates unavailable' : ageText(feed.fetchedAt, clock);
 
-  return <>
-    <header className="app-header"><a className="brand" href="./"><span aria-hidden="true">↳</span>reroute<span className="brand-city">Philadelphia</span></a><span className="pilot-label">Bus detours <span>Route 9</span></span></header>
-    <div className={`freshness-bar ${mode === 'replay' ? 'replay' : fresh ? 'fresh' : 'stale'}`} aria-live="polite">
-      <span className="freshness-label"><span className="freshness-dot" aria-hidden="true" />{freshnessText}</span>
-      {mode === 'current' ? <button onClick={() => { void refresh(); }} disabled={loading}><Icon name="refresh" />{loading ? 'Checking…' : 'Refresh'}</button>
-        : <button onClick={() => setMode('current')}>Back to current</button>}
-    </div>
-
-    {!route || !direction || !stop || !feed || !assessment ? <main className="loading-surface" aria-live="polite">
-      <h1>{routeError ? 'Route data could not be loaded' : 'Getting Route 9 ready…'}</h1>
-      <p>{routeError ?? 'Loading the route and service updates.'}</p>
-      {routeError && <button onClick={() => window.location.reload()}>Try again</button>}
-    </main> : <main className="app-workspace">
-      <aside className="journey-panel">
-        <div className="journey-main">
-          <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
-          <div className="journey-fields">
-            <fieldset className="direction-picker"><legend>Going toward</legend><div>{route.directions.map((item) => <button type="button" aria-pressed={direction.id === item.id} key={item.id} onClick={() => selectDirection(item.id)}><span>{item.headsign}</span><small>{item.label}</small></button>)}</div></fieldset>
-            {mode === 'current' && <NearbyStops route={route} direction={direction} feed={feed} now={clock} onSelect={selectStop} />}
-            <StopSearch key={direction.id} stops={direction.stops} stop={stop} onSelect={selectStop} />
-          </div>
-          {time.error ? <p className="inline-error" role="alert">{time.error}</p> : !mobile && <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
-        </div>
+  const evidence = route && direction && stop && feed && assessment ? (
         <div className="journey-evidence">
-          <details className="more-details">
+          <details className="more-details" open={mobile}>
             <summary>Service details<span>{assessment.relevantAlerts.length} {assessment.relevantAlerts.length === 1 ? 'alert' : 'alerts'}</span></summary>
             {!time.error && <>
               <div className="assessment-details"><h2>Why this result</h2><p>{assessment.summary}</p>
@@ -113,13 +93,39 @@ export default function App() {
           </details>
           <footer className="journey-footer">Independent Route 9 pilot</footer>
         </div>
+  ) : null;
+
+  return <div className={`app-shell ${mobile ? 'app-shell--mobile' : ''}`}>
+    <header className="app-header"><a className="brand" href="./"><span aria-hidden="true">↳</span>reroute<span className="brand-city">Philadelphia</span></a><span className="pilot-label">Bus detours <span>Route 9</span></span></header>
+    <div className={`freshness-bar ${mode === 'replay' ? 'replay' : fresh ? 'fresh' : 'stale'}`} aria-live="polite">
+      <span className="freshness-label"><span className="freshness-dot" aria-hidden="true" />{freshnessText}</span>
+      {mode === 'current' ? <button onClick={() => { void refresh(); }} disabled={loading}><Icon name="refresh" />{loading ? 'Checking…' : 'Refresh'}</button>
+        : <button onClick={() => setMode('current')}>Back to current</button>}
+    </div>
+
+    {!route || !direction || !stop || !feed || !assessment ? <main className="loading-surface" aria-live="polite">
+      <h1>{routeError ? 'Route data could not be loaded' : 'Getting Route 9 ready…'}</h1>
+      <p>{routeError ?? 'Loading the route and service updates.'}</p>
+      {routeError && <button onClick={() => window.location.reload()}>Try again</button>}
+    </main> : <main className="app-workspace">
+      <aside className="journey-panel">
+        <div className="journey-main">
+          <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
+          <div className="journey-fields">
+            <fieldset className="direction-picker"><legend>Going toward</legend><div>{route.directions.map((item) => <button type="button" aria-pressed={direction.id === item.id} key={item.id} onClick={() => selectDirection(item.id)}><span>{item.headsign}</span><small>{item.label}</small></button>)}</div></fieldset>
+            <StopPicker route={route} direction={direction} stop={stop} feed={feed} now={clock} onSelect={selectStop} replay={mode === 'replay'} />
+          </div>
+          {time.error ? <p className="inline-error" role="alert">{time.error}</p> : !mobile && <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
+        </div>
+        {!mobile && evidence}
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
+        {mobile && time.error && <div className="mobile-replay-error">{evidence}</div>}
         {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} mobile={mobile}
-          result={mobile ? <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} /> : null}
+          result={mobile ? <MobileStopSheet stop={stop} headsign={direction.headsign} assessment={assessment} replay={mode === 'replay'} expanded={sheetExpanded} onExpandedChange={setSheetExpanded}>{evidence}</MobileStopSheet> : null}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>
     </main>}
-  </>;
+  </div>;
 }

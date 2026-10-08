@@ -180,3 +180,25 @@ select, input { width: 100%; min-width: 0; min-height: 48px; border: 1px solid #
 .nearby-stops__status--affected { color: #903e19; background: #fff0e5; }
 .nearby-stops__status--unknown { color: #695320; background: #f7f3e3; }
 .nearby-stops__status--unaffected { color: #255e53; background: #e8f4ef; }
+
+/* A phone-sized workspace keeps the map and the selected stop on one screen. */
+@media (max-width: 700px) {
+  .app-shell--mobile { height: 100svh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  .app-shell--mobile .app-header { height: 44px; flex: 0 0 44px; padding: 0 12px; }
+  .app-shell--mobile .freshness-bar { min-height: 36px; flex-shrink: 0; padding: 0 12px; font-size: 11px; }
+  .app-shell--mobile .freshness-bar button { min-height: 36px; }
+  .app-shell--mobile .app-workspace { flex: 1 1 0; height: auto; min-height: 0; }
+  .app-shell--mobile .journey-main { padding: 10px 12px; flex: 0 0 auto; position: relative; z-index: 1100; }
+  .app-shell--mobile .journey-heading { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
+  .app-shell--mobile .direction-picker { margin-bottom: 8px; }
+  .app-shell--mobile .direction-picker button { min-height: 42px; }
+  .app-shell--mobile .map-area { flex: 1 1 0; height: auto; min-height: 0; }
+  .app-shell--mobile .map-area .route-map { height: 100%; }
+  .app-shell--mobile .loading-surface { overflow: auto; }
+}
+
+@media (max-width: 700px) {
+  .app-shell--mobile .combined-stop-picker { margin-bottom: 0; }
+  .app-shell--mobile .stop-search > label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
+  .mobile-replay-error { height: 100%; overflow-y: auto; padding: 12px; }
+}

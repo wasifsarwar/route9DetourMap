@@ -1,0 +1,65 @@
+.combined-stop-picker {
+  position: relative;
+  min-width: 0;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+
+.combined-stop-picker .stop-search { margin: 0; }
+.combined-stop-picker .stop-search__field {
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+  min-width: 0;
+}
+.combined-stop-picker .stop-search__field > .ui-icon { top: 15px; }
+.combined-stop-picker .stop-search__field input {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  height: 48px;
+}
+.combined-stop-picker .stop-search__action { flex: 0 0 auto; }
+.combined-stop-picker__near {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 48px;
+  padding: 0 10px;
+  color: #245ac3;
+  border-color: #aebfd8;
+  white-space: nowrap;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.combined-stop-picker__near .ui-icon { width: 17px; height: 17px; }
+.combined-stop-picker__near:disabled { color: #75859a; background: #f4f6f8; cursor: not-allowed; }
+.combined-stop-picker .stop-search__results,
+.combined-stop-picker__results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 600;
+  background: white;
+  border: 1px solid #bccbda;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px #182c4c20;
+  overflow: auto;
+  max-height: min(360px, 48svh);
+}
+.combined-stop-picker .stop-search__results { top: calc(100% + 3px); }
+.combined-stop-picker__results { top: calc(100% + 3px); }
+.combined-stop-picker .nearby-stops--panel { margin: 0; padding: 11px 12px 12px; }
+.combined-stop-picker .nearby-stops__panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.combined-stop-picker .nearby-stops__panel-head strong { color: #182c4c; font-size: 13px; }
+.combined-stop-picker .nearby-stops__panel-head button { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+.combined-stop-picker .nearby-stops__privacy { margin-top: 10px; padding-top: 8px; border-top: 1px solid #dde4eb; }
+.combined-stop-picker .nearby-stops li button { min-height: 44px; }
+
+@media (max-width: 360px) {
+  .combined-stop-picker__near { width: 48px; padding: 0; }
+  .combined-stop-picker__near span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}

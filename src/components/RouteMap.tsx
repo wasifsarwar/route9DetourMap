@@ -48,18 +48,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     if (inspection !== storedInspection) setStoredInspection(inspection);
   }, [inspection, storedInspection]);
   useEffect(() => { setPathView('directions'); }, [selectionKey]);
-  const stopSheet = useRef<HTMLDivElement>(null);
-  const [selectionRequest, setSelectionRequest] = useState(0);
-  const handledRequest = useRef(0);
-  const previousSelection = useRef(selectionKey);
-  useEffect(() => {
-    const changed = selectionKey !== previousSelection.current;
-    previousSelection.current = selectionKey;
-    if (!changed && selectionRequest === handledRequest.current) return;
-    handledRequest.current = selectionRequest;
-    if (mobile) stopSheet.current?.scrollIntoView({ block: 'nearest' });
-  }, [selectionRequest, selectionKey, mobile]);
-  selectStop.current = id => { onSelectStop(id); setSelectionRequest(request => request + 1); };
+  selectStop.current = onSelectStop;
   const availableAlerts = assessment.relevantAlerts.filter(({ alert, timing }) => timing !== 'inactive' && alert.directionIds.includes(direction.id));
   const automaticFocus = useMemo(() => getAutomaticMapFocus(direction, stop, assessment.relevantAlerts, reviewedAlerts),
     [direction, stop, assessment.relevantAlerts, reviewedAlerts]);
@@ -204,7 +193,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
     const { points, manual } = camera.current;
     if (!points.length) return;
     if (points.length === 1) map.current?.setView(points[0], 16, { animate: false });
-    else map.current?.fitBounds(L.latLngBounds(points), { paddingTopLeft: [44, 100], paddingBottomRight: [44, 90], maxZoom: 16, animate: false });
+    else map.current?.fitBounds(L.latLngBounds(points), { paddingTopLeft: mobile ? [24, 76] : [44, 100], paddingBottomRight: mobile ? [24, 42] : [44, 90], maxZoom: 16, animate: false });
     if (manual) section.current?.scrollIntoView({ block: 'nearest' });
   }, [cameraKey]);
   function showNearStop() {
@@ -213,7 +202,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
   }
   function showFullRoute() {
     const coordinates = validCoordinates(direction.shape);
-    if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { paddingTopLeft: [35, 100], paddingBottomRight: [35, 90], maxZoom: 15, animate: false });
+    if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { paddingTopLeft: mobile ? [24, 76] : [35, 100], paddingBottomRight: mobile ? [24, 42] : [35, 90], maxZoom: 15, animate: false });
   }
 
   return <section ref={section} className="route-map" aria-label="Route map and reported detours">
@@ -235,10 +224,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
       {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
       {tilesUnavailable && <p className="route-map__tile-error" role="status">Street tiles could not load. Route lines and stop details remain available.</p>}
     </div>
-    {result && <div ref={stopSheet} className="stop-sheet" role="region" aria-label="Selected stop">
-      <div className="stop-sheet__heading"><h2>{stop.name}</h2><span>Toward {direction.headsign}</span></div>
-      {result}
-    </div>}
+    {result}
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">
         <li><span className="route-map__line route-map__line--normal" aria-hidden="true" />Route</li>
