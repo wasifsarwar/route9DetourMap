@@ -105,3 +105,8 @@
   .detour-inspector__context { display: none; }
   .route-map:has(.detour-inspector__agency) .route-map__notice { display: none; }
 }
+
+.detour-inspector { max-height: calc(100% - 24px); overflow-y: auto; }
+.detour-inspector__agency-note { margin-top: 6px; background: white; border: 1px solid #d4dde7; border-radius: 8px; }
+.detour-inspector__agency-note .detour-inspector__agency { margin: 0; width: 100%; border: 0; }
+.detour-inspector__agency-note p { margin: 0; padding: 0 10px 10px; font-size: 12px; line-height: 1.45; color: #6b4c20; }

@@ -234,6 +234,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         <button ref={fullRouteButton} onClick={showFullRoute}><Icon name="frame" />Full route</button>
       </div>
     </div>
+    <div className="route-map__canvas-wrap">
     {availableAlerts.length > 0 && <div className="detour-inspector">
       {manualFocus ? <div className="detour-inspector__viewing">
         <span>Exploring: <strong>{manualFocus.alert.title}</strong></span>
@@ -246,12 +247,12 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
         {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
       </select></div>}
       {manualFocus && <p className="detour-inspector__context">Selected stop: {stop.name}</p>}
-      {disputedAgencyPath && <button className="detour-inspector__agency" aria-pressed={pathView === 'agency'}
+      {disputedAgencyPath && <div className="detour-inspector__agency-note"><button className="detour-inspector__agency" aria-describedby="agency-map-explanation" aria-pressed={pathView === 'agency'}
         onClick={() => setAgencyChoice(pathView === 'agency' ? null : agencyViewKey)}>
-        {pathView === 'agency' ? 'Hide unverified agency map' : 'Show agency map—unverified'}
-      </button>}
+        {pathView === 'agency' ? 'Hide detour' : 'Show SEPTA’s reported detour'}
+      </button><p id="agency-map-explanation">SEPTA’s map and directions disagree. The actual route is uncertain.</p></div>}
     </div>}
-    <div className="route-map__canvas-wrap">
+
     {stopOffscreen && <button className="route-map__return" onClick={() => {
       showNearStop();
       fullRouteButton.current?.focus({ preventScroll: true });
@@ -274,7 +275,7 @@ export function RouteMap({ mobile, result, direction, stop, assessment, onSelect
           <p>Dots trace the route. Squares are stops.</p>
           {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
             <button aria-pressed={pathView === 'directions'} onClick={() => setAgencyChoice(null)}>Written directions</button>
-            <button aria-pressed={pathView === 'agency'} onClick={() => setAgencyChoice(agencyViewKey)}>{disputedAgencyPath ? 'Show agency map—unverified' : 'Agency geometry'}</button>
+            <button aria-pressed={pathView === 'agency'} onClick={() => setAgencyChoice(agencyViewKey)}>{disputedAgencyPath ? 'Show SEPTA’s reported detour' : 'Agency geometry'}</button>
           </div>}
           {focused && <p className="path-explanation">{!hasPublishedPath ? 'This notice has no published detour path. The map shows its listed stop when available; nearby route lines do not establish an alternative boarding point.'
             : interpreted ? 'The illustrated path follows the written turns. The agency map disagrees, so this is not a verified bus trace.'
