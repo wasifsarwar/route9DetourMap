@@ -1,57 +1,75 @@
-# Reroute — a testable Route 9 pilot
+# Reroute — Route 9 stop-impact pilot
 
-A small browser prototype answering the first technical question: can a rider understand a detour better when the route, direction, date window, and source uncertainty appear together?
+[Open the app](https://wasifsarwar.github.io/route9DetourMap/)
 
-## Public site and deployment
+Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
-[Open the Route 9 pilot](https://wasifsarwar.github.io/route9DetourMap/)
+## Stack
 
-GitHub Actions runs the syntax checks and replay tests on pull requests and pushes to `main`. A successful push to `main` publishes only `dist/` to GitHub Pages. You can also run **Test and deploy GitHub Pages** manually from the repository's Actions tab. No API keys, package installation, or build step are needed.
+React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions; GitHub Pages serves the built app and same-origin JSON. There is no API key or application server. Dependencies are pinned by `package-lock.json`.
 
-The repository's **Settings → Pages → Source** must be **GitHub Actions**. The workflow uses the `github-pages` environment and grants deployment permissions only to the publishing job. Local assets and data use relative URLs, so the app works under `/route9DetourMap/`.
+## Local development
 
-This public deployment serves the recorded snapshot described below. Deploying it does not make the transit data live. `.openai/hosting.json` records the original private Sites preview; GitHub Pages is now the requested deployment target, and that file is outside the published `dist/` directory.
-
-## Run locally
-
-Requires Python 3 and Node.js (no package installation).
+Use Node.js 24 LTS (minimum 22.12) and npm.
 
 ```sh
-npm start
-# Open http://127.0.0.1:4173/
-npm test
-npm run check
+npm ci
+npm run refresh:data
+npm run dev
+# http://127.0.0.1:5173/
 ```
 
-## What to test
+The refresh command needs network access. Without a generated current feed, the app clearly reports that current data is unavailable and still offers the recorded example.
 
-1. **Sink Hole / Northbound**: choose During, then Before and After. The orange path should disappear outside the published date window.
-2. **Wrong direction**: switch Southbound. The selected northbound detour must not apply.
-3. **Two paths**: compare Text interpretation and Agency-published path. The latter contains a suspicious loop; the former follows the written street sequence and is explicitly unverified.
-4. **PECO**: conflicting text and structured end dates produce an uncertainty state. Changing the clock must not silently resolve that conflict.
-5. **Bridge Construction**: five official skipped-stop IDs can be inspected, but their timing remains unconfirmed because weekday text disagrees with the structured schedule.
-6. **Missing stop data**: Sink Hole must say unknown, not zero or all stops served.
+```sh
+npm run check
+npm test
+npm run build
+npm run preview
+# http://127.0.0.1:4173/
+```
 
-This is a snapshot captured October 7, 2026 around 10:26 PM Eastern. It never fetches current transit conditions. Only the selected alert is replayed; overlapping detours are not combined. No arrivals, actual bus positions, temporary boarding points, accounts, or payments are implemented. Do not use it for live travel advice.
+## Deployment and freshness
 
-## Data and provenance
+`.github/workflows/pages.yml` installs dependencies, checks types, runs tests, retrieves agency feeds, builds the app, and publishes `dist/` to GitHub Pages. Pushes to `main`, manual runs, and a five-minute schedule trigger deployment. Pull requests run checks and build without publishing or retrieving external data. Pages must use **GitHub Actions** as its source.
 
-`dist/data/route9-data.json` bundles SEPTA Route 9 GTFS shapes and ordered stops, legacy alert messages, v2 detour records, and v2 KML. Exact source URLs, capture times, raw text, warnings, selected trip IDs, feed version, and candidate-path provenance are in the fixture. It uses `[latitude, longitude]`, not GeoJSON ordering.
+GitHub scheduled runs can be delayed; this is not a guaranteed five-minute data service. The browser checks the published JSON every minute. Freshness uses the upstream retrieval timestamp, never the browser's fetch time. Data older than 15 minutes cannot confirm current stop impact. A failed source is published as incomplete; the collector does not relabel an old successful result as fresh. Check the Actions tab if the feed becomes stale. A production service should use a monitored collector with dependable scheduling.
 
-Two full-length weekday patterns are represented. Other short-trip variants are documented in `metadata.variantSummary` but are not rendered. No downloaded ZIP or credentials are published.
+`public/data/current-alerts.json` and `dist/` are generated and ignored by Git. Relative asset URLs support the `/route9DetourMap/` Pages path. `.openai/hosting.json` is historical metadata for the original preview and is not used in deployment.
 
-The sinkhole candidate connects vertices 0 and 11 of the northbound baseline through the published 4th/Spruce and 9th/Spruce intersections. It is an interpretation, not field validation. No skipped stops are inferred from it. Original KML remains available for comparison.
+## Project structure
 
-`conflicts` preserves all source problems. `timingConflicts` excludes geometry-only warnings so a route geometry problem cannot be mislabeled a date problem. All-day 00:00–23:59:59 source windows are normalized to the half-open minute interval 00:00–24:00. Recurring conflicts remain unresolved.
+- `src/App.tsx`, `src/components/`, `src/styles.css`: journey selection, status, source details, and map UI.
+- `src/hooks/useTransitData.ts`: independent route loading, cancellation, and current-feed polling.
+- `src/domain/`: pure stop-impact and Philadelphia time rules, with consequential edge-case tests.
+- `src/data/`: upstream collection, normalization, runtime validation, recorded snapshot adapter, and fixture tests.
+- `public/data/route9-snapshot.json`: recorded baseline and alerts, with original provenance and source warnings.
 
-Public access does not establish unrestricted commercial reuse. Clarify SEPTA feed terms before monetization. Map tiles use OpenStreetMap with visible attribution; production use needs a suitable tile-service plan/policy review. Leaflet 1.9.4 and its license are bundled under `dist/vendor`. Fonts are optional Google Fonts with local fallbacks.
+Keep policy decisions in the domain layer, source-specific interpretation in the data layer, and display logic in components. Add a regression test for changes that could incorrectly declare a stop usable or recommend boarding.
 
-## Next validation step
+## Data and interpretation
 
-Test with five Route 9 riders first. Show the original alert, ask them to explain the route change, then repeat using this prototype. Record completion time, mistaken direction/time assumptions, whether they recognize uncertain boarding information, and which view they prefer. Do not claim boarding accuracy from usability results.
+The collector combines SEPTA's [detour feed](https://www3.septa.org/api/v2/detours/?route=9), [legacy service notices](https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9), and directional KML. Legacy notices are collected in Actions because that endpoint does not permit browser cross-origin access. Matching records with materially conflicting text or schedules remain unresolved. The published feed is validated before rendering.
 
-Before live use: confirm a sample of detours and temporary stops with agency information or field observation; implement a server-side refresh/cache with source-age indicators; handle all relevant overlapping alerts and trip variants; add a review process for contradictions. Then test a small live route cohort before expanding or charging.
+The baseline represents two full-length Route 9 GTFS patterns, valid September 27, 2026 through February 20, 2027. Short trips and other variants are not represented. Replace the baseline with a reviewed GTFS snapshot when service changes; after its validity window the app cannot confirm stop status.
 
-## Implementation
+An explicit skipped-stop entry can establish that a stop is affected. A partial list cannot establish that unlisted stops are served. Missing stop lists, conflicting schedules, incomplete feeds, and stale data cannot produce an all-clear result. Unverified paths remain marked, and separate overlapping paths are not merged into a supposedly verified route.
 
-Static HTML/CSS/JavaScript + Leaflet. `dist/logic.js` contains the deterministic time/direction/uncertainty logic; `tests/logic.test.mjs` covers the consequential edge cases. `dist/app.js` renders the map and controls. Optional WebMCP exposes the same replay controls when supported by the browser.
+The current legacy notice explicitly closes northbound Schuylkill Av & JFK Blvd (stop 30576). It describes replacement boarding only as an area on Schuylkill between Walnut and Chestnut. The UI quotes that instruction with its source; it does not invent a replacement stop ID, map pin, or walking route. An exact alternative requires separate agency evidence and must pass every applicable alert check.
+
+Recorded-example mode uses the October 7, 2026 snapshot and a Philadelphia-time replay control. It is clearly historical and never supplies live alternative-boarding guidance. Candidate paths in that snapshot are interpretations, not field observations.
+
+## Validation
+
+Automated tests cover alert overlap, partial stop lists, stale/incomplete data, source contradictions, malformed feeds, direction, DST and overnight windows, and restrictions on alternative boarding. For a browser smoke test:
+
+1. Refresh agency data and choose northbound Schuylkill Av & JFK Blvd. While the explicit closure remains current, expect affected plus area-only agency instructions.
+2. Choose a different stop or direction. Missing stop coverage must remain unconfirmed.
+3. Open the relevant alerts and original sources; all applicable alerts should be available together.
+4. Switch to the recorded example and change the Philadelphia time; the historical label must remain visible.
+5. Inspect the map, select a stop, and try Full route / Near stop. Check phone-width layout.
+6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
+
+The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
+
+No arrivals, bus tracking, accounts, payments, automatic GTFS refresh, or field verification are implemented. Public feed access does not establish commercial reuse rights. Maps include OpenStreetMap attribution; review data and tile-service terms before scaling or monetization. Leaflet's license is included in its npm package.

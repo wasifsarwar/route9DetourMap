@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: read
@@ -18,6 +20,7 @@ jobs:
   validate:
     name: Validate site
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pages: read
@@ -28,10 +31,18 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Check JavaScript syntax
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Check TypeScript
         run: npm run check
-      - name: Test replay logic and fixtures
+      - name: Test data handling and stop impact
         run: npm test
+      - name: Retrieve current agency feeds
+        if: github.event_name != 'pull_request'
+        run: npm run refresh:data
+      - name: Build application
+        run: npm run build
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
