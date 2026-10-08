@@ -6,68 +6,70 @@
   overflow: hidden;
   background: #fff;
   border: 1px solid #dce3ee;
-  border-radius: 20px;
+  border-radius: 16px;
   color: #182c4c;
 }
 
-.route-map__toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-}
-
-.route-map__selection { display: flex; align-items: center; gap: 10px; min-width: 0; font-size: 12px; color: #65738a; }
-.route-map__selection strong { display: block; margin-top: 3px; color: #182c4c; font-size: 14px; line-height: 1.4; }
-.route-map__selection-dot { width: 12px; height: 12px; background: #182c4c; border: 3px solid #dce3ee; border-radius: 50%; flex-shrink: 0; box-sizing: content-box; }
+.route-map__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; }
+.route-map__toolbar h2 { margin: 0; font-size: 16px; font-weight: 700; }
 .route-map__controls { display: flex; gap: 6px; flex-shrink: 0; }
-.route-map__controls button { min-height: 40px; padding: 8px 12px; color: #182c4c; font: inherit; font-size: 12px; font-weight: 650; border: 1px solid #dce3ee; border-radius: 9px; background: #f6f8fc; cursor: pointer; }
+.route-map__controls button { min-height: 36px; padding: 7px 10px; color: #182c4c; font: inherit; font-size: 12px; font-weight: 650; border: 1px solid #dce3ee; border-radius: 7px; background: #f6f8fc; cursor: pointer; }
 .route-map__controls button:hover { background: #eaf0fa; border-color: #a2b7d8; }
 .route-map__controls button:focus-visible, .route-map .leaflet-interactive:focus-visible { outline: 3px solid #3769c5; outline-offset: 3px; }
-.route-map__canvas-wrap { position: relative; flex: 1; min-height: 300px; }
+
+.route-map .detour-inspector { padding: 0 18px 10px; }
+.route-map .detour-inspector__select { display: flex; align-items: center; gap: 8px; }
+.route-map .detour-inspector label { font-size: 12px; margin: 0 2px 0 0; flex-shrink: 0; }
+.route-map .detour-inspector__select select { flex: 1; min-width: 0; font-size: 13px; min-height: 38px; padding: 7px 9px; }
+.route-map .detour-inspector__select button { padding: 8px 11px; font-size: 12px; min-height: 38px; flex-shrink: 0; }
+.route-map__notice { margin: 8px 0 0; color: #71532f; font-size: 12px; line-height: 1.45; }
+
+.route-map__canvas-wrap { position: relative; flex: 1; min-height: 320px; }
 .route-map__canvas { position: absolute; inset: 0; height: 100%; width: 100%; background: #eef1f5; z-index: 0; }
 .route-map__tile-error { position: absolute; bottom: 20px; left: 12px; right: 12px; z-index: 450; width: fit-content; max-width: calc(100% - 24px); padding: 10px 14px; margin: 0; background: #fff8e9; border: 1px solid #e8caa1; border-radius: 10px; color: #715128; font-size: 12px; line-height: 1.5; box-sizing: border-box; }
-.route-map__footer { padding: 16px 20px; }
-.route-map__legend { display: flex; gap: 12px 20px; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; font-size: 12px; font-weight: 600; }
-.route-map__legend li { display: flex; align-items: center; gap: 7px; }
-.route-map__line { display: inline-block; width: 22px; border-top: 3px solid; }
+.route-map__footer { padding: 12px 18px 0; }
+.route-map__legend { display: flex; gap: 9px 16px; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; font-size: 11px; font-weight: 600; }
+.route-map__legend li { display: flex; align-items: center; gap: 6px; }
+.route-map__line { display: inline-block; width: 21px; border-top: 3px solid; }
 .route-map__line--normal { border-color: #3769c5; }
 .route-map__line--reported { border-color: #dd661c; }
-.route-map__line--uncertain { border-color: #dd661c; border-top-style: dashed; opacity: .75; }
-.route-map__line--unverified { border-color: #dd661c; border-top-style: dotted; opacity: .65; }
-.route-map__footer p { margin: 12px 0 0; color: #65738a; font-size: 12px; line-height: 1.5; }
+.route-map__footer p { margin: 10px 0 0; color: #65738a; font-size: 12px; line-height: 1.55; }
+.route-map__footer .route-map__marker-key { margin-top: 7px; font-size: 11px; }
+.route-map__details { margin-top: 10px; border-top: 1px solid #e8edf4; }
+.route-map__details > summary { padding: 11px 0; color: #4e6380; font-size: 12px; font-weight: 650; cursor: pointer; }
+.route-map__details-content { padding: 0 0 15px; }
+.route-map__issues { margin: 9px 0 0; padding-left: 18px; color: #71532f; font-size: 12px; line-height: 1.55; }
+.route-map__issues li + li { margin-top: 5px; }
+.route-map .path-view { display: flex; gap: 6px; }
+.route-map .path-view button { padding: 8px 12px; font-size: 12px; }
+.route-map .path-view button[aria-pressed='true'] { background: #fff0df; border-color: #d89563; }
+.route-map .bypassed-stops { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e8edf4; font-size: 12px; }
+.route-map .bypassed-stops p { margin-top: 5px; }
+.route-map .bypassed-stops ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 9px 0 0; }
+.route-map .bypassed-stops button { padding: 7px 9px; font-size: 12px; text-align: left; }
+
 .route-map .leaflet-tooltip { font-family: inherit; font-size: 12px; max-width: 240px; white-space: normal; color: #182c4c; border-radius: 7px; padding: 8px 10px; }
 .route-map .leaflet-control-attribution { font-size: 9px; }
-
-@media (max-width: 600px) {
-  .route-map__toolbar { align-items: flex-start; flex-direction: column; padding: 14px; gap: 10px; }
-  .route-map__controls { width: 100%; }
-  .route-map__controls button { flex: 1; min-height: 44px; }
-  .route-map__canvas-wrap { min-height: 380px; }
-  .route-map__footer { padding: 14px; }
-}
-.detour-inspector { padding: 0 20px 16px; }
-.detour-inspector label { display: block; font-size: 12px; margin-bottom: 6px; }
-.detour-inspector__select { display: flex; gap: 8px; }
-.detour-inspector__select select { flex: 1; font-size: 14px; min-height: 40px; }
-.detour-inspector__select button { padding: 8px 12px; font-size: 13px; flex-shrink: 0; }
-.path-view { display: flex; gap: 6px; margin-top: 10px; }
-.path-view button { padding: 8px 12px; font-size: 12px; }
-.path-view button[aria-pressed='true'] { background: #fff0df; border-color: #d89563; }
-.path-explanation { margin-top: 9px; color: #586c85; font-size: 12px; line-height: 1.5; }
 .route-stop { display: grid; place-items: center; background: #fff; color: #3769c5; border: 2px solid #3769c5; border-radius: 5px; font-size: 17px; font-weight: 800; line-height: 1; box-shadow: 0 1px 3px #182c4c30; }
 .route-stop--skipped { color: #a13c18; border-color: #a13c18; background: #ffe9dd; }
 .route-stop--inferred { color: #6b572e; border-color: #9c854f; background: #fff5d9; border-style: dashed; font-size: 13px; }
 .route-stop--selected { outline: 3px solid #182c4c; outline-offset: 3px; z-index: 1000; }
 .route-stop--replacement { color: white; background: #147464; border-color: white; }
 .route-stop:focus-visible { outline: 3px solid #182c4c; outline-offset: 3px; }
-.legend-path-dot { width: 8px; height: 8px; border: 2px solid #dd661c; border-radius: 50%; }
 .legend-stop { display: inline-grid; place-items: center; width: 17px; height: 17px; color: #3769c5; border: 2px solid; border-radius: 3px; font-size: 14px; }
 .legend-stop--skipped { color: #a13c18; background: #ffe9dd; }
 .legend-stop--inferred { color: #6b572e; border-style: dashed; background: #fff5d9; }
-.bypassed-stops { margin-top: 17px; padding-top: 15px; border-top: 1px solid #dce3ee; font-size: 13px; }
-.bypassed-stops p { margin-top: 6px; }
-.bypassed-stops ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 10px 0 0; }
-.bypassed-stops button { padding: 7px 9px; font-size: 12px; text-align: left; }
-@media (max-width: 600px) { .detour-inspector { padding: 0 14px 14px; } .path-view button { flex: 1; } }
+
+@media (max-width: 600px) {
+  .route-map__toolbar { padding: 10px 14px; gap: 8px; }
+  .route-map__toolbar h2 { font-size: 15px; }
+  .route-map__controls button { min-height: 42px; padding: 8px 9px; }
+  .route-map .detour-inspector { padding: 0 14px 10px; }
+  .route-map .detour-inspector__select { gap: 6px; }
+  .route-map .detour-inspector__select select, .route-map .detour-inspector__select button { min-height: 42px; }
+  .route-map .detour-inspector__select button { padding: 8px; }
+  .route-map__canvas-wrap { min-height: 420px; }
+  .route-map__footer { padding: 11px 14px 0; }
+  .route-map__legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 10px; }
+  .route-map .path-view button { flex: 1; }
+}

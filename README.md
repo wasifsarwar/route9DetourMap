@@ -4,6 +4,8 @@
 
 Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
+The default screen shows two choices, a short stop-status result, and the map. **More details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+
 ## Stack
 
 React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions; GitHub Pages serves the built app and same-origin JSON. There is no API key or application server. Dependencies are pinned by `package-lock.json`.
@@ -70,10 +72,10 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 1. Refresh agency data and choose northbound Schuylkill Av & JFK Blvd. While the explicit closure remains current, expect affected plus area-only agency instructions.
 2. Choose a different stop or direction. Missing stop coverage must remain unconfirmed.
 3. Open the relevant alerts and original sources; all applicable alerts should be available together.
-4. Switch to the recorded example and change the Philadelphia time; the historical label must remain visible.
+4. Open **More details → Try a recorded example**, switch modes, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
 5. Inspect the map, select a stop, and try Full route / Near stop. Check phone-width layout.
 6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
-7. Inspect Sink Hole, choose View detour, and compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
+7. Inspect Sink Hole, choose View detour, and open **Map details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
 
 The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
 

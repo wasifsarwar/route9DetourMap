@@ -44,6 +44,10 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
   const useTrace = !!trace?.path.length && (pathView === 'directions' || trace.kind === 'agency');
   const inferredStops = useTrace ? trace?.possiblyBypassedStopIds ?? [] : [];
   const bypassedStops = direction.stops.filter((item) => inferredStops.includes(item.id));
+  const mapNotice = focused ? [
+    interpreted || focused.alert.geometryIssues.length || focused.alert.sourceIssues.length ? 'Detour path unconfirmed' : '',
+    focused.timing === 'uncertain' ? 'Timing unconfirmed' : '',
+  ].filter(Boolean).join(' · ') : '';
 
   useEffect(() => {
     if (!container.current) return;
@@ -159,24 +163,17 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
 
   return <section ref={section} className="route-map" aria-label="Route map and reported detours">
     <div className="route-map__toolbar">
-      <div className="route-map__selection"><span className="route-map__selection-dot" aria-hidden="true" /><span>Your stop <strong>{stop.name}</strong></span></div>
+      <h2>Route map</h2>
       <div className="route-map__controls">
         <button onClick={() => map.current?.setView([stop.lat, stop.lon], 15, { animate: false })}>Near stop</button>
         <button onClick={showFullRoute}>Full route</button>
       </div>
     </div>
     {focused && <div className="detour-inspector">
-      <label htmlFor="map-detour">Detour to inspect</label>
-      <div className="detour-inspector__select"><select id="map-detour" value={focused.alert.id} onChange={(event) => onInspectAlert(event.target.value)}>
+      <div className="detour-inspector__select"><label htmlFor="map-detour">Detour</label><select id="map-detour" value={focused.alert.id} onChange={(event) => onInspectAlert(event.target.value)}>
         {mappedAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
       </select><button onClick={() => onInspectAlert(focused.alert.id)}>View detour</button></div>
-      {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
-        <button aria-pressed={pathView === 'directions'} onClick={() => setPathView('directions')}>Written directions</button>
-        <button aria-pressed={pathView === 'agency'} onClick={() => setPathView('agency')}>Agency geometry</button>
-      </div>}
-      <p className="path-explanation">{interpreted ? 'Illustration of the written turns. The agency map disagrees, so this is not a verified bus trace.'
-        : focused.alert.geometryIssues.length ? 'The agency’s published path needs review; its points do not establish boarding locations.' : 'Agency-reported path. Route dots show the path, not bus stops.'}
-        {focused.timing === 'uncertain' ? ' When this applies is also unconfirmed.' : ''}</p>
+      {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
     </div>}
     <div className="route-map__canvas-wrap">
       <div ref={container} className="route-map__canvas" aria-label={`Map of ${direction.headsign}; selected stop ${stop.name}`} />
@@ -185,17 +182,32 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">
         <li><span className="route-map__line route-map__line--normal" aria-hidden="true" />Normal route</li>
-        <li><span className="route-map__line route-map__line--reported" aria-hidden="true" />{interpreted ? 'Interpreted detour' : 'Reported detour'}</li>
-        <li><span className="legend-path-dot" aria-hidden="true" />Path dot · not a stop</li>
-        <li><span className="legend-stop" aria-hidden="true">▪</span>Scheduled stop</li>
-        <li><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped stop</li>
-        <li><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Possible bypass · unconfirmed</li>
+        <li><span className="route-map__line route-map__line--reported" aria-hidden="true" />Detour</li>
+        <li><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Unconfirmed stop</li>
+        <li><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</li>
       </ul>
-      {bypassedStops.length > 0 && <div className="bypassed-stops"><strong>Stops on the illustrated bypassed section</strong>
-        <p>These may be skipped. The agency has not confirmed closures or replacement locations for this section.</p>
-        <ul>{bypassedStops.map((item) => <li key={item.id}><button onClick={() => onSelectStop(item.id)}>{item.name}</button></li>)}</ul>
-      </div>}
-      <p>Stop markers keep their real locations. {assessment.alternative ? 'The green marker identifies the agency-confirmed replacement.' : 'No exact replacement boarding point has been confirmed for this check.'}</p>
+      <p className="route-map__marker-key">Dots trace the route. Squares are stops.</p>
+      <details className="route-map__details">
+        <summary>Map details</summary>
+        <div className="route-map__details-content">
+          {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
+            <button aria-pressed={pathView === 'directions'} onClick={() => setPathView('directions')}>Written directions</button>
+            <button aria-pressed={pathView === 'agency'} onClick={() => setPathView('agency')}>Agency geometry</button>
+          </div>}
+          {focused && <p className="path-explanation">{interpreted ? 'The illustrated path follows the written turns. The agency map disagrees, so this is not a verified bus trace.'
+            : focused.alert.geometryIssues.length ? 'The agency’s published path needs review; its points do not establish boarding locations.' : 'This path comes from the agency. It does not establish where passengers can board.'}
+            {focused.timing === 'uncertain' ? ' When this applies is also unconfirmed.' : ''}</p>}
+          {focused && [...focused.alert.geometryIssues, ...focused.alert.sourceIssues].length > 0 && <ul className="route-map__issues">
+            {[...focused.alert.geometryIssues, ...focused.alert.sourceIssues].map((issue, index) => <li key={`${index}-${issue}`}>{issue}</li>)}
+          </ul>}
+          <p>Blue squares are scheduled stops; the dark outline marks your selection. A question mark means the illustrated path may bypass that stop, but its closure is unconfirmed. A cross means an agency notice lists it as skipped; select it to check current impact.</p>
+          {bypassedStops.length > 0 && <div className="bypassed-stops"><strong>Possibly bypassed stops</strong>
+            <p>The agency has not confirmed closures or replacement locations for this section.</p>
+            <ul>{bypassedStops.map((item) => <li key={item.id}><button onClick={() => onSelectStop(item.id)}>{item.name}</button></li>)}</ul>
+          </div>}
+          <p>Stop markers keep their real locations. {assessment.alternative ? 'The green marker identifies the agency-confirmed replacement.' : 'No exact replacement boarding point has been confirmed for this check.'}</p>
+        </div>
+      </details>
     </div>
   </section>;
 }
