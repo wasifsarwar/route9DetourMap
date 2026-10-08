@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reroute — Route 9 pilot</title>
+  <meta name="description" content="Explore SEPTA Route 9 detours, route changes and skipped stops in a recorded-data prototype.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23182c4c'/%3E%3Cpath d='M9 25V9h14v14H16V15' stroke='%236be3b1' stroke-width='4' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./vendor/leaflet.css"><link rel="stylesheet" href="./style.css">
+  <script src="./vendor/leaflet.js" defer></script><script src="./app.js" type="module"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./" aria-label="Reroute home"><span class="brand-symbol" aria-hidden="true">↳</span>reroute<span class="city">PHILADELPHIA</span></a><span class="pilot-badge">Route 9 pilot</span></header>
+  <div class="replay-banner"><span class="replay-label">RECORDED DATA</span><span>Explore October 2026 detours. This is a test, not live travel advice.</span></div>
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Detour controls and results">
+      <section class="route-heading"><span class="route-number">9</span><div><p class="eyebrow">SEPTA BUS</p><h1>See where it changes.</h1><p class="route-subtitle">Andorra · Center City</p></div></section>
+      <section class="controls">
+        <label for="detour-select">Choose a detour</label><select id="detour-select" disabled><option>Loading recorded alerts…</option></select>
+        <label for="direction-select">Your direction</label><select id="direction-select" disabled></select>
+        <label for="replay-time">Replay date & time <span class="label-meta">Philadelphia</span></label><input id="replay-time" type="datetime-local" value="2026-10-07T21:54">
+        <div class="time-presets" aria-label="Replay presets"><button data-preset="before">Before</button><button data-preset="during">During</button><button data-preset="after">After</button></div>
+      </section>
+      <section id="result" class="result" aria-live="polite"><p>Loading the route and recorded detours…</p></section>
+      <div id="path-control" hidden><label for="path-select">Compare mapped paths</label><select id="path-select"><option value="candidate">Text interpretation · unverified</option><option value="agency">Agency-published path</option></select></div>
+      <section class="stops-section"><div class="section-heading"><h2 id="stops-heading">Stop changes</h2><span id="stop-count" class="count"></span></div><p id="stops-note" class="muted"></p><div id="stop-list"></div></section>
+      <details class="source-details"><summary>Original alert & sources</summary><div id="source-content"></div></details>
+      <details class="test-details"><summary>Try the prototype</summary><ol><li>Select Sink Hole and its affected direction.</li><li>Compare Before, During, and After. The detour line should appear only during its date window.</li><li>Compare the interpreted path with the agency map.</li><li>Switch direction. The detour should stop affecting your route.</li><li>Select PECO to see conflicting dates, or Bridge Construction to inspect its listed stops.</li></ol><p>Only the selected alert is replayed. Other detours are not combined. Temporary boarding locations and arrival predictions are not included.</p></details>
+      <footer class="sidebar-footer">Independent prototype · Not affiliated with SEPTA</footer>
+    </aside>
+    <section class="map-panel" aria-label="Route map">
+      <div id="map" role="region" aria-label="Interactive map of the selected route and detour"></div>
+      <div class="map-toolbar"><div><span class="eyebrow">ROUTE 9 / SINGLE DETOUR REPLAY</span><strong id="map-title">Loading route…</strong></div><button id="fit-map" class="fit-button" aria-label="Fit selected detour on map">Fit view</button></div>
+      <div id="tile-warning" class="tile-warning" hidden>Street tiles are unavailable. Route lines and stop locations are still shown.</div>
+      <div class="map-bottom"><div class="legend" aria-label="Map legend"><span><i class="line normal"></i>Normal route</span><span><i class="line detour"></i><span id="detour-legend">Detour</span></span><span><i class="cross">×</i><span id="skipped-legend">Skipped stop</span></span></div><p id="map-note">Recorded agency data · No live bus positions</p></div>
+    </section>
+  </main>
+  <noscript><p class="fatal">Enable JavaScript to use the interactive map.</p></noscript>
+</body>
+</html>
