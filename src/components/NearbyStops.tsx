@@ -12,12 +12,15 @@ export function NearbyStops({ route, direction, feed, now, onSelect }: {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const request = useRef(0);
-  useEffect(() => () => { request.current++; }, []);
+  const controller = useRef<AbortController | null>(null);
+  useEffect(() => () => { request.current++; controller.current?.abort(); }, []);
   async function locate() {
     const id = ++request.current;
+    controller.current?.abort();
+    controller.current = new AbortController();
     setLoading(true); setError(''); setFix(null);
     try {
-      const result = await requestLocation(navigator.geolocation);
+      const result = await requestLocation(navigator.geolocation, controller.current.signal);
       if (id !== request.current) return;
       if (!validFix(result, Date.now())) throw new Error('Location is too imprecise or out of date. Try again or search for your stop.');
       setFix(result);
@@ -28,7 +31,7 @@ export function NearbyStops({ route, direction, feed, now, onSelect }: {
   const locationTime = Math.max(now.getTime(), Date.now());
   const expired = fix && !validFix(fix, locationTime);
   const matches = fix ? nearbyStops(direction.stops, fix, locationTime) : [];
-  function clear() { request.current++; setLoading(false); setFix(null); setError(''); }
+  function clear() { request.current++; controller.current?.abort(); setLoading(false); setFix(null); setError(''); }
   return <div className="nearby-stops">
     <div className="nearby-stops__actions"><button onClick={() => { void locate(); }} disabled={loading}><Icon name="pin" />{loading ? 'Finding you…' : fix ? 'Update location' : 'Near me'}</button>
       {(fix || error || loading) && <button onClick={clear}>{loading ? 'Cancel' : 'Clear'}</button>}</div>
@@ -38,7 +41,7 @@ export function NearbyStops({ route, direction, feed, now, onSelect }: {
       {fix && !expired && <>
         <p>Near you toward {direction.headsign}. Approximate straight-line distances.</p>
         {fix.accuracy > 100 && <p>Location is approximate (within about {Math.round(fix.accuracy)} m). Stop order may vary.</p>}
-        {!matches.length && <p>No Route 9 stops within a mile. Try searching by street.</p>}
+        {!matches.length && <p>No Route 9 stops within a mile of your location. This app covers Philadelphia’s Route 9. You can explore it using stop search.</p>}
       </>}
     </div>
     {fix && !expired && matches.length > 0 && <ul aria-label="Nearby stops">{matches.map(({ stop, meters }) => {

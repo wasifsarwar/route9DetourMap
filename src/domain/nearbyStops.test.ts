@@ -25,3 +25,9 @@ describe('nearby stops', () => {
     expect(distanceLabel(1609.344)).toBe('1.0 mi');
   });
 });
+
+it('treats a Washington location as outside coverage, not a location failure', () => {
+  const washington = { lat: 47.4, lon: -122.2, accuracy: 50, timestamp: now };
+  expect(validFix(washington, now)).toBe(true);
+  expect(nearbyStops([stop('Philadelphia stop', 0)], washington, now)).toEqual([]);
+});
