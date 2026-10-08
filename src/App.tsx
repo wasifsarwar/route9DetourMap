@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTransitData } from './hooks/useTransitData';
+import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
 import { parseWallTime } from './domain/time';
 import type { DirectionId } from './domain/types';
@@ -21,8 +22,7 @@ function ageText(fetchedAt: string, now: Date) {
 
 export default function App() {
   const { snapshot, liveFeed, loading, refreshError, routeError, refresh } = useTransitData();
-  const [directionId, setDirectionId] = useState<DirectionId>('1');
-  const [stopId, setStopId] = useState('30576');
+  const { direction, stop, selectDirection, selectStop } = useSavedJourney(snapshot?.route);
   const [mode, setMode] = useState<'current' | 'replay'>('current');
   const [replayTime, setReplayTime] = useState('2026-10-07T21:54');
   const [clock, setClock] = useState(() => new Date());
@@ -40,8 +40,6 @@ export default function App() {
   useEffect(() => { setClock(new Date()); }, [liveFeed]);
 
   const route = snapshot?.route;
-  const direction = route?.directions.find((item) => item.id === directionId) ?? route?.directions[0];
-  const stop = direction?.stops.find((item) => item.id === stopId) ?? direction?.stops[0];
   const feed = mode === 'replay' ? snapshot?.feed : liveFeed ?? snapshot?.feed;
   const time = useMemo(() => {
     if (mode === 'current') return { now: clock, error: null };
@@ -52,11 +50,6 @@ export default function App() {
     route, feed, directionId: direction.id, stopId: stop.id, now: time.now, maxAgeMs: MAX_AGE_MS, replay: mode === 'replay', boarding: [],
   }) : null, [route, direction, stop, feed, time.now, mode]);
 
-  function changeDirection(value: DirectionId) {
-    setDirectionId(value);
-    const next = route?.directions.find((item) => item.id === value);
-    setStopId(next?.stops.find((item) => item.id === '30576')?.id ?? next?.stops[0]?.id ?? '');
-  }
   const waitingForCurrent = mode === 'current' && loading && !liveFeed;
   const historicalFallback = mode === 'current' && feed?.mode === 'snapshot';
   const fresh = mode === 'current' && assessment?.fresh && !historicalFallback;
@@ -84,8 +77,8 @@ export default function App() {
         <div className="journey-main">
           <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
           <div className="journey-fields">
-            <label htmlFor="direction">Going toward</label><select id="direction" value={direction.id} onChange={(event) => changeDirection(event.target.value as DirectionId)}>{route.directions.map((item) => <option value={item.id} key={item.id}>{item.headsign} ({item.label.toLowerCase()})</option>)}</select>
-            <label htmlFor="stop">Your stop</label><select id="stop" value={stop.id} onChange={(event) => setStopId(event.target.value)}>{direction.stops.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
+            <label htmlFor="direction">Going toward</label><select id="direction" value={direction.id} onChange={(event) => selectDirection(event.target.value as DirectionId)}>{route.directions.map((item) => <option value={item.id} key={item.id}>{item.headsign} ({item.label.toLowerCase()})</option>)}</select>
+            <label htmlFor="stop">Your stop</label><select id="stop" value={stop.id} onChange={(event) => selectStop(event.target.value)}>{direction.stops.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
           </div>
           {time.error ? <p className="inline-error" role="alert">{time.error}</p> : <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
         </div>
@@ -99,7 +92,7 @@ export default function App() {
               <AlertDetails items={assessment.relevantAlerts} onInspectAlert={inspectAlert} />
             </>}
             <details className="sources-panel"><summary>Sources & update times</summary>
-              <p>Agency data was retrieved {easternTime.format(new Date(feed.fetchedAt))}. The app checks for a newly published feed every minute.</p>
+              <p>Agency data was retrieved {easternTime.format(new Date(feed.fetchedAt))}. The app checks every minute while open and refreshes when you return.</p>
               <p>Collection is scheduled every five minutes, but updates can be delayed. After 15 minutes, current stop impact is shown as unconfirmed.</p>
               {refreshError && mode === 'current' && <p className="source-error">The latest update could not be loaded. {refreshError}</p>}
               <ul>{feed.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.name}</a> · {source.ok ? 'Retrieved' : 'Unavailable'}{source.error && <span> — {source.error}</span>}</li>)}</ul>
@@ -117,7 +110,7 @@ export default function App() {
         </div>
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
-        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={setStopId}
+        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>

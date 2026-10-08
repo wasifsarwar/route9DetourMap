@@ -1,0 +1,80 @@
+name: Refresh SEPTA data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/**'
+      - 'src/domain/**'
+      - 'public/data/route9-snapshot.json'
+      - 'package*.json'
+      - '.github/workflows/refresh-data.yml'
+  workflow_dispatch:
+  schedule:
+    # Avoid the top of the hour; GitHub may still delay scheduled runs.
+    - cron: '2-57/5 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: route9-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Collect and publish current alerts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install collector dependencies
+        run: npm ci
+      - name: Check collector and stop-impact rules
+        run: |
+          npm run check
+          npm test
+      - name: Collect and validate agency feeds
+        run: npm run refresh:data
+      - name: Publish data independently of the website
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs/promises');
+            const content = await fs.readFile('public/data/current-alerts.json', 'utf8');
+            const feed = JSON.parse(content);
+            const { owner, repo } = context.repo;
+            let parent;
+            try {
+              const result = await github.rest.git.getRef({ owner, repo, ref: 'heads/live-data' });
+              parent = result.data.object.sha;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+            // This dedicated branch contains only public, normalized agency data.
+            const tree = await github.rest.git.createTree({ owner, repo, tree: [
+              { path: 'current-alerts.json', mode: '100644', type: 'blob', content }
+            ] });
+            const commit = await github.rest.git.createCommit({
+              owner, repo, tree: tree.data.sha, parents: parent ? [parent] : [],
+              message: `Refresh SEPTA data ${feed.collectedAt}`
+            });
+            if (parent) {
+              await github.rest.git.updateRef({ owner, repo, ref: 'heads/live-data', sha: commit.data.sha, force: false });
+            } else {
+              await github.rest.git.createRef({ owner, repo, ref: 'refs/heads/live-data', sha: commit.data.sha });
+            }
+            await core.summary.addHeading('SEPTA collection').addTable([
+              [{ data: 'Source', header: true }, { data: 'Result', header: true }],
+              ...feed.sources.map(source => [source.name, source.ok ? 'Retrieved' : 'Unavailable'])
+            ]).addRaw(`\nCollected: ${feed.collectedAt}. Alerts: ${feed.alerts.length}.\n`).write();
+            // Publish incomplete states before failing the job so the app sees the failure too.
+            if (!feed.complete || feed.sources.some(source => !source.ok)) {
+              core.setFailed('Incomplete SEPTA data was published. Inspect the collection log for unavailable sources.');
+            }

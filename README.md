@@ -4,11 +4,11 @@
 
 Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
-The default screen shows two choices, a short stop-status result, and the map. **More details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+The default screen shows two choices, a short stop-status result, and the map. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **More details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
 
 ## Stack
 
-React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions; GitHub Pages serves the built app and same-origin JSON. There is no API key or application server. Dependencies are pinned by `package-lock.json`.
+React 19, strict TypeScript, Vite, Leaflet, and Vitest. A Node.js collector retrieves public SEPTA data in GitHub Actions. GitHub Pages serves the app; a separate `live-data` branch publishes current JSON without rebuilding the website. There is no API key or application server. Dependencies are pinned by `package-lock.json`.
 
 ## Local development
 
@@ -33,16 +33,20 @@ npm run preview
 
 ## Deployment and freshness
 
-`.github/workflows/pages.yml` installs dependencies, checks types, runs tests, retrieves agency feeds, builds the app, and publishes `dist/` to GitHub Pages. Pushes to `main`, manual runs, and a five-minute schedule trigger deployment. Pull requests run checks and build without publishing or retrieving external data. Pages must use **GitHub Actions** as its source.
+`.github/workflows/pages.yml` installs dependencies, checks types, runs tests, retrieves a fallback feed, builds the app, and publishes `dist/` to GitHub Pages. Pushes to `main` and manual runs trigger deployment. Pull requests run checks and build without publishing or retrieving external data. Pages must use **GitHub Actions** as its source.
 
-GitHub scheduled runs can be delayed; this is not a guaranteed five-minute data service. The browser checks the published JSON every minute. Freshness uses the upstream retrieval timestamp, never the browser's fetch time. Data older than 15 minutes cannot confirm current stop impact. A failed source is published as incomplete; the collector does not relabel an old successful result as fresh. Check the Actions tab if the feed becomes stale. A production service should use a monitored collector with dependable scheduling.
+`.github/workflows/refresh-data.yml` independently collects, validates, and publishes alerts to `live-data/current-alerts.json`. It runs on collector changes, manual dispatch, and every five minutes starting at minute 2. It has its own concurrency group and never waits for a Pages deployment. A source failure is published as incomplete before the workflow reports failure, so failures are visible both to riders and in Actions. The branch is dedicated to generated public data; no application code or credentials are published there.
+
+The deployed build sets `VITE_LIVE_FEED_URL` to the public raw GitHub URL. The browser checks it once per minute while visible and online, and immediately when the tab becomes visible or connectivity returns. Requests are single-flight and timeout-bound. If the primary endpoint fails or is stale, the app also checks the dated Pages copy and uses the newest valid publication available, including the one it already holds. A new incomplete publication supersedes an older successful one; missing sources are never silently hidden by an older fallback. The optional `collectedAt` field orders publications, while freshness still uses the original upstream retrieval timestamps. A minute-bucket query parameter avoids reusing an older raw-GitHub CDN object between polling intervals. Local development uses the same-origin feed unless `VITE_LIVE_FEED_URL` is set.
+
+GitHub scheduled runs can be delayed or dropped; this is **not a guaranteed five-minute data service**. Source data older than 15 minutes cannot confirm current stop impact, even if it was just downloaded. Check the **Refresh SEPTA data** workflow and manually dispatch it if needed. These changes remove deployment delays and improve recovery; a service with a freshness SLA would still need a monitored collector outside GitHub's best-effort scheduler.
 
 `public/data/current-alerts.json` and `dist/` are generated and ignored by Git. Relative asset URLs support the `/route9DetourMap/` Pages path. `.openai/hosting.json` is historical metadata for the original preview and is not used in deployment.
 
 ## Project structure
 
 - `src/App.tsx`, `src/components/`, `src/styles.css`: journey selection, status, source details, and map UI.
-- `src/hooks/useTransitData.ts`: independent route loading, cancellation, and current-feed polling.
+- `src/hooks/`: independent route loading, resilient polling, and browser-local journey preferences.
 - `src/domain/`: pure stop-impact and Philadelphia time rules, with consequential edge-case tests.
 - `src/data/`: upstream collection, normalization, runtime validation, recorded snapshot adapter, and fixture tests.
 - `public/data/route9-snapshot.json`: recorded baseline and alerts, with original provenance and source warnings.
@@ -59,7 +63,9 @@ An explicit skipped-stop entry can establish that a stop is affected. A partial 
 
 Alert cards expand direction and turn shorthand into ordered instructions while keeping the unchanged source wording in a separate disclosure. The sinkhole notice shown in Transit and SEPTA's original raw message have the same direction, date, and turns; SEPTA's legacy feed already includes expanded Left/Right wording. Text formatting never resolves conflicting dates or changes stop status.
 
-Use **Detour to inspect → View detour** to compare the path with the normal route. Circular dots follow the displayed path; square stop markers represent physical boarding locations. The reviewed sinkhole illustration follows 4th → Spruce → 9th → Walnut and replaces the bypassed normal segment visually. It is reused only when the current notice matches the reviewed text and direction. **Agency geometry** remains available for comparison with the published loop. Geometric bypass detection marks Walnut/5th, Walnut/7th and Walnut/8th as possibly skipped, without changing their closure assessment or inventing relocated stops. Current feeds contain no exact temporary-stop coordinates; intersection coordinates identify turns, not boarding points.
+The map automatically chooses a relevant alert for the selected stop. A named stop closure takes priority even when no detour geometry is available. Otherwise a nearby, connected illustration may provide visual context; this does not establish that the stop is closed. The automatic viewport stays near the stop. Use **Show → View** to inspect another detour, or **Near stop** to return. Changing stops or direction clears manual inspection.
+
+Circular dots follow the displayed path; square stop markers represent physical boarding locations. The reviewed sinkhole illustration follows 4th → Spruce → 9th → Walnut and replaces the bypassed normal segment visually. It is reused only when the current notice matches the reviewed text and direction. **Agency geometry** remains available for comparison with the published loop. Geometric bypass detection marks Walnut/5th, Walnut/7th and Walnut/8th as possibly skipped, without changing their closure assessment or inventing relocated stops. Current feeds contain no exact temporary-stop coordinates; intersection coordinates identify turns, not boarding points.
 
 The current legacy notice explicitly closes northbound Schuylkill Av & JFK Blvd (stop 30576). It describes replacement boarding only as an area on Schuylkill between Walnut and Chestnut. The UI quotes that instruction with its source; it does not invent a replacement stop ID, map pin, or walking route. An exact alternative requires separate agency evidence and must pass every applicable alert check.
 
@@ -75,7 +81,10 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 4. Open **More details → Try a recorded example**, switch modes, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
 5. Inspect the map, select a stop, and try Full route / Near stop. Check phone-width layout.
 6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
-7. Inspect Sink Hole, choose View detour, and open **Map details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
+7. Choose **Show → Sink Hole → View**, and open **Map details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
+8. Change the direction and stop, then reload. The journey should be restored; recorded-example mode and manual detour inspection should not persist.
+9. Select Schuylkill/JFK, then Walnut/7th. The map should first stay with the reported stop closure and then show the nearby sinkhole path. Inspect a different detour manually, then select another stop to return to automatic focus.
+10. Return to the app after it was hidden or offline. Check that it resumes fetching without overlapping requests and never substitutes browser retrieval time for source age.
 
 The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
 

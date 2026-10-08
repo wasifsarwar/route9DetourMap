@@ -5,7 +5,11 @@ const isRecord = (value: unknown): value is RecordValue => value !== null && typ
 const isText = (value: unknown): value is string => typeof value === 'string';
 const isNonemptyText = (value: unknown): value is string => isText(value) && value.trim().length > 0;
 const isTexts = (value: unknown): value is string[] => Array.isArray(value) && value.every(isText);
-const isTimestamp = (value: unknown): value is string => isText(value) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
+const isTimestamp = (value: unknown): value is string => {
+  if (!isText(value) || !/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.test(value) || !Number.isFinite(Date.parse(value))) return false;
+  // Date.parse silently rolls February 30 into March. Keep every timestamp's written date valid.
+  return new Date(`${value.slice(0, 10)}T00:00:00Z`).toISOString().slice(0, 10) === value.slice(0, 10);
+};
 const isBoundary = (value: unknown): boolean => value === null || isTimestamp(value);
 function isUrl(value: unknown): value is string {
   if (!isText(value)) return false;
@@ -42,6 +46,7 @@ function isAlert(value: unknown): value is DetourAlert {
 /** Treat a malformed deployment as unavailable, so consumers keep their existing safe fallback. */
 export function validateLiveFeed(value: unknown): AlertFeed {
   if (!isRecord(value) || value.routeId !== '9' || value.mode !== 'live' || !isTimestamp(value.fetchedAt)
+    || (value.collectedAt !== undefined && !isTimestamp(value.collectedAt))
     || typeof value.complete !== 'boolean' || !isTexts(value.warnings)
     || !Array.isArray(value.sources) || value.sources.length === 0 || !value.sources.every(isSource)
     || !Array.isArray(value.alerts) || !value.alerts.every(isAlert)) throw new Error('Current alerts failed validation. Please try refreshing again.');

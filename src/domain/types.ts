@@ -65,6 +65,8 @@ export interface AlertFeed {
   routeId: string;
   alerts: DetourAlert[];
   fetchedAt: string;
+  // Publication time orders complete and failed collection attempts; it never establishes source freshness.
+  collectedAt?: string;
   mode: 'live' | 'snapshot';
   complete: boolean;
   sources: FeedSource[];

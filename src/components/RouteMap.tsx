@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
 import { buildDetourTrace, samplePathPoints } from '../domain/mapGeometry';
+import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
 import './RouteMap.css';
 
 interface RouteMapProps {
@@ -35,17 +36,35 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
   const selectStop = useRef(onSelectStop);
   const [tilesUnavailable, setTilesUnavailable] = useState(false);
   const [pathView, setPathView] = useState<'directions' | 'agency'>('directions');
+  const selectionKey = `${direction.id}:${stop.id}`;
+  const [storedInspection, setStoredInspection] = useState<MapInspection>(() => ({
+    selectionKey, request: inspectionRequest, alertId: inspectionRequest ? inspectedAlertId || null : null,
+  }));
+  const inspection = resolveMapInspection(storedInspection, selectionKey, inspectionRequest, inspectedAlertId);
+  useEffect(() => {
+    if (inspection !== storedInspection) setStoredInspection(inspection);
+  }, [inspection, storedInspection]);
+  useEffect(() => { setPathView('directions'); }, [selectionKey]);
   selectStop.current = onSelectStop;
-  const mappedAlerts = assessment.relevantAlerts.filter(({ alert }) => alert.geometry.length || alert.candidateGeometry?.length);
-  const focused = mappedAlerts.find(({ alert }) => alert.id === inspectedAlertId) ?? mappedAlerts[0];
+  const availableAlerts = assessment.relevantAlerts.filter(({ alert, timing }) => timing !== 'inactive' && alert.directionIds.includes(direction.id));
+  const automaticFocus = useMemo(() => getAutomaticMapFocus(direction, stop, assessment.relevantAlerts, reviewedAlerts),
+    [direction, stop, assessment.relevantAlerts, reviewedAlerts]);
+  const manualFocus = availableAlerts.find(({ alert }) => alert.id === inspection.alertId);
+  const focused = manualFocus ?? availableAlerts.find(({ alert }) => alert.id === automaticFocus.alertId);
   const trace = useMemo(() => focused ? buildDetourTrace(direction, focused.alert,
     reviewedAlerts.find((alert) => alert.id === focused.alert.id)) : null, [direction, focused, reviewedAlerts]);
   const interpreted = trace?.kind === 'interpreted' && pathView === 'directions';
   const useTrace = !!trace?.path.length && (pathView === 'directions' || trace.kind === 'agency');
   const inferredStops = useTrace ? trace?.possiblyBypassedStopIds ?? [] : [];
   const bypassedStops = direction.stops.filter((item) => inferredStops.includes(item.id));
+  const hasPublishedPath = !!focused && (!!trace?.path.length || focused.alert.geometry.some(path => path.length > 1));
+  const nearby = !manualFocus && (automaticFocus.reason === 'illustrated-bypass' || automaticFocus.reason === 'nearby-path');
+  const pathUnconfirmed = hasPublishedPath && (interpreted || !!focused?.alert.geometryIssues.length || !!focused?.alert.sourceIssues.length);
   const mapNotice = focused ? [
-    interpreted || focused.alert.geometryIssues.length || focused.alert.sourceIssues.length ? 'Detour path unconfirmed' : '',
+    manualFocus && manualFocus.alert.id !== automaticFocus.alertId ? 'Viewing another route change' : '',
+    nearby ? pathUnconfirmed ? 'Nearby detour · path and stops unconfirmed' : 'Nearby detour · stop impact unconfirmed' : '',
+    !hasPublishedPath ? 'No detour path published' : '',
+    pathUnconfirmed && !nearby ? 'Detour path unconfirmed' : '',
     focused.timing === 'uncertain' ? 'Timing unconfirmed' : '',
   ].filter(Boolean).join(' · ') : '';
 
@@ -147,15 +166,28 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
     }
   }, [direction, stop, assessment, focused, trace, useTrace, interpreted, inferredStops]);
 
-  useEffect(() => { map.current?.setView([stop.lat, stop.lon], 15, { animate: false }); }, [direction.id, stop.id, stop.lat, stop.lon]);
   const detourCoordinates = useTrace && trace ? trace.path : focused?.alert.geometry.flat() ?? [];
-  const detourBounds = useRef(detourCoordinates);
-  detourBounds.current = detourCoordinates;
+  const namedStopCoordinates: Coordinate[] = direction.stops.filter(item => focused?.alert.skippedStopIds.includes(item.id))
+    .map(item => [item.lat, item.lon]);
+  const cameraPoints = manualFocus
+    ? detourCoordinates.length ? detourCoordinates : namedStopCoordinates.length ? namedStopCoordinates : [[stop.lat, stop.lon] as Coordinate]
+    : getStopFocusPoints(stop, useTrace && trace ? [trace.path, trace.bypassedPath] : focused?.alert.geometry ?? []);
+  const camera = useRef({ points: cameraPoints, manual: !!manualFocus });
+  camera.current = { points: cameraPoints, manual: !!manualFocus };
+  // A polling refresh should not undo a rider's pan or Full route view. Refocus
+  // only when the selected stop, applicable alert, or explicit view changes.
+  const cameraKey = `${selectionKey}:${focused?.alert.id ?? 'stop'}:${pathView}:${manualFocus ? `manual-${inspection.request}` : 'auto'}`;
   useEffect(() => {
-    if (!inspectionRequest || !detourBounds.current.length) return;
-    map.current?.fitBounds(L.latLngBounds(detourBounds.current), { padding: [40, 40], maxZoom: 16, animate: false });
-    section.current?.scrollIntoView({ block: 'nearest' });
-  }, [inspectionRequest]);
+    const { points, manual } = camera.current;
+    if (!points.length) return;
+    if (points.length === 1) map.current?.setView(points[0], 16, { animate: false });
+    else map.current?.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 16, animate: false });
+    if (manual) section.current?.scrollIntoView({ block: 'nearest' });
+  }, [cameraKey]);
+  function showNearStop() {
+    setStoredInspection({ selectionKey, request: inspectionRequest, alertId: null });
+    map.current?.setView([stop.lat, stop.lon], 16, { animate: false });
+  }
   function showFullRoute() {
     const coordinates = validCoordinates(direction.shape);
     if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { padding: [30, 30], maxZoom: 15, animate: false });
@@ -165,14 +197,15 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
     <div className="route-map__toolbar">
       <h2>Route map</h2>
       <div className="route-map__controls">
-        <button onClick={() => map.current?.setView([stop.lat, stop.lon], 15, { animate: false })}>Near stop</button>
+        <button onClick={showNearStop}>Near stop</button>
         <button onClick={showFullRoute}>Full route</button>
       </div>
     </div>
-    {focused && <div className="detour-inspector">
-      <div className="detour-inspector__select"><label htmlFor="map-detour">Detour</label><select id="map-detour" value={focused.alert.id} onChange={(event) => onInspectAlert(event.target.value)}>
-        {mappedAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
-      </select><button onClick={() => onInspectAlert(focused.alert.id)}>View detour</button></div>
+    {availableAlerts.length > 0 && <div className="detour-inspector">
+      <div className="detour-inspector__select"><label htmlFor="map-detour">Show</label><select id="map-detour" value={focused?.alert.id ?? ''} onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
+        <option value="">Near my stop</option>
+        {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
+      </select><button onClick={() => focused ? onInspectAlert(focused.alert.id) : showNearStop()}>View</button></div>
       {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
     </div>}
     <div className="route-map__canvas-wrap">
@@ -194,7 +227,8 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
             <button aria-pressed={pathView === 'directions'} onClick={() => setPathView('directions')}>Written directions</button>
             <button aria-pressed={pathView === 'agency'} onClick={() => setPathView('agency')}>Agency geometry</button>
           </div>}
-          {focused && <p className="path-explanation">{interpreted ? 'The illustrated path follows the written turns. The agency map disagrees, so this is not a verified bus trace.'
+          {focused && <p className="path-explanation">{!hasPublishedPath ? 'This notice has no published detour path. The map shows its listed stop when available; nearby route lines do not establish an alternative boarding point.'
+            : interpreted ? 'The illustrated path follows the written turns. The agency map disagrees, so this is not a verified bus trace.'
             : focused.alert.geometryIssues.length ? 'The agency’s published path needs review; its points do not establish boarding locations.' : 'This path comes from the agency. It does not establish where passengers can board.'}
             {focused.timing === 'uncertain' ? ' When this applies is also unconfirmed.' : ''}</p>}
           {focused && [...focused.alert.geometryIssues, ...focused.alert.sourceIssues].length > 0 && <ul className="route-map__issues">
