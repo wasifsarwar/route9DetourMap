@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import type { Coordinate, DetourAlert, RouteDirection, Stop, StopAssessment } from '../domain/types';
 import { buildDetourTrace, samplePathPoints } from '../domain/mapGeometry';
 import { getAutomaticMapFocus, getStopFocusPoints, resolveMapInspection, type MapInspection } from '../domain/mapFocus';
+import { Icon } from './Icon';
 import './RouteMap.css';
 
 interface RouteMapProps {
@@ -16,7 +17,7 @@ interface RouteMapProps {
   inspectionRequest: number;
   onInspectAlert: (alertId: string) => void;
 }
-const colors = { normal: '#3769c5', detour: '#dd661c', selected: '#182c4c', alternative: '#147464' };
+const colors = { normal: '#245ac3', detour: '#bc5724', selected: '#182c4c', alternative: '#147464' };
 function validCoordinates(coordinates: Coordinate[]): Coordinate[] {
   return coordinates.filter(([lat, lon]) => Number.isFinite(lat) && Number.isFinite(lon)
     && Math.abs(lat) <= 90 && Math.abs(lon) <= 180);
@@ -70,8 +71,9 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
 
   useEffect(() => {
     if (!container.current) return;
-    const instance = L.map(container.current, { zoomControl: true, scrollWheelZoom: false, attributionControl: true }).setView([39.99, -75.19], 12);
+    const instance = L.map(container.current, { zoomControl: false, scrollWheelZoom: false, attributionControl: true }).setView([39.99, -75.19], 12);
     map.current = instance;
+    L.control.zoom({ position: 'bottomright' }).addTo(instance);
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     });
@@ -90,7 +92,12 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
     group.clearLayers();
     const draw = (coordinates: Coordinate[], color: string, label: string, options: L.PolylineOptions = {}) => {
       const path = validCoordinates(coordinates);
-      if (path.length > 1) L.polyline(path, { color, weight: 5, opacity: .8, ...options }).bindTooltip(textNode(label)).addTo(group);
+      if (path.length > 1) {
+        if (options.className === 'focused-detour-path') L.polyline(path, {
+          color: '#fff', weight: 10, opacity: .9, interactive: false,
+        }).addTo(group);
+        L.polyline(path, { color, weight: 5, opacity: .8, ...options }).bindTooltip(textNode(label)).addTo(group);
+      }
     };
     const dots = (path: Coordinate[], color: string, spacing: number) => {
       for (const point of samplePathPoints(path, spacing)) L.circleMarker(point, {
@@ -145,7 +152,10 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
         icon: L.divIcon({ className: `route-stop ${isSelected ? 'route-stop--selected' : ''} ${listed.length ? 'route-stop--skipped' : inferred ? 'route-stop--inferred' : ''}`,
           html: `<span aria-hidden="true">${listed.length ? '×' : inferred ? '?' : '▪'}</span>`, iconSize: [20, 20], iconAnchor: [10, 10] }),
         keyboard: true, riseOnHover: true, zIndexOffset: isSelected ? 1000 : 0,
-      }).bindTooltip(textNode(`${isSelected ? 'Your stop · ' : ''}${routeStop.name} · ${status}`));
+      }).bindTooltip(textNode(isSelected ? routeStop.name : `${routeStop.name} · ${status}`), {
+        permanent: isSelected, direction: 'top', offset: [0, -15],
+        className: isSelected ? 'selected-stop-label' : '',
+      });
       marker.on('click', () => selectStop.current(routeStop.id));
       marker.on('add', () => {
         const element = marker.getElement();
@@ -181,7 +191,7 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
     const { points, manual } = camera.current;
     if (!points.length) return;
     if (points.length === 1) map.current?.setView(points[0], 16, { animate: false });
-    else map.current?.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 16, animate: false });
+    else map.current?.fitBounds(L.latLngBounds(points), { paddingTopLeft: [44, 100], paddingBottomRight: [44, 90], maxZoom: 16, animate: false });
     if (manual) section.current?.scrollIntoView({ block: 'nearest' });
   }, [cameraKey]);
   function showNearStop() {
@@ -190,39 +200,38 @@ export function RouteMap({ direction, stop, assessment, onSelectStop, reviewedAl
   }
   function showFullRoute() {
     const coordinates = validCoordinates(direction.shape);
-    if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { padding: [30, 30], maxZoom: 15, animate: false });
+    if (coordinates.length) map.current?.fitBounds(L.latLngBounds(coordinates), { paddingTopLeft: [35, 100], paddingBottomRight: [35, 90], maxZoom: 15, animate: false });
   }
 
   return <section ref={section} className="route-map" aria-label="Route map and reported detours">
     <div className="route-map__toolbar">
-      <h2>Route map</h2>
+      <h2 className="sr-only">Route map</h2>
       <div className="route-map__controls">
-        <button onClick={showNearStop}>Near stop</button>
-        <button onClick={showFullRoute}>Full route</button>
+        <button onClick={showNearStop}><Icon name="pin" />Your stop</button>
+        <button onClick={showFullRoute}><Icon name="frame" />Full route</button>
       </div>
     </div>
     {availableAlerts.length > 0 && <div className="detour-inspector">
-      <div className="detour-inspector__select"><label htmlFor="map-detour">Show</label><select id="map-detour" value={focused?.alert.id ?? ''} onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
+      <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Detour to explore</label><select id="map-detour" value={focused?.alert.id ?? ''} onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
         <option value="">Near my stop</option>
         {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
-      </select><button onClick={() => focused ? onInspectAlert(focused.alert.id) : showNearStop()}>View</button></div>
-      {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
+      </select></div>
     </div>}
     <div className="route-map__canvas-wrap">
       <div ref={container} className="route-map__canvas" aria-label={`Map of ${direction.headsign}; selected stop ${stop.name}`} />
+      {mapNotice && <p className="route-map__notice">{mapNotice}</p>}
       {tilesUnavailable && <p className="route-map__tile-error" role="status">Street tiles could not load. Route lines and stop details remain available.</p>}
     </div>
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">
-        <li><span className="route-map__line route-map__line--normal" aria-hidden="true" />Normal route</li>
+        <li><span className="route-map__line route-map__line--normal" aria-hidden="true" />Route</li>
         <li><span className="route-map__line route-map__line--reported" aria-hidden="true" />Detour</li>
-        <li><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Unconfirmed stop</li>
-        <li><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</li>
       </ul>
-      <p className="route-map__marker-key">Dots trace the route. Squares are stops.</p>
       <details className="route-map__details">
-        <summary>Map details</summary>
+        <summary>Map key & details</summary>
         <div className="route-map__details-content">
+          <div className="stop-legend"><span><span className="legend-stop legend-stop--inferred" aria-hidden="true">?</span>Stop unconfirmed</span><span><span className="legend-stop legend-stop--skipped" aria-hidden="true">×</span>Reported skipped</span></div>
+          <p>Dots trace the route. Squares are stops.</p>
           {trace?.kind === 'interpreted' && <div className="path-view" role="group" aria-label="Detour path source">
             <button aria-pressed={pathView === 'directions'} onClick={() => setPathView('directions')}>Written directions</button>
             <button aria-pressed={pathView === 'agency'} onClick={() => setPathView('agency')}>Agency geometry</button>

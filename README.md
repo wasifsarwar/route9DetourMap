@@ -4,7 +4,7 @@
 
 Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
-The default screen shows two choices, a short stop-status result, and the map. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **More details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+The default screen shows destination buttons, a stop picker, a short stop-status result, and a full-bleed map. Desktop keeps the trip controls in a compact sidebar; phones place them above the map. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
 
 ## Stack
 
@@ -63,7 +63,7 @@ An explicit skipped-stop entry can establish that a stop is affected. A partial 
 
 Alert cards expand direction and turn shorthand into ordered instructions while keeping the unchanged source wording in a separate disclosure. The sinkhole notice shown in Transit and SEPTA's original raw message have the same direction, date, and turns; SEPTA's legacy feed already includes expanded Left/Right wording. Text formatting never resolves conflicting dates or changes stop status.
 
-The map automatically chooses a relevant alert for the selected stop. A named stop closure takes priority even when no detour geometry is available. Otherwise a nearby, connected illustration may provide visual context; this does not establish that the stop is closed. The automatic viewport stays near the stop. Use **Show → View** to inspect another detour, or **Near stop** to return. Changing stops or direction clears manual inspection.
+The map automatically chooses a relevant alert for the selected stop. A named stop closure takes priority even when no detour geometry is available. Otherwise a nearby, connected illustration may provide visual context; this does not establish that the stop is closed. The automatic viewport stays near the stop. Use the detour selector to inspect another detour, or **Your stop** to return. Changing stops or direction clears manual inspection.
 
 Circular dots follow the displayed path; square stop markers represent physical boarding locations. The reviewed sinkhole illustration follows 4th → Spruce → 9th → Walnut and replaces the bypassed normal segment visually. It is reused only when the current notice matches the reviewed text and direction. **Agency geometry** remains available for comparison with the published loop. Geometric bypass detection marks Walnut/5th, Walnut/7th and Walnut/8th as possibly skipped, without changing their closure assessment or inventing relocated stops. Current feeds contain no exact temporary-stop coordinates; intersection coordinates identify turns, not boarding points.
 
@@ -78,10 +78,10 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 1. Refresh agency data and choose northbound Schuylkill Av & JFK Blvd. While the explicit closure remains current, expect affected plus area-only agency instructions.
 2. Choose a different stop or direction. Missing stop coverage must remain unconfirmed.
 3. Open the relevant alerts and original sources; all applicable alerts should be available together.
-4. Open **More details → Try a recorded example**, switch modes, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
-5. Inspect the map, select a stop, and try Full route / Near stop. Check phone-width layout.
+4. Open **Service details → Try a recorded example**, switch modes, and change the Philadelphia time; the historical label and **Back to current** button must remain visible even after closing the details.
+5. Inspect the map, select a stop, and try Full route / Your stop. Check phone-width layout.
 6. With the current feed missing or older than 15 minutes, expect unable to confirm, not an all-clear.
-7. Choose **Show → Sink Hole → View**, and open **Map details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
+7. Choose **Show → Sink Hole → View**, and open **Map key & details** to compare Written directions with Agency geometry. Path dots should follow the selected path; potential bypass markers must say unconfirmed, and the original alert must remain unchanged.
 8. Change the direction and stop, then reload. The journey should be restored; recorded-example mode and manual detour inspection should not persist.
 9. Select Schuylkill/JFK, then Walnut/7th. The map should first stay with the reported stop closure and then show the nearby sinkhole path. Inspect a different detour manually, then select another stop to return to automatic focus.
 10. Return to the app after it was hidden or offline. Check that it resumes fetching without overlapping requests and never substitutes browser retrieval time for source age.

@@ -3,7 +3,7 @@ import { useTransitData } from './hooks/useTransitData';
 import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
 import { parseWallTime } from './domain/time';
-import type { DirectionId } from './domain/types';
+import { Icon } from './components/Icon';
 import { RouteMap } from './components/RouteMap';
 import { ImpactCard } from './components/ImpactCard';
 import { AlertDetails } from './components/AlertDetails';
@@ -44,7 +44,7 @@ export default function App() {
   const time = useMemo(() => {
     if (mode === 'current') return { now: clock, error: null };
     try { return { now: new Date(parseWallTime(replayTime)), error: null }; }
-    catch { return { now: clock, error: 'Choose a valid Philadelphia date and time in More details.' }; }
+    catch { return { now: clock, error: 'Choose a valid Philadelphia date and time in Service details.' }; }
   }, [mode, replayTime, clock]);
   const assessment = useMemo(() => route && direction && stop && feed ? assessStop({
     route, feed, directionId: direction.id, stopId: stop.id, now: time.now, maxAgeMs: MAX_AGE_MS, replay: mode === 'replay', boarding: [],
@@ -61,10 +61,10 @@ export default function App() {
             : !feed.complete ? 'Some updates unavailable' : ageText(feed.fetchedAt, clock);
 
   return <>
-    <header className="app-header"><a className="brand" href="./"><span aria-hidden="true">↳</span>reroute<span className="brand-city">PHILADELPHIA</span></a><span className="pilot-label">Route 9</span></header>
+    <header className="app-header"><a className="brand" href="./"><span aria-hidden="true">↳</span>reroute<span className="brand-city">Philadelphia</span></a><span className="pilot-label">Bus detours <span>Route 9</span></span></header>
     <div className={`freshness-bar ${mode === 'replay' ? 'replay' : fresh ? 'fresh' : 'stale'}`} aria-live="polite">
-      <span>{freshnessText}</span>
-      {mode === 'current' ? <button onClick={() => { void refresh(); }} disabled={loading}>{loading ? 'Checking…' : 'Refresh'}</button>
+      <span className="freshness-label"><span className="freshness-dot" aria-hidden="true" />{freshnessText}</span>
+      {mode === 'current' ? <button onClick={() => { void refresh(); }} disabled={loading}><Icon name="refresh" />{loading ? 'Checking…' : 'Refresh'}</button>
         : <button onClick={() => setMode('current')}>Back to current</button>}
     </div>
 
@@ -77,14 +77,14 @@ export default function App() {
         <div className="journey-main">
           <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
           <div className="journey-fields">
-            <label htmlFor="direction">Going toward</label><select id="direction" value={direction.id} onChange={(event) => selectDirection(event.target.value as DirectionId)}>{route.directions.map((item) => <option value={item.id} key={item.id}>{item.headsign} ({item.label.toLowerCase()})</option>)}</select>
-            <label htmlFor="stop">Your stop</label><select id="stop" value={stop.id} onChange={(event) => selectStop(event.target.value)}>{direction.stops.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select>
+            <fieldset className="direction-picker"><legend>Going toward</legend><div>{route.directions.map((item) => <button type="button" aria-pressed={direction.id === item.id} key={item.id} onClick={() => selectDirection(item.id)}><span>{item.headsign}</span><small>{item.label}</small></button>)}</div></fieldset>
+            <label htmlFor="stop">Your stop</label><div className="stop-picker"><Icon name="pin" /><select id="stop" value={stop.id} onChange={(event) => selectStop(event.target.value)}>{direction.stops.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div>
           </div>
           {time.error ? <p className="inline-error" role="alert">{time.error}</p> : <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
         </div>
         <div className="journey-evidence">
           <details className="more-details">
-            <summary>More details<span>{assessment.relevantAlerts.length} alerts</span></summary>
+            <summary>Service details<span>{assessment.relevantAlerts.length} {assessment.relevantAlerts.length === 1 ? 'alert' : 'alerts'}</span></summary>
             {!time.error && <>
               <div className="assessment-details"><h2>Why this result</h2><p>{assessment.summary}</p>
                 <ul>{assessment.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
