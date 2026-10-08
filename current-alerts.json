@@ -107,151 +107,6 @@
       "stopCoverage": "unknown"
     },
     {
-      "id": "D17603",
-      "title": "Peco",
-      "directionIds": [
-        "0"
-      ],
-      "startsAt": "2026-10-07T23:27:22.000Z",
-      "endsAt": "2026-10-08T09:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "Until 5am on 10/5/26\nSB via Ridge\nL  - Wigard\nR - Valley\nR - Livezey\nL  - Ridge\nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "The written end date (2026-10-05) disagrees with the structured end date (2026-10-08)."
-      ],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
-      ],
-      "geometry": [
-        [
-          [
-            40.0488,
-            -75.2354
-          ],
-          [
-            40.0496,
-            -75.2336
-          ],
-          [
-            40.0526,
-            -75.2271
-          ],
-          [
-            40.0524,
-            -75.227
-          ],
-          [
-            40.0521,
-            -75.2263
-          ],
-          [
-            40.0488,
-            -75.2192
-          ],
-          [
-            40.0485,
-            -75.2187
-          ],
-          [
-            40.0481,
-            -75.2183
-          ],
-          [
-            40.0477,
-            -75.218
-          ],
-          [
-            40.0473,
-            -75.2179
-          ],
-          [
-            40.0461,
-            -75.2178
-          ],
-          [
-            40.0449,
-            -75.2204
-          ],
-          [
-            40.0447,
-            -75.2207
-          ],
-          [
-            40.0448,
-            -75.2208
-          ],
-          [
-            40.0454,
-            -75.2229
-          ],
-          [
-            40.045,
-            -75.2234
-          ],
-          [
-            40.0432,
-            -75.2275
-          ],
-          [
-            40.0442,
-            -75.2291
-          ],
-          [
-            40.0452,
-            -75.2317
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            40.0488,
-            -75.2354
-          ],
-          [
-            40.0477,
-            -75.2349
-          ],
-          [
-            40.0474,
-            -75.2347
-          ],
-          [
-            40.0462,
-            -75.2332
-          ],
-          [
-            40.0457,
-            -75.2326
-          ],
-          [
-            40.0455,
-            -75.2322
-          ],
-          [
-            40.0452,
-            -75.2317
-          ]
-        ]
-      ],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
       "id": "D16646",
       "title": "Bridge Construction",
       "directionIds": [
@@ -551,35 +406,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-08T05:53:54.699Z",
+  "fetchedAt": "2026-10-08T11:24:51.728Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-08T05:53:54.712Z",
+      "fetchedAt": "2026-10-08T11:24:51.728Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-08T05:53:54.699Z",
+      "fetchedAt": "2026-10-08T11:24:51.768Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-08T05:53:56.035Z",
+      "fetchedAt": "2026-10-08T11:24:52.587Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-08T05:53:55.841Z",
+      "fetchedAt": "2026-10-08T11:24:51.803Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-08T05:53:56.035Z"
+  "collectedAt": "2026-10-08T11:24:52.587Z"
 }
