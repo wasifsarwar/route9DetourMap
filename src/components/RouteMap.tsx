@@ -8,6 +8,7 @@ import type { useRealtime } from '../realtime/useRealtime';
 import { busesForDirection, arrivalsForStop, arrivalMinutes } from '../realtime/select';
 import { currentReport } from '../realtime/types';
 import { Icon } from './Icon';
+import { BusReview } from './BusReview';
 import './RouteMap.css';
 
 interface RouteMapProps {
@@ -36,6 +37,8 @@ function textNode(text: string): HTMLSpanElement {
 
 /** Route dots show a path; stop markers always keep their evidenced physical locations. */
 export function RouteMap({ realtime, mobile, result, direction, stop, assessment, onSelectStop, reviewedAlerts, inspectedAlertId, inspectionRequest, onInspectAlert }: RouteMapProps) {
+  const reviewEnabled = new URLSearchParams(window.location.search).get('review') === '1' && realtime.enabled;
+  const [reviewMap, setReviewMap] = useState<L.Map | null>(null);
   const section = useRef<HTMLElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
@@ -91,6 +94,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
     if (!container.current) return;
     const instance = L.map(container.current, { zoomControl: false, scrollWheelZoom: false, attributionControl: true }).setView([39.99, -75.19], 12);
     map.current = instance;
+    if (reviewEnabled) setReviewMap(instance);
     instance.on('dragstart', () => { setFollowId(null); setFollowNotice(''); });
     const stopKeyboardFollow = (event: KeyboardEvent) => {
       if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) { setFollowId(null); setFollowNotice(''); }
@@ -356,6 +360,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
       {(stopOffscreen || followed) && <button onClick={showNearStop}>Your stop</button>}
       {followed && <button onClick={() => setFollowId(null)}>Stop following</button>}
     </div>}
+    {reviewEnabled && reviewMap && <BusReview onExplore={() => { setFollowId(null); setFollowNotice(''); }} map={reviewMap} feed={realtime.feed} now={realtime.now} direction={direction} candidate={useTrace && trace ? [trace.path] : showFocusedAgency ? focused?.alert.geometry ?? [] : []} candidateLabel={focused ? `${focused.alert.title} (${pathView})` : ''} />}
     {result}
     <div className="route-map__footer">
       <ul className="route-map__legend" aria-label="Map legend">

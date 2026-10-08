@@ -1,0 +1,9 @@
+.bus-review { order: 1; flex: 0 0 auto; border-top: 2px solid #663b94; background: #faf7fd; font-size: 12px; }
+.bus-review > summary { padding: 12px 14px; cursor: pointer; font-weight: 700; }
+.bus-review__body { max-height: 220px; overflow: auto; padding: 0 14px 12px; }
+.bus-review p { line-height: 1.5; margin: 8px 0; }
+.bus-review select { display: block; margin-top: 5px; }
+.bus-review__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.bus-review button { font-size: 12px; padding: 7px 10px; min-height: 40px; }
+.bus-review input { width: auto; }
+@media (max-width: 700px) { .bus-review__body { max-height: 140px; } }
