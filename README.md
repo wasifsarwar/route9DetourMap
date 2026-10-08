@@ -4,7 +4,7 @@
 
 Choose your direction and usual stop to see whether SEPTA reports it affected by a detour. The app combines applicable alerts, shows normal and reported paths, and keeps missing or conflicting information visible. An orange line is never treated as proof of a boarding location.
 
-The default screen shows destination buttons, a stop picker, a short stop-status result, and a full-bleed map. Desktop keeps the trip controls in a compact sidebar; phones place them above the map. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
+The default screen shows destination buttons, a searchable stop picker, a short stop-status result, and a full-bleed map. Desktop keeps the trip controls in a compact sidebar; phones place them above the map. A permanent label identifies the selected stop, and muted base tiles keep the route and orange detour prominent. The last direction and stop are remembered on this browser. The map follows that stop and any nearby relevant detour; other detours remain available for manual inspection. **Service details** contains the result explanation, alert cards, source timestamps, and recorded-example controls. **Map key & details** contains the geometry comparison and extended map key. Stale-data, replay, and unconfirmed-boarding labels remain visible without opening either section.
 
 ## Stack
 
@@ -89,3 +89,5 @@ Automated tests cover alert overlap, partial stop lists, stale/incomplete data, 
 The next product test is with five Route 9 riders: compare comprehension and decision time against the original agency alert. Separately verify a sample of detours and boarding locations with the agency or field observation. Usability results alone do not establish boarding accuracy.
 
 No arrivals, bus tracking, accounts, payments, automatic GTFS refresh, or field verification are implemented. Public feed access does not establish commercial reuse rights. Maps include OpenStreetMap attribution; review data and tile-service terms before scaling or monetization. Leaflet's license is included in its npm package.
+
+Stop search accepts partial street names, intersections in either order (for example, `7 Walnut`), and expanded street types. Use arrow keys and Enter to choose, or Escape to cancel. Results are limited to the selected direction. Tapping a map stop opens a dismissible card with the same service assessment and boarding uncertainty as the main result.

@@ -3,6 +3,7 @@ import { useTransitData } from './hooks/useTransitData';
 import { useSavedJourney } from './hooks/useSavedJourney';
 import { assessStop } from './domain/impact';
 import { parseWallTime } from './domain/time';
+import { StopSearch } from './components/StopSearch';
 import { Icon } from './components/Icon';
 import { RouteMap } from './components/RouteMap';
 import { ImpactCard } from './components/ImpactCard';
@@ -78,7 +79,7 @@ export default function App() {
           <div className="journey-heading"><span className="route-number">9</span><div><h1>Check your stop</h1><p>Full-length trips only</p></div></div>
           <div className="journey-fields">
             <fieldset className="direction-picker"><legend>Going toward</legend><div>{route.directions.map((item) => <button type="button" aria-pressed={direction.id === item.id} key={item.id} onClick={() => selectDirection(item.id)}><span>{item.headsign}</span><small>{item.label}</small></button>)}</div></fieldset>
-            <label htmlFor="stop">Your stop</label><div className="stop-picker"><Icon name="pin" /><select id="stop" value={stop.id} onChange={(event) => selectStop(event.target.value)}>{direction.stops.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></div>
+            <StopSearch key={direction.id} stops={direction.stops} stop={stop} onSelect={selectStop} />
           </div>
           {time.error ? <p className="inline-error" role="alert">{time.error}</p> : <ImpactCard assessment={assessment} stop={stop} replay={mode === 'replay'} />}
         </div>
@@ -110,7 +111,7 @@ export default function App() {
         </div>
       </aside>
       <section className="map-area" aria-label="Map of your stop and reported detours">
-        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop}
+        {!time.error && <RouteMap direction={direction} stop={stop} assessment={assessment} onSelectStop={selectStop} replay={mode === 'replay'}
           reviewedAlerts={snapshot?.feed.alerts ?? []} inspectedAlertId={inspectedAlertId}
           inspectionRequest={inspectionRequest} onInspectAlert={inspectAlert} />}
       </section>
