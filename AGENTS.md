@@ -17,6 +17,7 @@ for focused mobile/desktop checks. Avoid adding a UI framework for styling alone
   with 6,000 or fewer answer characters and narrow oversized queries.
 - Use native text tools for CSS, config, and small edits. Do not read a whole
   file and then repeat the same read through Serena.
+- Memory MCP holds durable project decisions. Search/open relevant nodes only
   when the current context lacks the facts; verify mutable facts against code.
   Save concise new decisions at milestones. Replace obsolete observations;
   avoid transcripts, logs, secrets, or duplicating facts in Serena memory.
