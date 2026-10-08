@@ -32,6 +32,14 @@ tokens. Deployment is GitHub Pages; `.openai/hosting.json` is historical.
   justifies the extra usage. Specify its model/effort, files, question, and short
   deliverable. Avoid full-history copies, overlapping edits, and automatic
   explorer/implementer/reviewer rounds for simple tasks.
+- For authorized delegation, explicitly select model and effort rather than
+  inheriting Astra/Ultra: code explorer = Luna/Low; frontend implementer =
+  Sol/Medium; consequential correctness reviewer = Astra/High. Use supported
+  model IDs and dispatch controls; these written defaults do not configure the
+  runtime by themselves. Do not silently substitute an expensive fallback.
+- Give each delegate a self-contained brief: objective, relevant paths, necessary
+  facts, constraints, and completion criteria. Request a result of roughly 200
+  words or fewer plus essential evidence; expand only when correctness needs it.
 
 ## Retrieve only what resolves the next question
 
@@ -61,6 +69,10 @@ tokens. Deployment is GitHub Pages; `.openai/hosting.json` is historical.
   gather new evidence instead of repeating the same attempt.
 - Keep logs in files when large. Report exit status and relevant error excerpts;
   expand around failures as needed. Never hide a failure behind truncated output.
+- Run test/build commands directly; do not spawn an agent just to run a command.
+  Keep successful output to a short status/count summary. On failure, return
+  failing test names and relevant diagnostics; retain the full log for inspection
+  and preserve the command's exit code when redirecting or filtering output.
 - Docs-only changes: inspect the diff and run `git diff --check`.
 - Logic changes: run relevant tests, e.g. `npm test -- src/domain/example.test.ts`
   with the actual affected test path. Add regression coverage for stop-status,
@@ -79,6 +91,9 @@ tokens. Deployment is GitHub Pages; `.openai/hosting.json` is historical.
 - Search/open relevant Memory MCP nodes only when current context lacks the facts.
   Treat memory as a hint: verify mutable facts against the working tree and tests.
   Never load the entire graph or duplicate it in Serena memories.
+- Use Memory MCP as the sole agent-maintained project memory store. Do not add
+  overlapping memory systems. Keep required rules and maintained documentation
+  in repository files; they remain authoritative, rather than becoming memory copies.
 - Save only concise, durable decisions at meaningful milestones. Include source
   paths and dates for time-sensitive facts; replace obsolete observations. Avoid
   transcripts, raw logs, secrets, and routine progress entries.
