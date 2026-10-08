@@ -37,7 +37,7 @@ export function getAutomaticMapFocus(
 ): AutomaticMapFocus {
   const none: AutomaticMapFocus = { alertId: null, reason: 'none' };
   if (!direction.stops.some(item => item.id === stop.id)) return none;
-  const applicable = alerts.filter(item => item.timing !== 'inactive' && item.alert.directionIds.includes(direction.id))
+  const applicable = alerts.filter(item => item.timing === 'active' && item.alert.directionIds.includes(direction.id))
     .sort((a, b) => Number(a.timing !== 'active') - Number(b.timing !== 'active')
       || Number(a.alert.sourceIssues.length > 0) - Number(b.alert.sourceIssues.length > 0)
       || a.alert.id.localeCompare(b.alert.id));

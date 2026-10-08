@@ -63,6 +63,7 @@ describe('automatic map context', () => {
     const { direction, stop, alert, item } = setup();
     const named = { ...alert, skippedStopIds: [stop.id] };
     expect(getAutomaticMapFocus(direction, stop, [{ ...item, alert: named, timing: 'inactive' }]).alertId).toBeNull();
+    expect(getAutomaticMapFocus(direction, stop, [{ ...item, alert: named, timing: 'uncertain' }]).alertId).toBeNull();
     expect(getAutomaticMapFocus(direction, stop, [{ ...item, alert: { ...named, directionIds: ['0'] } }]).alertId).toBeNull();
     expect(getAutomaticMapFocus(direction, { ...stop, id: 'different-route' }, [item]).alertId).toBeNull();
   });

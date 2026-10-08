@@ -159,6 +159,8 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
 
     for (const { alert, timing } of assessment.relevantAlerts) {
       if (timing === 'inactive') continue;
+      // Unclear schedules are inspectable evidence, never automatic detour paths.
+      if (timing === 'uncertain' && manualFocus?.alert.id !== alert.id) continue;
       const isFocused = alert.id === focused?.alert.id;
       if (isFocused && useTrace && trace) {
         draw(trace.path, colors.detour, interpreted ? `${alert.title} · Illustration of written directions, not a verified bus trace` : `${alert.title} · Agency-reported path`, {
@@ -336,7 +338,7 @@ export function RouteMap({ realtime, mobile, result, direction, stop, assessment
         }}><span aria-hidden="true">×</span></button>
       </div> : <div className="detour-inspector__select"><label htmlFor="map-detour" className="sr-only">Explore route alerts</label><select ref={detourPicker} id="map-detour" value="" onChange={(event) => event.target.value ? onInspectAlert(event.target.value) : showNearStop()}>
         <option value="">Explore route alerts</option>
-        {availableAlerts.map(({ alert }) => <option key={alert.id} value={alert.id}>{alert.title}</option>)}
+        {availableAlerts.map(({ alert, timing }) => <option key={alert.id} value={alert.id}>{alert.title}{timing === 'uncertain' ? ' · timing unconfirmed' : ''}</option>)}
       </select></div>}
       {manualFocus && <p className="detour-inspector__context">Selected stop: {stop.name}</p>}
       {disputedAgencyPath && <div className="detour-inspector__agency-note"><button className="detour-inspector__agency" aria-describedby="agency-map-explanation" aria-pressed={pathView === 'agency'}

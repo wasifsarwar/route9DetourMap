@@ -43,8 +43,17 @@ export default function App() {
     setInspectionRequest((request) => request + 1);
   }
   useEffect(() => {
-    const timer = window.setInterval(() => setClock(new Date()), 30_000);
-    return () => window.clearInterval(timer);
+    let timer: number;
+    const tick = () => {
+      window.clearTimeout(timer);
+      setClock(new Date());
+      // Align to wall-clock boundaries so minute-based service windows switch promptly.
+      timer = window.setTimeout(tick, 30_000 - Date.now() % 30_000 + 10);
+    };
+    const resume = () => { if (document.visibilityState === 'visible') tick(); };
+    tick();
+    document.addEventListener('visibilitychange', resume);
+    return () => { window.clearTimeout(timer); document.removeEventListener('visibilitychange', resume); };
   }, []);
   useEffect(() => { setClock(new Date()); }, [liveFeed]);
 

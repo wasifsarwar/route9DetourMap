@@ -242,3 +242,21 @@ it('reserves elsewhere wording for a resolved stop assessment', () => {
   }
   expect(stopStatusCopy(assessStop(input({ stopId: 'other', feed: feed([]) }))).heading).toBe('No detour reported here');
 });
+
+
+describe('weekday detour display windows in Philadelphia time', () => {
+  const record = alert({ startsAt: '2026-10-01T00:00:00-04:00', endsAt: '2026-11-10T00:00:00-05:00', schedule: { days: [1,2,3,4,5], startTime: '07:00', endTime: '16:00' } });
+  it.each([
+    ['2026-10-08T10:59:59Z', 'inactive'],
+    ['2026-10-08T11:00:00Z', 'active'],
+    ['2026-10-08T19:59:59Z', 'active'],
+    ['2026-10-08T20:00:00Z', 'inactive'],
+    ['2026-10-10T16:00:00Z', 'inactive'],
+    ['2026-09-30T16:00:00Z', 'inactive'],
+    ['2026-11-10T17:00:00Z', 'inactive'],
+    ['2026-11-02T11:59:59Z', 'inactive'],
+    ['2026-11-02T12:00:00Z', 'active'],
+  ])('%s is %s regardless of the rider timezone', (timestamp, expected) => {
+    expect(evaluateAlertTiming(record, new Date(timestamp)).timing).toBe(expected);
+  });
+});
