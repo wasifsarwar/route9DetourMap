@@ -107,150 +107,13 @@
       "stopCoverage": "unknown"
     },
     {
-      "id": "D17655",
-      "title": "Peco",
-      "directionIds": [
-        "0"
-      ],
-      "startsAt": "2026-10-08T23:43:44.000Z",
-      "endsAt": "2026-10-10T09:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "7pn to 5am\nSB via Ridge\nL - Wigard\nR - Valley\nR - Livezey\nL - Ridge\nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published detour forms a closed loop; its geometry needs review.",
-        "The published skipped route segment has identical endpoints.",
-        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
-      ],
-      "geometry": [
-        [
-          [
-            40.0488,
-            -75.2354
-          ],
-          [
-            40.0496,
-            -75.2336
-          ],
-          [
-            40.0526,
-            -75.2271
-          ],
-          [
-            40.0524,
-            -75.227
-          ],
-          [
-            40.0521,
-            -75.2263
-          ],
-          [
-            40.0488,
-            -75.2192
-          ],
-          [
-            40.0485,
-            -75.2187
-          ],
-          [
-            40.0481,
-            -75.2183
-          ],
-          [
-            40.0477,
-            -75.218
-          ],
-          [
-            40.0473,
-            -75.2179
-          ],
-          [
-            40.0461,
-            -75.2178
-          ],
-          [
-            40.0449,
-            -75.2204
-          ],
-          [
-            40.0447,
-            -75.2207
-          ],
-          [
-            40.0448,
-            -75.2208
-          ],
-          [
-            40.0454,
-            -75.2229
-          ],
-          [
-            40.045,
-            -75.2234
-          ],
-          [
-            40.0432,
-            -75.2275
-          ],
-          [
-            40.0441,
-            -75.2289
-          ],
-          [
-            40.045,
-            -75.2314
-          ],
-          [
-            40.0456,
-            -75.2325
-          ],
-          [
-            40.0475,
-            -75.2347
-          ],
-          [
-            40.0488,
-            -75.2354
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            40.0488,
-            -75.2354
-          ],
-          [
-            40.0488,
-            -75.2354
-          ]
-        ]
-      ],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
-      "id": "D16944",
-      "title": "Open Street for Pedestrians on Walnut",
+      "id": "D17575",
+      "title": "Open Street for Pedestrian on Walnut",
       "directionIds": [
         "1"
       ],
-      "startsAt": "2026-10-04T10:30:00.000Z",
-      "endsAt": "2026-10-11T04:00:00.000Z",
+      "startsAt": "2026-10-11T10:45:00.000Z",
+      "endsAt": "2026-10-25T22:00:00.000Z",
       "schedule": {
         "days": [
           0,
@@ -261,14 +124,12 @@
           5,
           6
         ],
-        "startTime": "06:30",
+        "startTime": "06:45",
         "endTime": "18:00"
       },
-      "rawText": "CANCEL FOR 10-12-26\n10/04 - 10/25, Sundays Only \n 6:30 AM - 6:00 PM\nNB via Walnut St\nL - Broad St\nR - Spruce St\nR - 22nd St\nL - Walnut St\nReg Rt",
+      "rawText": "CANCEL FOR 10-12-26\n6:45am- 6pm Sun. Only until \n10-25-26\nNB via Walnut St\nL - Broad St\nR - Spruce St\nR - 22nd St\nL - Walnut St\nReg Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "The text says Sundays only, but the structured schedule includes other days."
-      ],
+      "timingIssues": [],
       "sourceIssues": [],
       "geometryIssues": [
         "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
@@ -324,28 +185,36 @@
             -75.1778
           ],
           [
-            39.9509,
+            39.951,
             -75.1773
           ],
           [
-            39.9524,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.1769
-          ],
-          [
             39.9511,
-            -75.1656
+            -75.1785
           ],
           [
-            39.9496,
-            -75.1659
+            39.95,
+            -75.1787
+          ],
+          [
+            39.9493,
+            -75.173
+          ],
+          [
+            39.9488,
+            -75.1731
+          ],
+          [
+            39.9487,
+            -75.1726
+          ],
+          [
+            39.9485,
+            -75.171
+          ],
+          [
+            39.9502,
+            -75.1707
           ]
         ]
       ],
@@ -357,12 +226,36 @@
           ],
           [
             39.9496,
-            -75.1659
+            -75.1658
+          ],
+          [
+            39.9498,
+            -75.1674
+          ],
+          [
+            39.95,
+            -75.169
+          ],
+          [
+            39.9502,
+            -75.1706
+          ],
+          [
+            39.9502,
+            -75.1707
+          ],
+          [
+            39.9502,
+            -75.1707
           ]
         ]
       ],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
+      "skippedStopIds": [
+        "14079",
+        "14080",
+        "14081"
+      ],
+      "stopCoverage": "explicit-list"
     },
     {
       "id": "D17704",
@@ -382,10 +275,10 @@
           5,
           6
         ],
-        "startTime": "18:00",
-        "endTime": "05:00"
+        "startTime": "00:00",
+        "endTime": "24:00"
       },
-      "rawText": "6:00pm- 05:00 am \nNB via Walnut \nR - 20th\nL - JFK\nR - Schuylkill \nReg. Rt.",
+      "rawText": "24/7 until 5am on Mon \n10/12/26\nNB via Walnut St \nR - 20th St \nL - JFK Blvd \nR - Schuylkill Ave \nReg. Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [],
       "sourceIssues": [],
@@ -541,35 +434,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-10T06:39:49.167Z",
+  "fetchedAt": "2026-10-10T13:03:31.844Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-10T06:39:49.170Z",
+      "fetchedAt": "2026-10-10T13:03:31.844Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-10T06:39:49.167Z",
+      "fetchedAt": "2026-10-10T13:03:31.887Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-10T06:39:50.201Z",
+      "fetchedAt": "2026-10-10T13:03:33.075Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-10T06:39:49.821Z",
+      "fetchedAt": "2026-10-10T13:03:32.220Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-10T06:39:50.201Z"
+  "collectedAt": "2026-10-10T13:03:33.076Z"
 }
