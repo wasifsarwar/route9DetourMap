@@ -244,13 +244,13 @@
       "stopCoverage": "unknown"
     },
     {
-      "id": "D16646",
-      "title": "Bridge Construction",
+      "id": "D16944",
+      "title": "Open Street for Pedestrians on Walnut",
       "directionIds": [
         "1"
       ],
-      "startsAt": "2026-09-22T02:09:48.000Z",
-      "endsAt": "2026-10-23T09:00:00.000Z",
+      "startsAt": "2026-10-04T10:30:00.000Z",
+      "endsAt": "2026-10-11T04:00:00.000Z",
       "schedule": {
         "days": [
           0,
@@ -261,14 +261,133 @@
           5,
           6
         ],
-        "startTime": "21:00",
-        "endTime": "05:00"
+        "startTime": "06:30",
+        "endTime": "18:00"
       },
-      "rawText": "Weekdays only from \n\n9:00pm- 05:00am on10-23-\n26\n\nNB via Walnut \nR - 20th\nL - JFK\nR - Schuylkill \nReg. Rt.",
+      "rawText": "CANCEL FOR 10-12-26\n10/04 - 10/25, Sundays Only \n 6:30 AM - 6:00 PM\nNB via Walnut St\nL - Broad St\nR - Spruce St\nR - 22nd St\nL - Walnut St\nReg Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [
-        "The text says weekdays only, but the structured schedule includes weekends."
+        "The text says Sundays only, but the structured schedule includes other days."
       ],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            39.9493,
+            -75.1637
+          ],
+          [
+            39.9493,
+            -75.1642
+          ],
+          [
+            39.9495,
+            -75.1642
+          ],
+          [
+            39.9509,
+            -75.1639
+          ],
+          [
+            39.9507,
+            -75.1628
+          ],
+          [
+            39.9492,
+            -75.1631
+          ],
+          [
+            39.9494,
+            -75.1643
+          ],
+          [
+            39.9471,
+            -75.1648
+          ],
+          [
+            39.947,
+            -75.1649
+          ],
+          [
+            39.947,
+            -75.165
+          ],
+          [
+            39.9486,
+            -75.1778
+          ],
+          [
+            39.9486,
+            -75.1778
+          ],
+          [
+            39.9509,
+            -75.1773
+          ],
+          [
+            39.9524,
+            -75.177
+          ],
+          [
+            39.9525,
+            -75.177
+          ],
+          [
+            39.9525,
+            -75.1769
+          ],
+          [
+            39.9511,
+            -75.1656
+          ],
+          [
+            39.9496,
+            -75.1659
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            39.9493,
+            -75.1637
+          ],
+          [
+            39.9496,
+            -75.1659
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
+      "id": "D17704",
+      "title": "Bridge Construction",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-09T22:26:50.000Z",
+      "endsAt": "2026-10-12T09:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "18:00",
+        "endTime": "05:00"
+      },
+      "rawText": "6:00pm- 05:00 am \nNB via Walnut \nR - 20th\nL - JFK\nR - Schuylkill \nReg. Rt.",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
       "sourceIssues": [],
       "geometryIssues": [],
       "geometry": [
@@ -393,127 +512,6 @@
       "stopCoverage": "explicit-list"
     },
     {
-      "id": "D16944",
-      "title": "Open Street for Pedestrians on Walnut",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-10-04T10:30:00.000Z",
-      "endsAt": "2026-10-25T22:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "06:30",
-        "endTime": "18:00"
-      },
-      "rawText": "10/04 - 10/25, Sundays Only \n 6:30 AM - 6:00 PM\nNB via Walnut St\nL - Broad St\nR - Spruce St\nR - 22nd St\nL - Walnut St\nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "The text says Sundays only, but the structured schedule includes other days."
-      ],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
-      ],
-      "geometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9493,
-            -75.1642
-          ],
-          [
-            39.9495,
-            -75.1642
-          ],
-          [
-            39.9509,
-            -75.1639
-          ],
-          [
-            39.9507,
-            -75.1628
-          ],
-          [
-            39.9492,
-            -75.1631
-          ],
-          [
-            39.9494,
-            -75.1643
-          ],
-          [
-            39.9471,
-            -75.1648
-          ],
-          [
-            39.947,
-            -75.1649
-          ],
-          [
-            39.947,
-            -75.165
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.9509,
-            -75.1773
-          ],
-          [
-            39.9524,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.1769
-          ],
-          [
-            39.9511,
-            -75.1656
-          ],
-          [
-            39.9496,
-            -75.1659
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9496,
-            -75.1659
-          ]
-        ]
-      ],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -543,35 +541,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-09T21:14:08.837Z",
+  "fetchedAt": "2026-10-10T00:55:26.687Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-09T21:14:08.838Z",
+      "fetchedAt": "2026-10-10T00:55:26.687Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-09T21:14:08.837Z",
+      "fetchedAt": "2026-10-10T00:55:26.724Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-09T21:14:09.702Z",
+      "fetchedAt": "2026-10-10T00:55:27.439Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-09T21:14:09.502Z",
+      "fetchedAt": "2026-10-10T00:55:27.106Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-09T21:14:09.702Z"
+  "collectedAt": "2026-10-10T00:55:27.439Z"
 }
