@@ -251,153 +251,6 @@
       "stopCoverage": "explicit-list"
     },
     {
-      "id": "D17704",
-      "title": "Bridge Construction",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-10-09T22:26:50.000Z",
-      "endsAt": "2026-10-12T09:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "24/7 until 5am on Mon \n10/12/26\nNB via Walnut St \nR - 20th St \nL - JFK Blvd \nR - Schuylkill Ave \nReg. Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [],
-      "geometry": [
-        [
-          [
-            39.9505,
-            -75.1736
-          ],
-          [
-            39.9505,
-            -75.1738
-          ],
-          [
-            39.9529,
-            -75.1733
-          ],
-          [
-            39.9546,
-            -75.173
-          ],
-          [
-            39.9556,
-            -75.1805
-          ],
-          [
-            39.9557,
-            -75.1807
-          ],
-          [
-            39.956,
-            -75.1806
-          ],
-          [
-            39.956,
-            -75.1807
-          ],
-          [
-            39.9561,
-            -75.1809
-          ],
-          [
-            39.956,
-            -75.1811
-          ],
-          [
-            39.955,
-            -75.1813
-          ],
-          [
-            39.9548,
-            -75.1813
-          ],
-          [
-            39.9548,
-            -75.1811
-          ],
-          [
-            39.9551,
-            -75.1809
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            39.9505,
-            -75.1736
-          ],
-          [
-            39.9508,
-            -75.1755
-          ],
-          [
-            39.951,
-            -75.1772
-          ],
-          [
-            39.9511,
-            -75.1783
-          ],
-          [
-            39.9513,
-            -75.1796
-          ],
-          [
-            39.9517,
-            -75.1826
-          ],
-          [
-            39.9518,
-            -75.1826
-          ],
-          [
-            39.9519,
-            -75.1826
-          ],
-          [
-            39.9528,
-            -75.182
-          ],
-          [
-            39.953,
-            -75.1819
-          ],
-          [
-            39.9545,
-            -75.1812
-          ],
-          [
-            39.9551,
-            -75.1809
-          ]
-        ]
-      ],
-      "skippedStopIds": [
-        "131",
-        "14088",
-        "14089",
-        "19542",
-        "20407"
-      ],
-      "stopCoverage": "explicit-list"
-    },
-    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -427,35 +280,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-12T02:25:24.743Z",
+  "fetchedAt": "2026-10-12T09:33:35.558Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-12T02:25:24.743Z",
+      "fetchedAt": "2026-10-12T09:33:35.558Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-12T02:25:24.787Z",
+      "fetchedAt": "2026-10-12T09:33:35.590Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-12T02:25:25.563Z",
+      "fetchedAt": "2026-10-12T09:33:36.280Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-12T02:25:24.962Z",
+      "fetchedAt": "2026-10-12T09:33:35.853Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-12T02:25:25.563Z"
+  "collectedAt": "2026-10-12T09:33:36.280Z"
 }
