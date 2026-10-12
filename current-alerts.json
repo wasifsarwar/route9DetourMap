@@ -121,7 +121,7 @@
         "startTime": "21:00",
         "endTime": "05:00"
       },
-      "rawText": "Weekdays only from \n9:00pm- 05:00am on\n10-23-26\n\nNB via Walnut \nR - 20th\nL - JFK\nR - Schuylkill \nReg. Rt.",
+      "rawText": "Mon - Fri 9pm - 5am until\nFri 10-23-26\nNB via Walnut St \nR - 20th St \nL  - JFK Blvd \nR - Schuylkill Ave  \nReg. Rt.",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [
         "One of SEPTA’s daily operating windows could not be interpreted.",
@@ -280,35 +280,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-12T09:33:35.558Z",
+  "fetchedAt": "2026-10-12T19:17:04.149Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-12T09:33:35.558Z",
+      "fetchedAt": "2026-10-12T19:17:04.149Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-12T09:33:35.590Z",
+      "fetchedAt": "2026-10-12T19:17:04.206Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-12T09:33:36.280Z",
+      "fetchedAt": "2026-10-12T19:17:04.997Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-12T09:33:35.853Z",
+      "fetchedAt": "2026-10-12T19:17:04.805Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-12T09:33:36.280Z"
+  "collectedAt": "2026-10-12T19:17:04.997Z"
 }
