@@ -250,20 +250,21 @@
       "endsAt": "2026-10-23T09:00:00.000Z",
       "schedule": {
         "days": [
+          0,
           1,
           2,
           3,
           4,
-          5
+          5,
+          6
         ],
-        "startTime": "21:00",
-        "endTime": "05:00"
+        "startTime": "00:00",
+        "endTime": "24:00"
       },
-      "rawText": "Mon - Fri 9pm - 5am until\nFri 10-23-26\nNB via Walnut St \nR - 20th St \nL  - JFK Blvd \nR - Schuylkill Ave  \nReg. Rt.",
+      "rawText": "24/7 until 10/23/27\nNB via Walnut St \nR - 20th St \nL  - JFK Blvd \nR - Schuylkill Ave  \nReg. Rt.",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [
-        "One of SEPTA’s daily operating windows could not be interpreted.",
-        "One of SEPTA’s daily operating windows could not be interpreted."
+        "The written end date (2027-10-23) disagrees with the structured end date (2026-10-23)."
       ],
       "sourceIssues": [],
       "geometryIssues": [],
@@ -418,35 +419,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-13T08:02:27.541Z",
+  "fetchedAt": "2026-10-13T15:53:04.281Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-13T08:02:27.541Z",
+      "fetchedAt": "2026-10-13T15:53:04.283Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-13T08:02:27.587Z",
+      "fetchedAt": "2026-10-13T15:53:04.281Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-13T08:02:28.625Z",
+      "fetchedAt": "2026-10-13T15:53:05.088Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-13T08:02:28.220Z",
+      "fetchedAt": "2026-10-13T15:53:05.035Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-13T08:02:28.626Z"
+  "collectedAt": "2026-10-13T15:53:05.088Z"
 }
