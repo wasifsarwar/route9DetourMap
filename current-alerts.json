@@ -241,6 +241,275 @@
       "stopCoverage": "explicit-list"
     },
     {
+      "id": "D18033",
+      "title": "Contractors",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-10-15T11:11:39.000Z",
+      "endsAt": "2026-10-15T21:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "Until 5pm on 10/15/26\nSB via Ridge Ave\nL  -Walnut Lane\nR - Henry Ave\nR - Hermit\nL  - Ridge Ave\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [],
+      "geometry": [
+        [
+          [
+            40.027,
+            -75.2094
+          ],
+          [
+            40.0273,
+            -75.2088
+          ],
+          [
+            40.0287,
+            -75.2056
+          ],
+          [
+            40.0265,
+            -75.204
+          ],
+          [
+            40.0261,
+            -75.2036
+          ],
+          [
+            40.0259,
+            -75.2033
+          ],
+          [
+            40.0257,
+            -75.2027
+          ],
+          [
+            40.0256,
+            -75.2023
+          ],
+          [
+            40.0256,
+            -75.2019
+          ],
+          [
+            40.0257,
+            -75.2012
+          ],
+          [
+            40.026,
+            -75.1994
+          ],
+          [
+            40.026,
+            -75.1994
+          ],
+          [
+            40.0259,
+            -75.1994
+          ],
+          [
+            40.0258,
+            -75.1996
+          ],
+          [
+            40.0255,
+            -75.2003
+          ],
+          [
+            40.0248,
+            -75.202
+          ],
+          [
+            40.0247,
+            -75.2025
+          ],
+          [
+            40.0246,
+            -75.2029
+          ],
+          [
+            40.0246,
+            -75.2031
+          ],
+          [
+            40.0253,
+            -75.2043
+          ],
+          [
+            40.0238,
+            -75.2077
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            40.027,
+            -75.2094
+          ],
+          [
+            40.027,
+            -75.2094
+          ],
+          [
+            40.0254,
+            -75.2086
+          ],
+          [
+            40.0247,
+            -75.2082
+          ],
+          [
+            40.0238,
+            -75.2077
+          ]
+        ]
+      ],
+      "skippedStopIds": [
+        "12305",
+        "12335"
+      ],
+      "stopCoverage": "explicit-list"
+    },
+    {
+      "id": "D18032",
+      "title": "Contractors",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-15T11:10:04.000Z",
+      "endsAt": "2026-10-15T21:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "Until 5pm on 10/15/26\nNB via Ridge Ave\nR - Hermit\nL  - Henry Ave\nL  - Roxborough Ave\nR - Ridge Ave\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            40.0238,
+            -75.2077
+          ],
+          [
+            40.0257,
+            -75.2035
+          ],
+          [
+            40.0259,
+            -75.2033
+          ],
+          [
+            40.0257,
+            -75.2027
+          ],
+          [
+            40.0256,
+            -75.2019
+          ],
+          [
+            40.026,
+            -75.1994
+          ],
+          [
+            40.0258,
+            -75.1996
+          ],
+          [
+            40.0256,
+            -75.1999
+          ],
+          [
+            40.0248,
+            -75.202
+          ],
+          [
+            40.0246,
+            -75.2029
+          ],
+          [
+            40.0247,
+            -75.2032
+          ],
+          [
+            40.0251,
+            -75.2028
+          ],
+          [
+            40.0256,
+            -75.2025
+          ],
+          [
+            40.0259,
+            -75.2033
+          ],
+          [
+            40.0264,
+            -75.2039
+          ],
+          [
+            40.0316,
+            -75.2077
+          ],
+          [
+            40.03,
+            -75.2113
+          ],
+          [
+            40.0287,
+            -75.2104
+          ],
+          [
+            40.0238,
+            -75.2077
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            40.0238,
+            -75.2077
+          ],
+          [
+            40.0238,
+            -75.2077
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -270,35 +539,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-15T09:46:01.232Z",
+  "fetchedAt": "2026-10-15T14:26:36.547Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-15T09:46:01.232Z",
+      "fetchedAt": "2026-10-15T14:26:36.548Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-15T09:46:01.265Z",
+      "fetchedAt": "2026-10-15T14:26:36.547Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-15T09:46:01.660Z",
+      "fetchedAt": "2026-10-15T14:26:37.177Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-15T09:46:01.656Z",
+      "fetchedAt": "2026-10-15T14:26:37.368Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-15T09:46:01.660Z"
+  "collectedAt": "2026-10-15T14:26:37.368Z"
 }
