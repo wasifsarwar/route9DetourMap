@@ -241,31 +241,6 @@
       "stopCoverage": "explicit-list"
     },
     {
-      "id": "D18058",
-      "title": "Xfinity Event",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-10-15T14:51:55.000Z",
-      "endsAt": "2026-10-16T00:00:00.000Z",
-      "schedule": null,
-      "rawText": "until 8pm\nNB via Walnut\nL - Broad\nR - Spruce\nR - 16th\nL - Walnut\nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "SEPTA did not supply interpretable daily operating hours."
-      ],
-      "sourceIssues": [
-        "SEPTA reports an incomplete alert interpretation."
-      ],
-      "geometryIssues": [
-        "A current detour map is unavailable."
-      ],
-      "geometry": [],
-      "unservedGeometry": [],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -295,35 +270,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-15T23:52:43.677Z",
+  "fetchedAt": "2026-10-16T02:05:09.326Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-15T23:52:43.679Z",
+      "fetchedAt": "2026-10-16T02:05:09.355Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-15T23:52:43.677Z",
+      "fetchedAt": "2026-10-16T02:05:09.326Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-15T23:52:46.142Z",
+      "fetchedAt": "2026-10-16T02:05:12.354Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-15T23:52:46.232Z",
+      "fetchedAt": "2026-10-16T02:05:11.020Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-15T23:52:46.232Z"
+  "collectedAt": "2026-10-16T02:05:12.354Z"
 }
