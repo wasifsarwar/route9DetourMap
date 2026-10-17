@@ -128,6 +128,153 @@
       "stopCoverage": "unknown"
     },
     {
+      "id": "D17971",
+      "title": "Market St Run for the Blue",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-10-18T09:00:00.000Z",
+      "endsAt": "2026-10-18T17:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "05:00",
+        "endTime": "13:00"
+      },
+      "rawText": "5am to 1pm 10/18/2026\nSB via 30th St\nR - Market\nR - JFK Blvd\nTake recovery at 30th St\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            39.9556,
+            -75.1831
+          ],
+          [
+            39.9548,
+            -75.1833
+          ],
+          [
+            39.9549,
+            -75.1834
+          ],
+          [
+            39.9553,
+            -75.1871
+          ],
+          [
+            39.9553,
+            -75.1871
+          ],
+          [
+            39.956,
+            -75.187
+          ],
+          [
+            39.9562,
+            -75.1869
+          ],
+          [
+            39.9563,
+            -75.1867
+          ],
+          [
+            39.9559,
+            -75.1836
+          ],
+          [
+            39.9558,
+            -75.1832
+          ],
+          [
+            39.9557,
+            -75.1831
+          ],
+          [
+            39.9556,
+            -75.1831
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            39.9556,
+            -75.1831
+          ],
+          [
+            39.9556,
+            -75.1831
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
+      "id": "D17972",
+      "title": "Market St Run for the Blue",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-18T09:00:00.000Z",
+      "endsAt": "2026-10-18T17:00:00.000Z",
+      "schedule": null,
+      "rawText": "5am to 1pm 10/18/2026\nNB via JFK Blvd\nR - 30th St\nL - Market\nL - Schuylkill\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
+      "id": "D17930",
+      "title": "Open Street for Pedestrians on Walnut St",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-18T10:45:00.000Z",
+      "endsAt": "2026-10-18T22:00:00.000Z",
+      "schedule": null,
+      "rawText": "6:45am to 6pm on 10/18/26\nNB via Walnut \nL  - Broad \nR - Spruce \nR - 22nd \nL  - Walnut \nReg Rte",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D17897",
       "title": "Annual PHL Bike Ride",
       "directionIds": [
@@ -182,35 +329,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-17T08:58:57.658Z",
+  "fetchedAt": "2026-10-17T12:51:21.856Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-17T08:58:57.660Z",
+      "fetchedAt": "2026-10-17T12:51:21.863Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-17T08:58:57.658Z",
+      "fetchedAt": "2026-10-17T12:51:21.856Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-17T08:58:58.427Z",
+      "fetchedAt": "2026-10-17T12:51:22.158Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-17T08:58:58.213Z",
+      "fetchedAt": "2026-10-17T12:51:22.287Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-17T08:58:58.427Z"
+  "collectedAt": "2026-10-17T12:51:22.287Z"
 }
