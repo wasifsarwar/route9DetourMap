@@ -101,66 +101,40 @@
         "14880"
       ],
       "stopCoverage": "explicit-list"
-    },
-    {
-      "id": "D16046",
-      "title": "Construction",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-09-09T22:57:00.000Z",
-      "endsAt": "2027-09-03T08:30:00.000Z",
-      "schedule": null,
-      "rawText": "The NB Transit Stop at, Schuylkill and JFK and is, disontiuned until further, notice due to construction., Please board passengers, on Schuylkill between, Walnut and Chestnut",
-      "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "This notice is published in SEPTA’s service notices and has no detour map.",
-        "Closed stop matched by the explicitly named northbound Schuylkill/JFK intersection in the agency text and GTFS stop name."
-      ],
-      "geometry": [],
-      "unservedGeometry": [],
-      "skippedStopIds": [
-        "30576"
-      ],
-      "stopCoverage": "partial-list",
-      "boardingNote": {
-        "text": "SEPTA says to board on Schuylkill between Walnut and Chestnut. The notice does not identify an exact stop or boarding point.",
-        "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-        "precision": "area-only"
-      }
     }
   ],
-  "fetchedAt": "2026-10-20T23:19:34.821Z",
+  "fetchedAt": "2026-10-21T01:42:52.236Z",
   "mode": "live",
-  "complete": true,
+  "complete": false,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-20T23:19:34.821Z",
+      "fetchedAt": "2026-10-21T01:42:52.236Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-20T23:19:34.864Z",
-      "ok": true
+      "fetchedAt": null,
+      "ok": false,
+      "error": "HTTP 501"
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-20T23:19:35.080Z",
+      "fetchedAt": "2026-10-21T01:42:52.797Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-20T23:19:35.088Z",
+      "fetchedAt": "2026-10-21T01:42:52.713Z",
       "ok": true
     }
   ],
-  "warnings": [],
-  "collectedAt": "2026-10-20T23:19:35.089Z"
+  "warnings": [
+    "Not all Route 9 alert sources could be checked. Stop status may be incomplete."
+  ],
+  "collectedAt": "2026-10-21T01:42:52.797Z"
 }
