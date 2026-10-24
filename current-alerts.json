@@ -2,31 +2,6 @@
   "routeId": "9",
   "alerts": [
     {
-      "id": "D18345",
-      "title": "CONSTRUCTION",
-      "directionIds": [
-        "0"
-      ],
-      "startsAt": "2026-10-21T13:58:50.000Z",
-      "endsAt": "2026-10-24T02:00:00.000Z",
-      "schedule": null,
-      "rawText": "Until 10pm on 10-23-2026\nSB Via WTC\nService WTC inside bus \nlane (right side)\nExit through lft side betwn \ncones",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "SEPTA did not supply interpretable daily operating hours."
-      ],
-      "sourceIssues": [
-        "SEPTA reports an incomplete alert interpretation."
-      ],
-      "geometryIssues": [
-        "A current detour map is unavailable."
-      ],
-      "geometry": [],
-      "unservedGeometry": [],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -52,35 +27,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-10-24T01:52:44.991Z",
+  "fetchedAt": "2026-10-24T06:39:19.433Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-24T01:52:44.993Z",
+      "fetchedAt": "2026-10-24T06:39:19.477Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-24T01:52:44.991Z",
+      "fetchedAt": "2026-10-24T06:39:19.433Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-24T01:52:45.107Z",
+      "fetchedAt": "2026-10-24T06:39:19.471Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-24T01:52:45.121Z",
+      "fetchedAt": "2026-10-24T06:39:19.485Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-24T01:52:45.121Z"
+  "collectedAt": "2026-10-24T06:39:19.485Z"
 }
