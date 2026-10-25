@@ -2,234 +2,6 @@
   "routeId": "9",
   "alerts": [
     {
-      "id": "D18519",
-      "title": "Open Street for Pedestrians",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-10-25T11:35:01.000Z",
-      "endsAt": "2026-10-25T22:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "Until 6pm on Sun 10/25/26\nNB via Walnut St \nL  - Broad St \nR - Spruce St \nR - 22nd St \nL  - Walnut St \nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
-      ],
-      "geometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9493,
-            -75.1642
-          ],
-          [
-            39.9495,
-            -75.1642
-          ],
-          [
-            39.9509,
-            -75.1639
-          ],
-          [
-            39.9507,
-            -75.1628
-          ],
-          [
-            39.9492,
-            -75.1631
-          ],
-          [
-            39.9494,
-            -75.1643
-          ],
-          [
-            39.9471,
-            -75.1648
-          ],
-          [
-            39.947,
-            -75.1649
-          ],
-          [
-            39.947,
-            -75.165
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.9509,
-            -75.1773
-          ],
-          [
-            39.9524,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.177
-          ],
-          [
-            39.9525,
-            -75.1769
-          ],
-          [
-            39.9519,
-            -75.1719
-          ],
-          [
-            39.9504,
-            -75.1723
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9496,
-            -75.1658
-          ],
-          [
-            39.9498,
-            -75.1674
-          ],
-          [
-            39.95,
-            -75.169
-          ],
-          [
-            39.9501,
-            -75.1705
-          ],
-          [
-            39.9504,
-            -75.1722
-          ]
-        ]
-      ],
-      "skippedStopIds": [
-        "14079",
-        "14080",
-        "14081",
-        "14084"
-      ],
-      "stopCoverage": "explicit-list"
-    },
-    {
-      "id": "D18518",
-      "title": "Crane Activity",
-      "directionIds": [
-        "0"
-      ],
-      "startsAt": "2026-10-25T11:23:52.000Z",
-      "endsAt": "2026-10-25T22:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "Until 6pm on Sun 10/25/26\nSB via Chestnut St \nL  - 7th St \nR - Market St \nR - 6th \nL  - Chestnut St \nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published detour forms a closed loop; its geometry needs review.",
-        "The published skipped route segment has identical endpoints."
-      ],
-      "geometry": [
-        [
-          [
-            39.9494,
-            -75.1523
-          ],
-          [
-            39.9508,
-            -75.152
-          ],
-          [
-            39.9509,
-            -75.152
-          ],
-          [
-            39.9507,
-            -75.1504
-          ],
-          [
-            39.9507,
-            -75.1504
-          ],
-          [
-            39.9497,
-            -75.1506
-          ],
-          [
-            39.9492,
-            -75.1508
-          ],
-          [
-            39.9485,
-            -75.1509
-          ],
-          [
-            39.9487,
-            -75.1525
-          ],
-          [
-            39.9494,
-            -75.1523
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            39.9494,
-            -75.1523
-          ],
-          [
-            39.9494,
-            -75.1523
-          ]
-        ]
-      ],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
-    },
-    {
       "id": "D16046",
       "title": "Construction",
       "directionIds": [
@@ -255,35 +27,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-10-25T19:43:55.880Z",
+  "fetchedAt": "2026-10-25T22:05:23.386Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-25T19:43:55.905Z",
+      "fetchedAt": "2026-10-25T22:05:23.402Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-25T19:43:55.880Z",
+      "fetchedAt": "2026-10-25T22:05:23.386Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-25T19:43:55.960Z",
+      "fetchedAt": "2026-10-25T22:05:23.544Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-25T19:43:55.938Z",
+      "fetchedAt": "2026-10-25T22:05:23.545Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-25T19:43:55.960Z"
+  "collectedAt": "2026-10-25T22:05:23.545Z"
 }
