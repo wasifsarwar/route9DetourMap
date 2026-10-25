@@ -148,7 +148,7 @@
         "0"
       ],
       "startsAt": "2026-10-25T11:23:52.000Z",
-      "endsAt": "2026-10-25T17:00:00.000Z",
+      "endsAt": "2026-10-25T22:00:00.000Z",
       "schedule": {
         "days": [
           0,
@@ -162,7 +162,7 @@
         "startTime": "00:00",
         "endTime": "24:00"
       },
-      "rawText": "Until 1pm on Sun 10/25/26\nSB via Chestnut St \nL  - 7th St \nR - Market St \nR - 6th \nL  - Chestnut St \nReg Rt",
+      "rawText": "Until 6pm on Sun 10/25/26\nSB via Chestnut St \nL  - 7th St \nR - Market St \nR - 6th \nL  - Chestnut St \nReg Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [],
       "sourceIssues": [],
@@ -255,35 +255,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-10-25T13:48:54.136Z",
+  "fetchedAt": "2026-10-25T17:16:24.880Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-25T13:48:54.149Z",
+      "fetchedAt": "2026-10-25T17:16:24.882Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-25T13:48:54.136Z",
+      "fetchedAt": "2026-10-25T17:16:24.880Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-25T13:48:54.354Z",
+      "fetchedAt": "2026-10-25T17:16:24.887Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-25T13:48:54.368Z",
+      "fetchedAt": "2026-10-25T17:16:24.887Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-25T13:48:54.368Z"
+  "collectedAt": "2026-10-25T17:16:24.887Z"
 }
