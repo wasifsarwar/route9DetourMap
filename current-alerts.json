@@ -2,13 +2,278 @@
   "routeId": "9",
   "alerts": [
     {
-      "id": "D16046",
+      "id": "D18537",
       "title": "Construction",
       "directionIds": [
         "1"
       ],
-      "startsAt": "2026-09-09T22:57:27.000Z",
-      "endsAt": "2027-09-03T08:30:00.000Z",
+      "startsAt": "2026-10-26T12:25:00.000Z",
+      "endsAt": "2026-10-26T20:30:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "Until 4:30pm 10/26/26\nNB via Ridge ave \nL -  Parker\nR - Umbria \nR - Domino Ln\nL -  Ridge \nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [],
+      "geometry": [
+        [
+          [
+            40.0424,
+            -75.2262
+          ],
+          [
+            40.0424,
+            -75.2263
+          ],
+          [
+            40.0416,
+            -75.2273
+          ],
+          [
+            40.0398,
+            -75.2294
+          ],
+          [
+            40.0349,
+            -75.2349
+          ],
+          [
+            40.0356,
+            -75.2355
+          ],
+          [
+            40.0386,
+            -75.2402
+          ],
+          [
+            40.0386,
+            -75.2401
+          ],
+          [
+            40.0395,
+            -75.2393
+          ],
+          [
+            40.0401,
+            -75.2388
+          ],
+          [
+            40.0424,
+            -75.2377
+          ],
+          [
+            40.0429,
+            -75.2373
+          ],
+          [
+            40.0433,
+            -75.2367
+          ],
+          [
+            40.0453,
+            -75.2321
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            40.0424,
+            -75.2262
+          ],
+          [
+            40.0426,
+            -75.2264
+          ],
+          [
+            40.0432,
+            -75.2275
+          ],
+          [
+            40.0441,
+            -75.2288
+          ],
+          [
+            40.0443,
+            -75.2294
+          ],
+          [
+            40.0449,
+            -75.231
+          ],
+          [
+            40.0453,
+            -75.232
+          ],
+          [
+            40.0453,
+            -75.2321
+          ]
+        ]
+      ],
+      "skippedStopIds": [
+        "16073",
+        "20408"
+      ],
+      "stopCoverage": "explicit-list"
+    },
+    {
+      "id": "D18540",
+      "title": "Construction",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-10-26T12:25:00.000Z",
+      "endsAt": "2026-10-26T20:30:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "Until 4:30pm 10/26/26\nSB via Ridge ave \nR - Domino Ln\nL -  Umbria\nL -  Parker\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            40.0453,
+            -75.2321
+          ],
+          [
+            40.0433,
+            -75.2367
+          ],
+          [
+            40.0429,
+            -75.2373
+          ],
+          [
+            40.0424,
+            -75.2377
+          ],
+          [
+            40.0401,
+            -75.2388
+          ],
+          [
+            40.0395,
+            -75.2393
+          ],
+          [
+            40.0386,
+            -75.2401
+          ],
+          [
+            40.0386,
+            -75.2402
+          ],
+          [
+            40.0356,
+            -75.2355
+          ],
+          [
+            40.0349,
+            -75.2349
+          ],
+          [
+            40.0348,
+            -75.2351
+          ],
+          [
+            40.0353,
+            -75.2356
+          ],
+          [
+            40.0355,
+            -75.2354
+          ],
+          [
+            40.0356,
+            -75.2355
+          ],
+          [
+            40.0384,
+            -75.2398
+          ],
+          [
+            40.0386,
+            -75.2399
+          ],
+          [
+            40.0388,
+            -75.2399
+          ],
+          [
+            40.0401,
+            -75.2388
+          ],
+          [
+            40.0424,
+            -75.2377
+          ],
+          [
+            40.0429,
+            -75.2373
+          ],
+          [
+            40.0433,
+            -75.2367
+          ],
+          [
+            40.0453,
+            -75.2321
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            40.0453,
+            -75.2321
+          ],
+          [
+            40.0453,
+            -75.2321
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
+      "id": "D18539",
+      "title": "Construction",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-26T12:10:35.000Z",
+      "endsAt": "2026-12-31T09:30:00.000Z",
       "schedule": null,
       "rawText": "The NB Transit Stop at \nSchuylkill and JFK and is \ndisontiuned until further \nnotice due to construction. \nPlease board passengers \non Schuylkill between \nWalnut and Chestnut",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
@@ -27,35 +292,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-10-26T10:41:52.956Z",
+  "fetchedAt": "2026-10-26T17:00:12.618Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-26T10:41:52.957Z",
+      "fetchedAt": "2026-10-26T17:00:12.621Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-26T10:41:52.956Z",
+      "fetchedAt": "2026-10-26T17:00:12.675Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-26T10:41:52.961Z",
+      "fetchedAt": "2026-10-26T17:00:12.618Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-26T10:41:52.973Z",
+      "fetchedAt": "2026-10-26T17:00:12.634Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-26T10:41:52.973Z"
+  "collectedAt": "2026-10-26T17:00:12.675Z"
 }
