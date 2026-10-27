@@ -2,60 +2,145 @@
   "routeId": "9",
   "alerts": [
     {
+      "id": "D18586",
+      "title": "Construction",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-10-27T13:37:50.000Z",
+      "endsAt": "2026-10-29T20:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "24/7 until 4pm Thurs \n10/29/26\nNB via Ridge Ave \nR - Shawmont Ave \nL  - Wises Mill Rd \nL  - Henry Ave \nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            40.0527,
+            -75.2362
+          ],
+          [
+            40.0521,
+            -75.2343
+          ],
+          [
+            40.0524,
+            -75.2339
+          ],
+          [
+            40.0538,
+            -75.2311
+          ],
+          [
+            40.0524,
+            -75.2339
+          ],
+          [
+            40.0522,
+            -75.2342
+          ],
+          [
+            40.0521,
+            -75.2343
+          ],
+          [
+            40.0527,
+            -75.2362
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            40.0527,
+            -75.2362
+          ],
+          [
+            40.0527,
+            -75.2362
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D18539",
       "title": "Construction",
       "directionIds": [
         "1"
       ],
-      "startsAt": "2026-10-26T12:10:35.000Z",
+      "startsAt": "2026-10-26T12:10:00.000Z",
       "endsAt": "2026-12-31T09:30:00.000Z",
       "schedule": null,
-      "rawText": "The NB Transit Stop at \nSchuylkill and JFK and is \ndisontiuned until further \nnotice due to construction. \nPlease board passengers \non Schuylkill between \nWalnut and Chestnut",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [
-        "SEPTA did not supply interpretable daily operating hours."
-      ],
-      "sourceIssues": [
-        "SEPTA reports an incomplete alert interpretation."
-      ],
+      "rawText": "The NB Transit Stop at, Schuylkill and JFK and is, disontiuned until further, notice due to construction., Please board passengers, on Schuylkill between, Walnut and Chestnut",
+      "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
+      "timingIssues": [],
+      "sourceIssues": [],
       "geometryIssues": [
-        "A current detour map is unavailable."
+        "This notice is published in SEPTA’s service notices and has no detour map.",
+        "Closed stop matched by the explicitly named northbound Schuylkill/JFK intersection in the agency text and GTFS stop name."
       ],
       "geometry": [],
       "unservedGeometry": [],
-      "skippedStopIds": [],
-      "stopCoverage": "unknown"
+      "skippedStopIds": [
+        "30576"
+      ],
+      "stopCoverage": "partial-list",
+      "boardingNote": {
+        "text": "SEPTA says to board on Schuylkill between Walnut and Chestnut. The notice does not identify an exact stop or boarding point.",
+        "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
+        "precision": "area-only"
+      }
     }
   ],
-  "fetchedAt": "2026-10-27T11:00:27.640Z",
+  "fetchedAt": "2026-10-27T16:25:07.995Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-27T11:00:27.640Z",
+      "fetchedAt": "2026-10-27T16:25:07.995Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-27T11:00:27.642Z",
+      "fetchedAt": "2026-10-27T16:25:08.034Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-27T11:00:27.744Z",
+      "fetchedAt": "2026-10-27T16:25:08.163Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-27T11:00:27.775Z",
+      "fetchedAt": "2026-10-27T16:25:08.115Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-27T11:00:27.775Z"
+  "collectedAt": "2026-10-27T16:25:08.163Z"
 }
