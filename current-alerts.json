@@ -83,6 +83,31 @@
       "stopCoverage": "unknown"
     },
     {
+      "id": "D18669",
+      "title": "Construction",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-10-28T14:55:52.000Z",
+      "endsAt": "2026-10-28T22:00:00.000Z",
+      "schedule": null,
+      "rawText": "10/28, 10:47 AM - 6:00 PM\nSB Via Ridge Ave\nL on Port Royal Ave\nR on Henry Ave\nR on Wises Mill Rd\nR on Shawmont Ave\nL on Ridge Ave\nResume route",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D18539",
       "title": "Construction",
       "directionIds": [
@@ -112,35 +137,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-28T11:33:12.376Z",
+  "fetchedAt": "2026-10-28T17:19:55.476Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-28T11:33:12.376Z",
+      "fetchedAt": "2026-10-28T17:19:55.476Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-28T11:33:12.427Z",
+      "fetchedAt": "2026-10-28T17:19:55.514Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-28T11:33:12.378Z",
+      "fetchedAt": "2026-10-28T17:19:55.698Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-28T11:33:12.382Z",
+      "fetchedAt": "2026-10-28T17:19:55.486Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-28T11:33:12.427Z"
+  "collectedAt": "2026-10-28T17:19:55.699Z"
 }
