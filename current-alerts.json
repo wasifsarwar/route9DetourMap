@@ -112,35 +112,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-10-31T05:39:57.804Z",
+  "fetchedAt": "2026-10-31T11:14:10.173Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-10-31T05:39:57.805Z",
+      "fetchedAt": "2026-10-31T11:14:10.191Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-10-31T05:39:57.804Z",
+      "fetchedAt": "2026-10-31T11:14:10.244Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-10-31T05:39:57.845Z",
+      "fetchedAt": "2026-10-31T11:14:10.182Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-10-31T05:39:57.844Z",
+      "fetchedAt": "2026-10-31T11:14:10.173Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-10-31T05:39:57.845Z"
+  "collectedAt": "2026-10-31T11:14:10.244Z"
 }
