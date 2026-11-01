@@ -89,7 +89,7 @@
         "1"
       ],
       "startsAt": "2026-11-01T10:43:29.000Z",
-      "endsAt": "2026-11-01T17:30:00.000Z",
+      "endsAt": "2026-11-01T23:00:00.000Z",
       "schedule": {
         "days": [
           0,
@@ -103,7 +103,7 @@
         "startTime": "00:00",
         "endTime": "24:00"
       },
-      "rawText": "Until 1230 pm on 11/01/26\nNB via Walnut\nL  - Broad\nR - Spruce\nR - 22nd\nL  - Walnut\nReg Rt",
+      "rawText": "Until  6pm on 11/01/26\nNB via Walnut\nL  - Broad\nR - Spruce\nR - 22nd\nL  - Walnut\nReg Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [],
       "sourceIssues": [],
@@ -263,35 +263,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-11-01T16:05:39.201Z",
+  "fetchedAt": "2026-11-01T20:27:17.881Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-01T16:05:39.201Z",
+      "fetchedAt": "2026-11-01T20:27:17.883Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-01T16:05:39.247Z",
+      "fetchedAt": "2026-11-01T20:27:17.881Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-01T16:05:39.298Z",
+      "fetchedAt": "2026-11-01T20:27:18.052Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-01T16:05:39.271Z",
+      "fetchedAt": "2026-11-01T20:27:18.075Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-01T16:05:39.298Z"
+  "collectedAt": "2026-11-01T20:27:18.075Z"
 }
