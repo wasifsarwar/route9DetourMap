@@ -83,157 +83,6 @@
       "stopCoverage": "unknown"
     },
     {
-      "id": "D18785",
-      "title": "Crane In Street",
-      "directionIds": [
-        "1"
-      ],
-      "startsAt": "2026-11-01T10:43:29.000Z",
-      "endsAt": "2026-11-01T23:00:00.000Z",
-      "schedule": {
-        "days": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ],
-        "startTime": "00:00",
-        "endTime": "24:00"
-      },
-      "rawText": "Until  6pm on 11/01/26\nNB via Walnut\nL  - Broad\nR - Spruce\nR - 22nd\nL  - Walnut\nReg Rt",
-      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
-      "timingIssues": [],
-      "sourceIssues": [],
-      "geometryIssues": [
-        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
-      ],
-      "geometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9493,
-            -75.1642
-          ],
-          [
-            39.9495,
-            -75.1642
-          ],
-          [
-            39.9509,
-            -75.1639
-          ],
-          [
-            39.9507,
-            -75.1628
-          ],
-          [
-            39.9492,
-            -75.1631
-          ],
-          [
-            39.9494,
-            -75.1643
-          ],
-          [
-            39.9471,
-            -75.1648
-          ],
-          [
-            39.947,
-            -75.1649
-          ],
-          [
-            39.947,
-            -75.165
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.9486,
-            -75.1778
-          ],
-          [
-            39.951,
-            -75.1773
-          ],
-          [
-            39.9511,
-            -75.1785
-          ],
-          [
-            39.95,
-            -75.1787
-          ],
-          [
-            39.9493,
-            -75.173
-          ],
-          [
-            39.9488,
-            -75.1731
-          ],
-          [
-            39.9487,
-            -75.1726
-          ],
-          [
-            39.9485,
-            -75.171
-          ],
-          [
-            39.9502,
-            -75.1707
-          ]
-        ]
-      ],
-      "unservedGeometry": [
-        [
-          [
-            39.9493,
-            -75.1637
-          ],
-          [
-            39.9496,
-            -75.1658
-          ],
-          [
-            39.9498,
-            -75.1674
-          ],
-          [
-            39.95,
-            -75.169
-          ],
-          [
-            39.9502,
-            -75.1706
-          ],
-          [
-            39.9502,
-            -75.1707
-          ],
-          [
-            39.9502,
-            -75.1707
-          ]
-        ]
-      ],
-      "skippedStopIds": [
-        "14079",
-        "14080",
-        "14081"
-      ],
-      "stopCoverage": "explicit-list"
-    },
-    {
       "id": "D18539",
       "title": "Construction",
       "directionIds": [
@@ -263,35 +112,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-11-01T20:27:17.881Z",
+  "fetchedAt": "2026-11-01T23:47:50.238Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-01T20:27:17.883Z",
+      "fetchedAt": "2026-11-01T23:47:50.238Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-01T20:27:17.881Z",
+      "fetchedAt": "2026-11-01T23:47:50.294Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-01T20:27:18.052Z",
+      "fetchedAt": "2026-11-01T23:47:50.242Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-01T20:27:18.075Z",
+      "fetchedAt": "2026-11-01T23:47:50.242Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-01T20:27:18.075Z"
+  "collectedAt": "2026-11-01T23:47:50.294Z"
 }
