@@ -2,6 +2,139 @@
   "routeId": "9",
   "alerts": [
     {
+      "id": "D19000",
+      "title": "Police  Action",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-11-06T17:54:35.000Z",
+      "endsAt": "2026-11-06T19:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "00:00",
+        "endTime": "24:00"
+      },
+      "rawText": "Until 2pm 11/6/26\nSB via 30th st \nL -  Market \nL -  Schuylkill \nR - JFK Blvd \nR - 20th \nL -  Market \nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            39.9556,
+            -75.1831
+          ],
+          [
+            39.9549,
+            -75.1833
+          ],
+          [
+            39.9548,
+            -75.1833
+          ],
+          [
+            39.9546,
+            -75.1812
+          ],
+          [
+            39.9551,
+            -75.1809
+          ],
+          [
+            39.9553,
+            -75.1809
+          ],
+          [
+            39.9554,
+            -75.1808
+          ],
+          [
+            39.9555,
+            -75.1806
+          ],
+          [
+            39.9546,
+            -75.173
+          ],
+          [
+            39.9539,
+            -75.1732
+          ],
+          [
+            39.9536,
+            -75.1732
+          ],
+          [
+            39.9546,
+            -75.1812
+          ],
+          [
+            39.9558,
+            -75.1807
+          ],
+          [
+            39.9564,
+            -75.1805
+          ],
+          [
+            39.9567,
+            -75.1805
+          ],
+          [
+            39.9568,
+            -75.1806
+          ],
+          [
+            39.9568,
+            -75.1808
+          ],
+          [
+            39.9571,
+            -75.1825
+          ],
+          [
+            39.9571,
+            -75.1827
+          ],
+          [
+            39.9569,
+            -75.1828
+          ],
+          [
+            39.9556,
+            -75.1831
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            39.9556,
+            -75.1831
+          ],
+          [
+            39.9556,
+            -75.1831
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D18730",
       "title": "Construction",
       "directionIds": [
@@ -112,35 +245,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-11-06T11:29:29.393Z",
+  "fetchedAt": "2026-11-06T18:19:23.723Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-06T11:29:29.393Z",
+      "fetchedAt": "2026-11-06T18:19:23.723Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-06T11:29:29.394Z",
+      "fetchedAt": "2026-11-06T18:19:23.770Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-06T11:29:29.475Z",
+      "fetchedAt": "2026-11-06T18:19:23.742Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-06T11:29:29.451Z",
+      "fetchedAt": "2026-11-06T18:19:23.740Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-06T11:29:29.476Z"
+  "collectedAt": "2026-11-06T18:19:23.770Z"
 }
