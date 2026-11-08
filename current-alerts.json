@@ -2,6 +2,31 @@
   "routeId": "9",
   "alerts": [
     {
+      "id": "D19060",
+      "title": "Crane Activity",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-11-08T10:36:12.000Z",
+      "endsAt": "2026-11-08T21:00:00.000Z",
+      "schedule": null,
+      "rawText": "6am - 4pm on 11/8/26\nNB via Walnut\nL  - Broad\nR - Spruce\nR - 22nd\nL  - Walnut\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D19039",
       "title": "Construction Hole",
       "directionIds": [
@@ -112,35 +137,35 @@
       }
     }
   ],
-  "fetchedAt": "2026-11-08T09:15:20.593Z",
+  "fetchedAt": "2026-11-08T16:01:42.942Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-08T09:15:20.593Z",
+      "fetchedAt": "2026-11-08T16:01:42.944Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-08T09:15:20.627Z",
+      "fetchedAt": "2026-11-08T16:01:42.942Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-08T09:15:20.978Z",
+      "fetchedAt": "2026-11-08T16:01:43.319Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-08T09:15:20.711Z",
+      "fetchedAt": "2026-11-08T16:01:43.028Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-08T09:15:20.978Z"
+  "collectedAt": "2026-11-08T16:01:43.319Z"
 }
