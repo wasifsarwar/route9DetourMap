@@ -29,37 +29,59 @@
         "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
         "precision": "area-only"
       }
+    },
+    {
+      "id": "notice-46ebb987a7f01298a34309f2770244af-advisory_message",
+      "title": "Construction",
+      "directionIds": [
+        "0",
+        "1"
+      ],
+      "startsAt": "2026-10-26T12:10:00.000Z",
+      "endsAt": "2026-12-31T09:30:00.000Z",
+      "schedule": null,
+      "rawText": "<h3 class=\"separated\">Sunday Schedule in Effect for Thanksgiving Day</h3><p>Bus, Metro and Regional Rail routes operate on a Sunday schedule on <a href=\"https://wwww.septa.org/news/thanksgiving/\">Thanksgiving Day</a>. Routes that do not have Sunday schedules do not operate. All modes resume regular weekday schedule at the start of service day, Friday, November 27.</p>",
+      "sourceUrl": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "This notice is published in SEPTA’s service notices and has no detour map."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-11-11T11:47:40.954Z",
+  "fetchedAt": "2026-11-11T18:53:34.858Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-11T11:47:40.954Z",
+      "fetchedAt": "2026-11-11T18:53:34.858Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-11T11:47:40.957Z",
+      "fetchedAt": "2026-11-11T18:53:34.913Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-11T11:47:41.043Z",
+      "fetchedAt": "2026-11-11T18:53:34.913Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-11T11:47:40.997Z",
+      "fetchedAt": "2026-11-11T18:53:34.915Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-11T11:47:41.044Z"
+  "collectedAt": "2026-11-11T18:53:34.915Z"
 }
