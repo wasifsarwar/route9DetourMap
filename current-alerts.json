@@ -2,6 +2,94 @@
   "routeId": "9",
   "alerts": [
     {
+      "id": "D19338",
+      "title": "Infrasource",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-11-16T00:06:22.000Z",
+      "endsAt": "2026-11-16T09:00:00.000Z",
+      "schedule": {
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "startTime": "19:00",
+        "endTime": "04:00"
+      },
+      "rawText": "7pm to 4am \nSb via Chestnut St\nL - 18th St\nR - Market St\nR - 15th St\nL - Chestnut St\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [],
+      "sourceIssues": [],
+      "geometryIssues": [],
+      "geometry": [
+        [
+          [
+            39.9517,
+            -75.1703
+          ],
+          [
+            39.9532,
+            -75.17
+          ],
+          [
+            39.9527,
+            -75.1667
+          ],
+          [
+            39.9527,
+            -75.1663
+          ],
+          [
+            39.9526,
+            -75.1655
+          ],
+          [
+            39.9526,
+            -75.1652
+          ],
+          [
+            39.9521,
+            -75.1654
+          ],
+          [
+            39.9511,
+            -75.1656
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            39.9517,
+            -75.1704
+          ],
+          [
+            39.9515,
+            -75.1689
+          ],
+          [
+            39.9513,
+            -75.1673
+          ],
+          [
+            39.9511,
+            -75.1656
+          ]
+        ]
+      ],
+      "skippedStopIds": [
+        "6061",
+        "14907"
+      ],
+      "stopCoverage": "explicit-list"
+    },
+    {
       "id": "D18539",
       "title": "Construction",
       "directionIds": [
@@ -53,35 +141,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-11-15T23:36:25.260Z",
+  "fetchedAt": "2026-11-16T03:04:48.420Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-15T23:36:25.260Z",
+      "fetchedAt": "2026-11-16T03:04:48.421Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-15T23:36:25.287Z",
+      "fetchedAt": "2026-11-16T03:04:48.420Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-15T23:36:25.287Z",
+      "fetchedAt": "2026-11-16T03:04:48.454Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-15T23:36:25.287Z",
+      "fetchedAt": "2026-11-16T03:04:48.683Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-15T23:36:25.287Z"
+  "collectedAt": "2026-11-16T03:04:48.683Z"
 }
