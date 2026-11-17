@@ -2,6 +2,159 @@
   "routeId": "9",
   "alerts": [
     {
+      "id": "D19410",
+      "title": "Construction",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-11-17T01:05:14.000Z",
+      "endsAt": "2026-11-20T09:00:00.000Z",
+      "schedule": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "startTime": "19:00",
+        "endTime": "04:00"
+      },
+      "rawText": "Monday thru Friday\n7:00PM to 4:00AM\nSB via Chestnut\nL- 18th\nR- Market\nR- S Penn Square\nR- Market\nR- 12th\nL-  Chestnut\nReg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "One of SEPTA’s daily operating windows could not be interpreted.",
+        "One of SEPTA’s daily operating windows could not be interpreted."
+      ],
+      "sourceIssues": [],
+      "geometryIssues": [
+        "The published skipped route segment has identical endpoints.",
+        "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
+      ],
+      "geometry": [
+        [
+          [
+            39.9517,
+            -75.1704
+          ],
+          [
+            39.9517,
+            -75.1703
+          ],
+          [
+            39.9532,
+            -75.17
+          ],
+          [
+            39.9527,
+            -75.1667
+          ],
+          [
+            39.9527,
+            -75.1663
+          ],
+          [
+            39.9526,
+            -75.1652
+          ],
+          [
+            39.9526,
+            -75.1652
+          ],
+          [
+            39.9521,
+            -75.1653
+          ],
+          [
+            39.9519,
+            -75.1652
+          ],
+          [
+            39.9518,
+            -75.1651
+          ],
+          [
+            39.9515,
+            -75.1631
+          ],
+          [
+            39.9515,
+            -75.1629
+          ],
+          [
+            39.9516,
+            -75.1628
+          ],
+          [
+            39.9517,
+            -75.1627
+          ],
+          [
+            39.9523,
+            -75.1626
+          ],
+          [
+            39.9529,
+            -75.1625
+          ],
+          [
+            39.9531,
+            -75.1625
+          ],
+          [
+            39.9532,
+            -75.1624
+          ],
+          [
+            39.9533,
+            -75.1623
+          ],
+          [
+            39.953,
+            -75.1597
+          ],
+          [
+            39.9522,
+            -75.1598
+          ],
+          [
+            39.9503,
+            -75.1602
+          ],
+          [
+            39.9489,
+            -75.1605
+          ],
+          [
+            39.9502,
+            -75.1706
+          ],
+          [
+            39.9502,
+            -75.1707
+          ],
+          [
+            39.9517,
+            -75.1703
+          ]
+        ]
+      ],
+      "unservedGeometry": [
+        [
+          [
+            39.9517,
+            -75.1704
+          ],
+          [
+            39.9517,
+            -75.1704
+          ]
+        ]
+      ],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
       "id": "D18539",
       "title": "Construction",
       "directionIds": [
@@ -53,35 +206,35 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-11-16T20:54:54.438Z",
+  "fetchedAt": "2026-11-17T03:21:27.567Z",
   "mode": "live",
   "complete": true,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-16T20:54:54.438Z",
+      "fetchedAt": "2026-11-17T03:21:27.567Z",
       "ok": true
     },
     {
       "name": "SEPTA service notices",
       "url": "https://www3.septa.org/api/Alerts/get_alert_data.php?route_id=bus_route_9",
-      "fetchedAt": "2026-11-16T20:54:54.500Z",
+      "fetchedAt": "2026-11-17T03:21:27.568Z",
       "ok": true
     },
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-16T20:54:54.447Z",
+      "fetchedAt": "2026-11-17T03:21:27.718Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-16T20:54:54.448Z",
+      "fetchedAt": "2026-11-17T03:21:27.747Z",
       "ok": true
     }
   ],
   "warnings": [],
-  "collectedAt": "2026-11-16T20:54:54.501Z"
+  "collectedAt": "2026-11-17T03:21:27.748Z"
 }
