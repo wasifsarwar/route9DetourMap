@@ -155,14 +155,14 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-11-18T19:06:25.528Z",
+  "fetchedAt": "2026-11-19T01:08:12.678Z",
   "mode": "live",
   "complete": false,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-18T19:06:25.528Z",
+      "fetchedAt": "2026-11-19T01:08:12.678Z",
       "ok": true
     },
     {
@@ -175,18 +175,18 @@
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-18T19:06:25.529Z",
+      "fetchedAt": "2026-11-19T01:08:12.686Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-18T19:06:25.553Z",
+      "fetchedAt": "2026-11-19T01:08:12.679Z",
       "ok": true
     }
   ],
   "warnings": [
     "Not all Route 9 alert sources could be checked. Stop status may be incomplete."
   ],
-  "collectedAt": "2026-11-18T19:06:56.022Z"
+  "collectedAt": "2026-11-19T01:08:43.143Z"
 }
