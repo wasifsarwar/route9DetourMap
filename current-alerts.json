@@ -20,7 +20,7 @@
         "startTime": "19:00",
         "endTime": "04:00"
       },
-      "rawText": "Monday thru Friday\n7:00PM to 4:00AM\nSB via Chestnut\nL- 18th\nR- Market\nR- S Penn Square\nR- Market\nR- 12th\nL-  Chestnut\nReg Rt",
+      "rawText": "Monday thru Friday\n7:00PM to 4:00AM\nSB via Chestnut\nL- 18th\nR- Market\nR- 15th\nL-  Chestnut\nReg Rt",
       "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
       "timingIssues": [
         "One of SEPTA’s daily operating windows could not be interpreted.",
@@ -28,15 +28,12 @@
       ],
       "sourceIssues": [],
       "geometryIssues": [
+        "The published detour forms a closed loop; its geometry needs review.",
         "The published skipped route segment has identical endpoints.",
         "The published path endpoint is more than 200 meters from the last named intersection; the route geometry needs review."
       ],
       "geometry": [
         [
-          [
-            39.9517,
-            -75.1704
-          ],
           [
             39.9517,
             -75.1703
@@ -55,7 +52,7 @@
           ],
           [
             39.9526,
-            -75.1652
+            -75.1655
           ],
           [
             39.9526,
@@ -63,71 +60,15 @@
           ],
           [
             39.9521,
-            -75.1653
+            -75.1654
           ],
           [
-            39.9519,
-            -75.1652
+            39.9511,
+            -75.1656
           ],
           [
-            39.9518,
-            -75.1651
-          ],
-          [
-            39.9515,
-            -75.1631
-          ],
-          [
-            39.9515,
-            -75.1629
-          ],
-          [
-            39.9516,
-            -75.1628
-          ],
-          [
-            39.9517,
-            -75.1627
-          ],
-          [
-            39.9523,
-            -75.1626
-          ],
-          [
-            39.9529,
-            -75.1625
-          ],
-          [
-            39.9531,
-            -75.1625
-          ],
-          [
-            39.9532,
-            -75.1624
-          ],
-          [
-            39.9533,
-            -75.1623
-          ],
-          [
-            39.953,
-            -75.1597
-          ],
-          [
-            39.9522,
-            -75.1598
-          ],
-          [
-            39.9503,
-            -75.1602
-          ],
-          [
-            39.9489,
-            -75.1605
-          ],
-          [
-            39.9502,
-            -75.1706
+            39.9496,
+            -75.1659
           ],
           [
             39.9502,
@@ -155,14 +96,14 @@
       "stopCoverage": "unknown"
     }
   ],
-  "fetchedAt": "2026-11-19T23:51:57.578Z",
+  "fetchedAt": "2026-11-20T04:32:58.666Z",
   "mode": "live",
   "complete": false,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-19T23:51:57.578Z",
+      "fetchedAt": "2026-11-20T04:32:58.666Z",
       "ok": true
     },
     {
@@ -175,18 +116,18 @@
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-19T23:51:57.579Z",
+      "fetchedAt": "2026-11-20T04:32:58.712Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-19T23:51:57.616Z",
+      "fetchedAt": "2026-11-20T04:32:58.723Z",
       "ok": true
     }
   ],
   "warnings": [
     "Not all Route 9 alert sources could be checked. Stop status may be incomplete."
   ],
-  "collectedAt": "2026-11-19T23:52:28.088Z"
+  "collectedAt": "2026-11-20T04:33:29.023Z"
 }
