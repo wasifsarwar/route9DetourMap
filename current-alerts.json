@@ -1,14 +1,65 @@
 {
   "routeId": "9",
-  "alerts": [],
-  "fetchedAt": "2026-11-21T02:43:09.679Z",
+  "alerts": [
+    {
+      "id": "D19407",
+      "title": "The Philadelphia Marathon Run",
+      "directionIds": [
+        "0"
+      ],
+      "startsAt": "2026-11-22T09:00:00.000Z",
+      "endsAt": "2026-11-22T20:00:00.000Z",
+      "schedule": null,
+      "rawText": "4:00AM to 3:00PM\nSB via Ridge\nL- Walnut, R- Henry, L- \nAbbottsford, L- Fox, L- Rt 1 \nSouth(center lanes),Bare \nleft to 76 East, Bare left onto \n676 East, Take Broad St \nExit, Continue Staight on \nVine, Layover on Vine \nbetween Broad & 13th",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    },
+    {
+      "id": "D19415",
+      "title": "The Philadelphia Marathon Run",
+      "directionIds": [
+        "1"
+      ],
+      "startsAt": "2026-11-22T09:00:00.000Z",
+      "endsAt": "2026-11-22T20:00:00.000Z",
+      "schedule": null,
+      "rawText": "4:00AM to 3:00PM\nNB via Vine\nL-13th, L-Vine, R-16th, Bare \nright onto 76 WB(Valley \nForge), Bare right onto Rt 1 \nNB, R-Hunting Park Exit, \nR-Wissahickon, R- Roberts. \nR-Henry, L-Hermit, R-\nRidge, Reg Rt",
+      "sourceUrl": "https://www3.septa.org/api/v2/detours/?route=9",
+      "timingIssues": [
+        "SEPTA did not supply interpretable daily operating hours."
+      ],
+      "sourceIssues": [
+        "SEPTA reports an incomplete alert interpretation."
+      ],
+      "geometryIssues": [
+        "A current detour map is unavailable."
+      ],
+      "geometry": [],
+      "unservedGeometry": [],
+      "skippedStopIds": [],
+      "stopCoverage": "unknown"
+    }
+  ],
+  "fetchedAt": "2026-11-21T10:14:57.800Z",
   "mode": "live",
   "complete": false,
   "sources": [
     {
       "name": "SEPTA detours",
       "url": "https://www3.septa.org/api/v2/detours/?route=9",
-      "fetchedAt": "2026-11-21T02:43:09.684Z",
+      "fetchedAt": "2026-11-21T10:14:57.800Z",
       "ok": true
     },
     {
@@ -21,18 +72,18 @@
     {
       "name": "SEPTA northbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=1",
-      "fetchedAt": "2026-11-21T02:43:09.736Z",
+      "fetchedAt": "2026-11-21T10:14:57.988Z",
       "ok": true
     },
     {
       "name": "SEPTA southbound maps",
       "url": "https://www3.septa.org/api/v2/kml/?route=9&type=bus&direction=0",
-      "fetchedAt": "2026-11-21T02:43:09.679Z",
+      "fetchedAt": "2026-11-21T10:14:57.974Z",
       "ok": true
     }
   ],
   "warnings": [
     "Not all Route 9 alert sources could be checked. Stop status may be incomplete."
   ],
-  "collectedAt": "2026-11-21T02:43:40.110Z"
+  "collectedAt": "2026-11-21T10:15:28.533Z"
 }
